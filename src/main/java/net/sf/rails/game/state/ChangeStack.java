@@ -230,4 +230,20 @@ public class ChangeStack {
         return redoStack.size() + undoStack.size();
     }
 
+
+    /**
+     * @return an immutable view of the current undo stack
+     */
+    public ImmutableList<ChangeSet> getUndoList() {
+        return ImmutableList.copyOf(undoStack);
+    }
+
+    /**
+     * @return an immutable view of the current redo stack
+     */
+    public ImmutableList<ChangeSet> getRedoList() {
+        return ImmutableList.copyOf(redoStack);
+    }
+
+
 }

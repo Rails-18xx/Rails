@@ -40,9 +40,12 @@ public final class ExchangeForShare extends SpecialProperty {
     }
 
     public boolean isExecutionable() {
-        // FIXME: Check if this works correctly
-        // IT is better to rewrite this check
-        return ((PrivateCompany)originalCompany).getOwner() instanceof Player;
+      if (originalCompany instanceof PrivateCompany) {
+            return ((PrivateCompany) originalCompany).getOwner() instanceof Player;
+        } else if (originalCompany instanceof PublicCompany) {
+            return ((PublicCompany) originalCompany).getPresident() != null;
+        }
+        return false;
     }
 
     /**

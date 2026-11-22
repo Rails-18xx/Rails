@@ -19,6 +19,8 @@ public final class StringState extends State {
         return new StringState(parent, id, null);
     }
     
+    
+
     /**
      * @param text initial String
      */

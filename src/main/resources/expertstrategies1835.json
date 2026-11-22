@@ -1,0 +1,4667 @@
+{
+  "tileLayingStrategies": [
+    {
+      "context": {
+        "companyId": "M1",
+        "phase": "2",
+        "friendlyCompanyIds": [
+          "BY"
+        ]
+      },
+      "moves": [
+        {
+          "hexId": "I3",
+          "tileId": "202",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "I3",
+          "tileId": "208",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "H2",
+          "tileId": "208",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "K3",
+          "tileId": "204",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "H2",
+          "tileId": "201",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "J2",
+          "tileId": "9",
+          "rotation": "NW",
+          "weight": 2
+        },
+        {
+          "hexId": "K3",
+          "tileId": "58",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "K5",
+          "tileId": "9",
+          "rotation": "W",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "HE",
+        "phase": "2",
+        "friendlyCompanyIds": []
+      },
+      "moves": [
+        {
+          "hexId": "J10",
+          "tileId": "24",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "J12",
+          "tileId": "7",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "K7",
+          "tileId": "16",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "J6",
+          "tileId": "214",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "J6",
+          "tileId": "210",
+          "rotation": "SE",
+          "weight": 2
+        },
+        {
+          "hexId": "M17",
+          "tileId": "7",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "I5",
+          "tileId": "18",
+          "rotation": "SE",
+          "weight": 2
+        },
+        {
+          "hexId": "J6",
+          "tileId": "213",
+          "rotation": "SE",
+          "weight": 2
+        },
+        {
+          "hexId": "K7",
+          "tileId": "25",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "I3",
+          "tileId": "207",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "I3",
+          "tileId": "216",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "G9",
+          "tileId": "8",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "J10",
+          "tileId": "9",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "E9",
+          "tileId": "8",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "D12",
+          "tileId": "47",
+          "rotation": "W",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "SX",
+        "phase": "2",
+        "friendlyCompanyIds": [
+          "M3"
+        ]
+      },
+      "moves": [
+        {
+          "hexId": "I17",
+          "tileId": "69",
+          "rotation": "NE",
+          "weight": 4
+        },
+        {
+          "hexId": "H20",
+          "tileId": "201",
+          "rotation": "W",
+          "weight": 3
+        },
+        {
+          "hexId": "H20",
+          "tileId": "202",
+          "rotation": "W",
+          "weight": 2
+        },
+        {
+          "hexId": "H16",
+          "tileId": "206",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "H18",
+          "tileId": "9",
+          "rotation": "W",
+          "weight": 5
+        },
+        {
+          "hexId": "H16",
+          "tileId": "5",
+          "rotation": "SE",
+          "weight": 3
+        },
+        {
+          "hexId": "G17",
+          "tileId": "8",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "F16",
+          "tileId": "26",
+          "rotation": "SE",
+          "weight": 2
+        },
+        {
+          "hexId": "I17",
+          "tileId": "56",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "H20",
+          "tileId": "208",
+          "rotation": "W",
+          "weight": 3
+        },
+        {
+          "hexId": "H16",
+          "tileId": "12",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "F18",
+          "tileId": "20",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "G17",
+          "tileId": "24",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "H16",
+          "tileId": "6",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "I15",
+          "tileId": "3",
+          "rotation": "NE",
+          "weight": 2
+        },
+        {
+          "hexId": "H16",
+          "tileId": "13",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "L6",
+          "tileId": "210",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "G19",
+          "tileId": "19",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "G11",
+          "tileId": "4",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "K7",
+          "tileId": "23",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "D16",
+          "tileId": "9",
+          "rotation": "W",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "M3",
+        "phase": "2",
+        "friendlyCompanyIds": []
+      },
+      "moves": [
+        {
+          "hexId": "F14",
+          "tileId": "57",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "F10",
+          "tileId": "6",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "G9",
+          "tileId": "8",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "G11",
+          "tileId": "4",
+          "rotation": "SW",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "M4",
+        "phase": "2",
+        "friendlyCompanyIds": []
+      },
+      "moves": [
+        {
+          "hexId": "G5",
+          "tileId": "5",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "F4",
+          "tileId": "3",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "F6",
+          "tileId": "4",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "E7",
+          "tileId": "8",
+          "rotation": "E",
+          "weight": 2
+        },
+        {
+          "hexId": "G3",
+          "tileId": "214",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "G5",
+          "tileId": "12",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "H4",
+          "tileId": "87",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "G7",
+          "tileId": "9",
+          "rotation": "W",
+          "weight": 2
+        },
+        {
+          "hexId": "I5",
+          "tileId": "7",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "G5",
+          "tileId": "5",
+          "rotation": "SE",
+          "weight": 2
+        },
+        {
+          "hexId": "G7",
+          "tileId": "8",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "E9",
+          "tileId": "8",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "D10",
+          "tileId": "9",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "G5",
+          "tileId": "206",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "G3",
+          "tileId": "210",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "L6",
+          "tileId": "212",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "E11",
+          "tileId": "8",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "D10",
+          "tileId": "24",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "G11",
+          "tileId": "4",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "G5",
+          "tileId": "57",
+          "rotation": "SW",
+          "weight": 3
+        },
+        {
+          "hexId": "H4",
+          "tileId": "55",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "F6",
+          "tileId": "58",
+          "rotation": "E",
+          "weight": 4
+        },
+        {
+          "hexId": "F8",
+          "tileId": "9",
+          "rotation": "W",
+          "weight": 3
+        },
+        {
+          "hexId": "G5",
+          "tileId": "14",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "G3",
+          "tileId": "211",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "H4",
+          "tileId": "88",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "F6",
+          "tileId": "203",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "E5",
+          "tileId": "7",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "H4",
+          "tileId": "69",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "H4",
+          "tileId": "204",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "K5",
+          "tileId": "23",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "L6",
+          "tileId": "215",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "F4",
+          "tileId": "58",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "H4",
+          "tileId": "69",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "H2",
+          "tileId": "207",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "I5",
+          "tileId": "7",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "H10",
+          "tileId": "4",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "H10",
+          "tileId": "58",
+          "rotation": "NE",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "M5",
+        "phase": "2",
+        "friendlyCompanyIds": []
+      },
+      "moves": [
+        {
+          "hexId": "D18",
+          "tileId": "8",
+          "rotation": "NE",
+          "weight": 5
+        },
+        {
+          "hexId": "C19",
+          "tileId": "8",
+          "rotation": "E",
+          "weight": 5
+        },
+        {
+          "hexId": "E17",
+          "tileId": "16",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "D18",
+          "tileId": "16",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "H18",
+          "tileId": "8",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "J14",
+          "tileId": "8",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "D18",
+          "tileId": "7",
+          "rotation": "E",
+          "weight": 4
+        },
+        {
+          "hexId": "D20",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 4
+        },
+        {
+          "hexId": "F20",
+          "tileId": "9",
+          "rotation": "SW",
+          "weight": 3
+        },
+        {
+          "hexId": "G19",
+          "tileId": "8",
+          "rotation": "NE",
+          "weight": 2
+        },
+        {
+          "hexId": "H20",
+          "tileId": "201",
+          "rotation": "NE",
+          "weight": 2
+        },
+        {
+          "hexId": "H16",
+          "tileId": "14",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "F6",
+          "tileId": "87",
+          "rotation": "SE",
+          "weight": 3
+        },
+        {
+          "hexId": "F20",
+          "tileId": "8",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "F18",
+          "tileId": "8",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "F18",
+          "tileId": "28",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "F20",
+          "tileId": "19",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "G15",
+          "tileId": "4",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "G3",
+          "tileId": "212",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "H20",
+          "tileId": "201",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "H18",
+          "tileId": "16",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "G17",
+          "tileId": "8",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "E17",
+          "tileId": "19",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "D18",
+          "tileId": "29",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "D14",
+          "tileId": "23",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "F14",
+          "tileId": "15",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "F10",
+          "tileId": "6",
+          "rotation": "W",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "M3",
+        "phase": "2",
+        "friendlyCompanyIds": [
+          "SX"
+        ]
+      },
+      "moves": [
+        {
+          "hexId": "F14",
+          "tileId": "5",
+          "rotation": "SW",
+          "weight": 6
+        },
+        {
+          "hexId": "G15",
+          "tileId": "4",
+          "rotation": "NW",
+          "weight": 7
+        },
+        {
+          "hexId": "H16",
+          "tileId": "57",
+          "rotation": "NW",
+          "weight": 3
+        },
+        {
+          "hexId": "F14",
+          "tileId": "15",
+          "rotation": "NW",
+          "weight": 2
+        },
+        {
+          "hexId": "E13",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 2
+        },
+        {
+          "hexId": "F14",
+          "tileId": "6",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "F10",
+          "tileId": "5",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "E11",
+          "tileId": "8",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "F14",
+          "tileId": "14",
+          "rotation": "W",
+          "weight": 2
+        },
+        {
+          "hexId": "F14",
+          "tileId": "57",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "F16",
+          "tileId": "9",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "F18",
+          "tileId": "9",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "F20",
+          "tileId": "8",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "E19",
+          "tileId": "209",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "F10",
+          "tileId": "57",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "E13",
+          "tileId": "9",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "F20",
+          "tileId": "9",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "H16",
+          "tileId": "206",
+          "rotation": "SW",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "M6",
+        "phase": "2",
+        "friendlyCompanyIds": []
+      },
+      "moves": [
+        {
+          "hexId": "B10",
+          "tileId": "9",
+          "rotation": "NW",
+          "weight": 7
+        },
+        {
+          "hexId": "A11",
+          "tileId": "6",
+          "rotation": "NW",
+          "weight": 7
+        },
+        {
+          "hexId": "B12",
+          "tileId": "58",
+          "rotation": "SW",
+          "weight": 7
+        },
+        {
+          "hexId": "B14",
+          "tileId": "3",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "C15",
+          "tileId": "9",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "D16",
+          "tileId": "9",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "B12",
+          "tileId": "204",
+          "rotation": "SE",
+          "weight": 2
+        },
+        {
+          "hexId": "B10",
+          "tileId": "26",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "B14",
+          "tileId": "87",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "B16",
+          "tileId": "58",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "C17",
+          "tileId": "8",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "C15",
+          "tileId": "8",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "A11",
+          "tileId": "12",
+          "rotation": "W",
+          "weight": 4
+        },
+        {
+          "hexId": "H20",
+          "tileId": "201",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "D14",
+          "tileId": "16",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "B10",
+          "tileId": "8",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "A11",
+          "tileId": "5",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "B10",
+          "tileId": "16",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "B14",
+          "tileId": "3",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "D14",
+          "tileId": "8",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "C15",
+          "tileId": "7",
+          "rotation": "NW",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "M5",
+        "phase": "2",
+        "friendlyCompanyIds": [
+          "M2",
+          "SX"
+        ]
+      },
+      "moves": [
+        {
+          "hexId": "D18",
+          "tileId": "7",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "D20",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "F20",
+          "tileId": "9",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "G19",
+          "tileId": "8",
+          "rotation": "NE",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "M3",
+        "phase": "2",
+        "friendlyCompanyIds": [
+          "M6",
+          "SX"
+        ]
+      },
+      "moves": [
+        {
+          "hexId": "F14",
+          "tileId": "5",
+          "rotation": "NE",
+          "weight": 3
+        },
+        {
+          "hexId": "E13",
+          "tileId": "9",
+          "rotation": "NW",
+          "weight": 3
+        },
+        {
+          "hexId": "D12",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 3
+        },
+        {
+          "hexId": "D10",
+          "tileId": "7",
+          "rotation": "NE",
+          "weight": 3
+        },
+        {
+          "hexId": "F10",
+          "tileId": "206",
+          "rotation": "NW",
+          "weight": 3
+        },
+        {
+          "hexId": "F14",
+          "tileId": "15",
+          "rotation": "W",
+          "weight": 2
+        },
+        {
+          "hexId": "E15",
+          "tileId": "7",
+          "rotation": "SE",
+          "weight": 2
+        },
+        {
+          "hexId": "F14",
+          "tileId": "14",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "G15",
+          "tileId": "4",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "F16",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "H10",
+          "tileId": "58",
+          "rotation": "NE",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "M1",
+        "phase": "2",
+        "friendlyCompanyIds": []
+      },
+      "moves": [
+        {
+          "hexId": "H2",
+          "tileId": "202",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "J2",
+          "tileId": "9",
+          "rotation": "NW",
+          "weight": 4
+        },
+        {
+          "hexId": "K3",
+          "tileId": "4",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "L4",
+          "tileId": "8",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "H2",
+          "tileId": "207",
+          "rotation": "E",
+          "weight": 2
+        },
+        {
+          "hexId": "H4",
+          "tileId": "56",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "I3",
+          "tileId": "201",
+          "rotation": "NW",
+          "weight": 2
+        },
+        {
+          "hexId": "I3",
+          "tileId": "208",
+          "rotation": "NW",
+          "weight": 3
+        },
+        {
+          "hexId": "K5",
+          "tileId": "28",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "H2",
+          "tileId": "201",
+          "rotation": "SW",
+          "weight": 3
+        },
+        {
+          "hexId": "K3",
+          "tileId": "58",
+          "rotation": "NW",
+          "weight": 4
+        },
+        {
+          "hexId": "K5",
+          "tileId": "9",
+          "rotation": "W",
+          "weight": 4
+        },
+        {
+          "hexId": "H2",
+          "tileId": "208",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "K7",
+          "tileId": "7",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "K5",
+          "tileId": "20",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "H4",
+          "tileId": "2",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "K3",
+          "tileId": "203",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "G5",
+          "tileId": "206",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "K7",
+          "tileId": "8",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "I5",
+          "tileId": "7",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "I3",
+          "tileId": "202",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "K5",
+          "tileId": "23",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "F10",
+          "tileId": "206",
+          "rotation": "NW",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "PR",
+        "phase": "2",
+        "friendlyCompanyIds": []
+      },
+      "moves": [
+        {
+          "hexId": "I3",
+          "tileId": "202",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "H2",
+          "tileId": "216",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "F10",
+          "tileId": "63",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "K13",
+          "tileId": "19",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "G3",
+          "tileId": "218",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "D12",
+          "tileId": "24",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "D14",
+          "tileId": "23",
+          "rotation": "W",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "M2",
+        "phase": "2",
+        "friendlyCompanyIds": []
+      },
+      "moves": [
+        {
+          "hexId": "E17",
+          "tileId": "8",
+          "rotation": "NW",
+          "weight": 12
+        },
+        {
+          "hexId": "D16",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 12
+        },
+        {
+          "hexId": "D14",
+          "tileId": "8",
+          "rotation": "NW",
+          "weight": 12
+        },
+        {
+          "hexId": "B14",
+          "tileId": "3",
+          "rotation": "SE",
+          "weight": 10
+        },
+        {
+          "hexId": "F20",
+          "tileId": "23",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "I17",
+          "tileId": "1",
+          "rotation": "SW",
+          "weight": 3
+        },
+        {
+          "hexId": "I15",
+          "tileId": "204",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "D20",
+          "tileId": "16",
+          "rotation": "SE",
+          "weight": 5
+        },
+        {
+          "hexId": "I17",
+          "tileId": "88",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "E17",
+          "tileId": "8",
+          "rotation": "E",
+          "weight": 3
+        },
+        {
+          "hexId": "F16",
+          "tileId": "8",
+          "rotation": "W",
+          "weight": 3
+        },
+        {
+          "hexId": "E19",
+          "tileId": "209",
+          "rotation": "SW",
+          "weight": 10
+        },
+        {
+          "hexId": "F20",
+          "tileId": "24",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "B14",
+          "tileId": "87",
+          "rotation": "SE",
+          "weight": 5
+        },
+        {
+          "hexId": "F20",
+          "tileId": "29",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "B12",
+          "tileId": "204",
+          "rotation": "SE",
+          "weight": 2
+        },
+        {
+          "hexId": "B12",
+          "tileId": "203",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "G17",
+          "tileId": "8",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "H18",
+          "tileId": "20",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "B14",
+          "tileId": "58",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "F20",
+          "tileId": "20",
+          "rotation": "NW",
+          "weight": 4
+        },
+        {
+          "hexId": "B18",
+          "tileId": "26",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "H20",
+          "tileId": "208",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "I17",
+          "tileId": "204",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "F18",
+          "tileId": "9",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "B16",
+          "tileId": "87",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "E19",
+          "tileId": "209",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "D18",
+          "tileId": "25",
+          "rotation": "SE",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "M5",
+        "phase": "2",
+        "friendlyCompanyIds": [
+          "M6",
+          "SX"
+        ]
+      },
+      "moves": [
+        {
+          "hexId": "D18",
+          "tileId": "7",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "D20",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "F20",
+          "tileId": "9",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "G19",
+          "tileId": "8",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "H20",
+          "tileId": "201",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "H18",
+          "tileId": "8",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "D20",
+          "tileId": "16",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "J12",
+          "tileId": "9",
+          "rotation": "W",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "BY",
+        "phase": "2",
+        "friendlyCompanyIds": []
+      },
+      "moves": [
+        {
+          "hexId": "O15",
+          "tileId": "201",
+          "rotation": "NE",
+          "weight": 2
+        },
+        {
+          "hexId": "N16",
+          "tileId": "8",
+          "rotation": "SW",
+          "weight": 12
+        },
+        {
+          "hexId": "M15",
+          "tileId": "58",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "L16",
+          "tileId": "8",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "K15",
+          "tileId": "7",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "K13",
+          "tileId": "9",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "J12",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "N14",
+          "tileId": "9",
+          "rotation": "NW",
+          "weight": 2
+        },
+        {
+          "hexId": "J10",
+          "tileId": "9",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "M13",
+          "tileId": "8",
+          "rotation": "NE",
+          "weight": 2
+        },
+        {
+          "hexId": "O15",
+          "tileId": "207",
+          "rotation": "W",
+          "weight": 7
+        },
+        {
+          "hexId": "J6",
+          "tileId": "215",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "K5",
+          "tileId": "7",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "M17",
+          "tileId": "9",
+          "rotation": "W",
+          "weight": 2
+        },
+        {
+          "hexId": "K7",
+          "tileId": "7",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "L6",
+          "tileId": "210",
+          "rotation": "E",
+          "weight": 3
+        },
+        {
+          "hexId": "O15",
+          "tileId": "202",
+          "rotation": "E",
+          "weight": 9
+        },
+        {
+          "hexId": "M15",
+          "tileId": "4",
+          "rotation": "SE",
+          "weight": 3
+        },
+        {
+          "hexId": "M13",
+          "tileId": "7",
+          "rotation": "NW",
+          "weight": 4
+        },
+        {
+          "hexId": "L12",
+          "tileId": "9",
+          "rotation": "NW",
+          "weight": 4
+        },
+        {
+          "hexId": "K11",
+          "tileId": "4",
+          "rotation": "NW",
+          "weight": 4
+        },
+        {
+          "hexId": "J10",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 6
+        },
+        {
+          "hexId": "O13",
+          "tileId": "8",
+          "rotation": "NW",
+          "weight": 8
+        },
+        {
+          "hexId": "N12",
+          "tileId": "6",
+          "rotation": "NW",
+          "weight": 5
+        },
+        {
+          "hexId": "N10",
+          "tileId": "69",
+          "rotation": "NE",
+          "weight": 2
+        },
+        {
+          "hexId": "M9",
+          "tileId": "6",
+          "rotation": "NW",
+          "weight": 3
+        },
+        {
+          "hexId": "M7",
+          "tileId": "56",
+          "rotation": "SE",
+          "weight": 2
+        },
+        {
+          "hexId": "M9",
+          "tileId": "14",
+          "rotation": "W",
+          "weight": 4
+        },
+        {
+          "hexId": "N12",
+          "tileId": "13",
+          "rotation": "SW",
+          "weight": 4
+        },
+        {
+          "hexId": "K7",
+          "tileId": "27",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "K11",
+          "tileId": "88",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "K7",
+          "tileId": "9",
+          "rotation": "SW",
+          "weight": 4
+        },
+        {
+          "hexId": "J6",
+          "tileId": "214",
+          "rotation": "NE",
+          "weight": 2
+        },
+        {
+          "hexId": "M15",
+          "tileId": "4",
+          "rotation": "NW",
+          "weight": 8
+        },
+        {
+          "hexId": "K15",
+          "tileId": "9",
+          "rotation": "SW",
+          "weight": 4
+        },
+        {
+          "hexId": "I17",
+          "tileId": "1",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "K13",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 2
+        },
+        {
+          "hexId": "K11",
+          "tileId": "58",
+          "rotation": "NW",
+          "weight": 2
+        },
+        {
+          "hexId": "H18",
+          "tileId": "8",
+          "rotation": "NE",
+          "weight": 2
+        },
+        {
+          "hexId": "I17",
+          "tileId": "55",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "H18",
+          "tileId": "8",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "H20",
+          "tileId": "202",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "N14",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "N12",
+          "tileId": "5",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "N12",
+          "tileId": "12",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "F18",
+          "tileId": "9",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "M13",
+          "tileId": "8",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "M11",
+          "tileId": "8",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "M9",
+          "tileId": "5",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "N8",
+          "tileId": "9",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "L6",
+          "tileId": "211",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "O15",
+          "tileId": "201",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "N10",
+          "tileId": "56",
+          "rotation": "E",
+          "weight": 3
+        },
+        {
+          "hexId": "M7",
+          "tileId": "69",
+          "rotation": "SE",
+          "weight": 2
+        },
+        {
+          "hexId": "L8",
+          "tileId": "2",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "I3",
+          "tileId": "208",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "O15",
+          "tileId": "202",
+          "rotation": "NE",
+          "weight": 3
+        },
+        {
+          "hexId": "O13",
+          "tileId": "9",
+          "rotation": "NW",
+          "weight": 2
+        },
+        {
+          "hexId": "I17",
+          "tileId": "2",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "H18",
+          "tileId": "9",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "M9",
+          "tileId": "57",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "L8",
+          "tileId": "55",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "K7",
+          "tileId": "8",
+          "rotation": "NE",
+          "weight": 2
+        },
+        {
+          "hexId": "N10",
+          "tileId": "87",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "M9",
+          "tileId": "206",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "K3",
+          "tileId": "3",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "K3",
+          "tileId": "204",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "J12",
+          "tileId": "27",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "L10",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "L8",
+          "tileId": "69",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "K7",
+          "tileId": "25",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "J6",
+          "tileId": "210",
+          "rotation": "SE",
+          "weight": 2
+        },
+        {
+          "hexId": "O15",
+          "tileId": "208",
+          "rotation": "W",
+          "weight": 2
+        },
+        {
+          "hexId": "M13",
+          "tileId": "9",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "N12",
+          "tileId": "5",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "M11",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 4
+        },
+        {
+          "hexId": "M9",
+          "tileId": "57",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "L6",
+          "tileId": "210",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "N14",
+          "tileId": "8",
+          "rotation": "NE",
+          "weight": 2
+        },
+        {
+          "hexId": "M15",
+          "tileId": "58",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "N12",
+          "tileId": "57",
+          "rotation": "NW",
+          "weight": 3
+        },
+        {
+          "hexId": "K5",
+          "tileId": "23",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "M9",
+          "tileId": "6",
+          "rotation": "SE",
+          "weight": 2
+        },
+        {
+          "hexId": "L8",
+          "tileId": "2",
+          "rotation": "W",
+          "weight": 2
+        },
+        {
+          "hexId": "M7",
+          "tileId": "55",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "M9",
+          "tileId": "15",
+          "rotation": "W",
+          "weight": 2
+        },
+        {
+          "hexId": "N12",
+          "tileId": "15",
+          "rotation": "NW",
+          "weight": 2
+        },
+        {
+          "hexId": "L6",
+          "tileId": "217",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "L14",
+          "tileId": "218",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "M11",
+          "tileId": "24",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "G19",
+          "tileId": "9",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "G17",
+          "tileId": "16",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "K15",
+          "tileId": "26",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "F16",
+          "tileId": "25",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "K11",
+          "tileId": "203",
+          "rotation": "W",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "M5",
+        "phase": "2",
+        "friendlyCompanyIds": [
+          "SX"
+        ]
+      },
+      "moves": [
+        {
+          "hexId": "D18",
+          "tileId": "7",
+          "rotation": "E",
+          "weight": 8
+        },
+        {
+          "hexId": "D20",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 8
+        },
+        {
+          "hexId": "F20",
+          "tileId": "8",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "H20",
+          "tileId": "202",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "H20",
+          "tileId": "208",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "H18",
+          "tileId": "18",
+          "rotation": "E",
+          "weight": 3
+        },
+        {
+          "hexId": "B14",
+          "tileId": "87",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "F18",
+          "tileId": "9",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "H12",
+          "tileId": "8",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "F20",
+          "tileId": "8",
+          "rotation": "W",
+          "weight": 3
+        },
+        {
+          "hexId": "F18",
+          "tileId": "8",
+          "rotation": "E",
+          "weight": 2
+        },
+        {
+          "hexId": "H16",
+          "tileId": "206",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "K13",
+          "tileId": "23",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "K11",
+          "tileId": "87",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "G17",
+          "tileId": "27",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "F20",
+          "tileId": "9",
+          "rotation": "SW",
+          "weight": 4
+        },
+        {
+          "hexId": "G19",
+          "tileId": "8",
+          "rotation": "W",
+          "weight": 3
+        },
+        {
+          "hexId": "H16",
+          "tileId": "12",
+          "rotation": "SE",
+          "weight": 5
+        },
+        {
+          "hexId": "H20",
+          "tileId": "201",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "C19",
+          "tileId": "7",
+          "rotation": "E",
+          "weight": 2
+        },
+        {
+          "hexId": "G19",
+          "tileId": "9",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "H20",
+          "tileId": "207",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "H18",
+          "tileId": "24",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "D20",
+          "tileId": "16",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "D18",
+          "tileId": "26",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "F20",
+          "tileId": "19",
+          "rotation": "SE",
+          "weight": 2
+        },
+        {
+          "hexId": "H18",
+          "tileId": "20",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "G17",
+          "tileId": "9",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "G17",
+          "tileId": "8",
+          "rotation": "E",
+          "weight": 2
+        },
+        {
+          "hexId": "I15",
+          "tileId": "204",
+          "rotation": "W",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "SX",
+        "phase": "2",
+        "friendlyCompanyIds": [
+          "M5"
+        ]
+      },
+      "moves": [
+        {
+          "hexId": "H16",
+          "tileId": "5",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "H18",
+          "tileId": "9",
+          "rotation": "W",
+          "weight": 5
+        },
+        {
+          "hexId": "E19",
+          "tileId": "209",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "H16",
+          "tileId": "12",
+          "rotation": "SE",
+          "weight": 2
+        },
+        {
+          "hexId": "I15",
+          "tileId": "58",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "H14",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "C19",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 2
+        },
+        {
+          "hexId": "K15",
+          "tileId": "26",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "H16",
+          "tileId": "57",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "G17",
+          "tileId": "9",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "I15",
+          "tileId": "4",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "J14",
+          "tileId": "7",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "K15",
+          "tileId": "23",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "K7",
+          "tileId": "8",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "K5",
+          "tileId": "23",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "I5",
+          "tileId": "19",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "H16",
+          "tileId": "6",
+          "rotation": "SW",
+          "weight": 4
+        },
+        {
+          "hexId": "G17",
+          "tileId": "8",
+          "rotation": "E",
+          "weight": 2
+        },
+        {
+          "hexId": "I17",
+          "tileId": "56",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "H20",
+          "tileId": "208",
+          "rotation": "W",
+          "weight": 3
+        },
+        {
+          "hexId": "H18",
+          "tileId": "8",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "F20",
+          "tileId": "20",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "I17",
+          "tileId": "2",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "I17",
+          "tileId": "87",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "C19",
+          "tileId": "7",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "C17",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "F18",
+          "tileId": "8",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "I17",
+          "tileId": "69",
+          "rotation": "NE",
+          "weight": 3
+        },
+        {
+          "hexId": "H20",
+          "tileId": "202",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "G17",
+          "tileId": "19",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "H18",
+          "tileId": "24",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "M15",
+          "tileId": "4",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "M17",
+          "tileId": "9",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "G19",
+          "tileId": "19",
+          "rotation": "SE",
+          "weight": 2
+        },
+        {
+          "hexId": "G19",
+          "tileId": "7",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "H18",
+          "tileId": "8",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "M17",
+          "tileId": "7",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "B14",
+          "tileId": "87",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "H16",
+          "tileId": "5",
+          "rotation": "SE",
+          "weight": 2
+        },
+        {
+          "hexId": "H20",
+          "tileId": "202",
+          "rotation": "E",
+          "weight": 2
+        },
+        {
+          "hexId": "I15",
+          "tileId": "3",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "E19",
+          "tileId": "220",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "H20",
+          "tileId": "216",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "H16",
+          "tileId": "63",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "C11",
+          "tileId": "221",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "G15",
+          "tileId": "58",
+          "rotation": "SW",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "WT",
+        "phase": "2",
+        "friendlyCompanyIds": []
+      },
+      "moves": [
+        {
+          "hexId": "M9",
+          "tileId": "57",
+          "rotation": "W",
+          "weight": 3
+        },
+        {
+          "hexId": "M11",
+          "tileId": "7",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "M7",
+          "tileId": "69",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "N8",
+          "tileId": "26",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "K7",
+          "tileId": "25",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "M9",
+          "tileId": "6",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "M11",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "K7",
+          "tileId": "28",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "N12",
+          "tileId": "15",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "N10",
+          "tileId": "1",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "K5",
+          "tileId": "9",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "M9",
+          "tileId": "6",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "L10",
+          "tileId": "27",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "K11",
+          "tileId": "58",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "K13",
+          "tileId": "8",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "J14",
+          "tileId": "9",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "F14",
+          "tileId": "63",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "H14",
+          "tileId": "7",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "C9",
+          "tileId": "8",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "M9",
+          "tileId": "5",
+          "rotation": "SE",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "M1",
+        "phase": "2",
+        "friendlyCompanyIds": [
+          "BY",
+          "M4"
+        ]
+      },
+      "moves": [
+        {
+          "hexId": "H2",
+          "tileId": "202",
+          "rotation": "W",
+          "weight": 4
+        },
+        {
+          "hexId": "H4",
+          "tileId": "69",
+          "rotation": "SW",
+          "weight": 3
+        },
+        {
+          "hexId": "I5",
+          "tileId": "8",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "H2",
+          "tileId": "201",
+          "rotation": "SW",
+          "weight": 3
+        },
+        {
+          "hexId": "J2",
+          "tileId": "9",
+          "rotation": "NW",
+          "weight": 4
+        },
+        {
+          "hexId": "K3",
+          "tileId": "58",
+          "rotation": "NW",
+          "weight": 3
+        },
+        {
+          "hexId": "H2",
+          "tileId": "207",
+          "rotation": "E",
+          "weight": 4
+        },
+        {
+          "hexId": "I3",
+          "tileId": "208",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "K5",
+          "tileId": "9",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "H4",
+          "tileId": "2",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "G3",
+          "tileId": "215",
+          "rotation": "W",
+          "weight": 2
+        },
+        {
+          "hexId": "H4",
+          "tileId": "87",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "G11",
+          "tileId": "3",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "G9",
+          "tileId": "25",
+          "rotation": "NE",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "OL",
+        "phase": "2",
+        "friendlyCompanyIds": []
+      },
+      "moves": [
+        {
+          "hexId": "D8",
+          "tileId": "5",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "D8",
+          "tileId": "14",
+          "rotation": "W",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "MS",
+        "phase": "2",
+        "friendlyCompanyIds": []
+      },
+      "moves": [
+        {
+          "hexId": "B14",
+          "tileId": "87",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "F18",
+          "tileId": "7",
+          "rotation": "NW",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "BA",
+        "phase": "2",
+        "friendlyCompanyIds": []
+      },
+      "moves": [
+        {
+          "hexId": "I5",
+          "tileId": "28",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "I5",
+          "tileId": "7",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "L4",
+          "tileId": "8",
+          "rotation": "NW",
+          "weight": 2
+        },
+        {
+          "hexId": "I5",
+          "tileId": "23",
+          "rotation": "SE",
+          "weight": 2
+        },
+        {
+          "hexId": "L6",
+          "tileId": "214",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "L4",
+          "tileId": "9",
+          "rotation": "W",
+          "weight": 2
+        },
+        {
+          "hexId": "L2",
+          "tileId": "3",
+          "rotation": "NE",
+          "weight": 2
+        },
+        {
+          "hexId": "L6",
+          "tileId": "210",
+          "rotation": "E",
+          "weight": 2
+        },
+        {
+          "hexId": "K7",
+          "tileId": "9",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "K7",
+          "tileId": "27",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "I3",
+          "tileId": "208",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "M7",
+          "tileId": "1",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "I3",
+          "tileId": "202",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "L4",
+          "tileId": "7",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "L4",
+          "tileId": "26",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "L6",
+          "tileId": "214",
+          "rotation": "W",
+          "weight": 2
+        },
+        {
+          "hexId": "H4",
+          "tileId": "204",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "K7",
+          "tileId": "7",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "L4",
+          "tileId": "23",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "K5",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "L6",
+          "tileId": "210",
+          "rotation": "W",
+          "weight": 2
+        },
+        {
+          "hexId": "L10",
+          "tileId": "7",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "M13",
+          "tileId": "9",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "M7",
+          "tileId": "88",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "J6",
+          "tileId": "219",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "O15",
+          "tileId": "216",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "L10",
+          "tileId": "46",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "J12",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "D10",
+          "tileId": "27",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "K5",
+          "tileId": "7",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "J10",
+          "tileId": "25",
+          "rotation": "W",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "M4",
+        "phase": "2",
+        "friendlyCompanyIds": [
+          "M1"
+        ]
+      },
+      "moves": [
+        {
+          "hexId": "G5",
+          "tileId": "57",
+          "rotation": "SW",
+          "weight": 15
+        },
+        {
+          "hexId": "F6",
+          "tileId": "58",
+          "rotation": "E",
+          "weight": 13
+        },
+        {
+          "hexId": "F8",
+          "tileId": "9",
+          "rotation": "W",
+          "weight": 11
+        },
+        {
+          "hexId": "G5",
+          "tileId": "5",
+          "rotation": "NW",
+          "weight": 3
+        },
+        {
+          "hexId": "H4",
+          "tileId": "69",
+          "rotation": "SW",
+          "weight": 3
+        },
+        {
+          "hexId": "I3",
+          "tileId": "201",
+          "rotation": "NE",
+          "weight": 6
+        },
+        {
+          "hexId": "G3",
+          "tileId": "215",
+          "rotation": "W",
+          "weight": 4
+        },
+        {
+          "hexId": "G5",
+          "tileId": "205",
+          "rotation": "W",
+          "weight": 7
+        },
+        {
+          "hexId": "F10",
+          "tileId": "5",
+          "rotation": "NW",
+          "weight": 7
+        },
+        {
+          "hexId": "F16",
+          "tileId": "7",
+          "rotation": "W",
+          "weight": 2
+        },
+        {
+          "hexId": "F8",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "G9",
+          "tileId": "8",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "G5",
+          "tileId": "14",
+          "rotation": "SW",
+          "weight": 7
+        },
+        {
+          "hexId": "G11",
+          "tileId": "204",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "K5",
+          "tileId": "29",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "G9",
+          "tileId": "8",
+          "rotation": "W",
+          "weight": 2
+        },
+        {
+          "hexId": "J6",
+          "tileId": "210",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "H4",
+          "tileId": "204",
+          "rotation": "E",
+          "weight": 2
+        },
+        {
+          "hexId": "K5",
+          "tileId": "28",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "G7",
+          "tileId": "9",
+          "rotation": "W",
+          "weight": 5
+        },
+        {
+          "hexId": "H10",
+          "tileId": "88",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "F6",
+          "tileId": "3",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "F4",
+          "tileId": "58",
+          "rotation": "E",
+          "weight": 2
+        },
+        {
+          "hexId": "G5",
+          "tileId": "15",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "F4",
+          "tileId": "87",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "E7",
+          "tileId": "9",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "F10",
+          "tileId": "57",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "K5",
+          "tileId": "9",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "F4",
+          "tileId": "3",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "G11",
+          "tileId": "204",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "I3",
+          "tileId": "201",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "I5",
+          "tileId": "7",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "I3",
+          "tileId": "208",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "F10",
+          "tileId": "12",
+          "rotation": "NW",
+          "weight": 2
+        },
+        {
+          "hexId": "K5",
+          "tileId": "28",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "J6",
+          "tileId": "213",
+          "rotation": "SE",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "M2",
+        "phase": "2",
+        "friendlyCompanyIds": [
+          "M3"
+        ]
+      },
+      "moves": [
+        {
+          "hexId": "E17",
+          "tileId": "8",
+          "rotation": "E",
+          "weight": 5
+        },
+        {
+          "hexId": "F16",
+          "tileId": "8",
+          "rotation": "W",
+          "weight": 5
+        },
+        {
+          "hexId": "E19",
+          "tileId": "209",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "F20",
+          "tileId": "8",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "F18",
+          "tileId": "9",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "F16",
+          "tileId": "25",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "I17",
+          "tileId": "204",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "K13",
+          "tileId": "7",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "E19",
+          "tileId": "209",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "G11",
+          "tileId": "58",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "I3",
+          "tileId": "202",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "J10",
+          "tileId": "9",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "E19",
+          "tileId": "209",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "F20",
+          "tileId": "20",
+          "rotation": "NW",
+          "weight": 2
+        },
+        {
+          "hexId": "H20",
+          "tileId": "208",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "J12",
+          "tileId": "9",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "E19",
+          "tileId": "209",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "H20",
+          "tileId": "201",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "H16",
+          "tileId": "15",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "I15",
+          "tileId": "4",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "I15",
+          "tileId": "88",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "H20",
+          "tileId": "207",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "D18",
+          "tileId": "29",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "J14",
+          "tileId": "9",
+          "rotation": "W",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "M3",
+        "phase": "2",
+        "friendlyCompanyIds": [
+          "M2"
+        ]
+      },
+      "moves": [
+        {
+          "hexId": "F14",
+          "tileId": "57",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "F10",
+          "tileId": "57",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "F8",
+          "tileId": "8",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "F14",
+          "tileId": "205",
+          "rotation": "NW",
+          "weight": 4
+        },
+        {
+          "hexId": "F10",
+          "tileId": "15",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "G17",
+          "tileId": "9",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "G17",
+          "tileId": "20",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "E13",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 2
+        },
+        {
+          "hexId": "F18",
+          "tileId": "26",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "F14",
+          "tileId": "6",
+          "rotation": "SE",
+          "weight": 4
+        },
+        {
+          "hexId": "E13",
+          "tileId": "9",
+          "rotation": "NW",
+          "weight": 3
+        },
+        {
+          "hexId": "D12",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 3
+        },
+        {
+          "hexId": "D10",
+          "tileId": "7",
+          "rotation": "NE",
+          "weight": 3
+        },
+        {
+          "hexId": "F14",
+          "tileId": "14",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "H4",
+          "tileId": "88",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "K5",
+          "tileId": "8",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "J12",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "E11",
+          "tileId": "8",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "D10",
+          "tileId": "8",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "F10",
+          "tileId": "14",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "J10",
+          "tileId": "9",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "K5",
+          "tileId": "7",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "G11",
+          "tileId": "4",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "H10",
+          "tileId": "58",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "I11",
+          "tileId": "9",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "F10",
+          "tileId": "206",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "F6",
+          "tileId": "87",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "K3",
+          "tileId": "58",
+          "rotation": "NW",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "M1",
+        "phase": "2",
+        "friendlyCompanyIds": [
+          "M4"
+        ]
+      },
+      "moves": [
+        {
+          "hexId": "H2",
+          "tileId": "202",
+          "rotation": "W",
+          "weight": 7
+        },
+        {
+          "hexId": "H4",
+          "tileId": "69",
+          "rotation": "SW",
+          "weight": 9
+        },
+        {
+          "hexId": "J2",
+          "tileId": "9",
+          "rotation": "NW",
+          "weight": 7
+        },
+        {
+          "hexId": "K3",
+          "tileId": "4",
+          "rotation": "NW",
+          "weight": 5
+        },
+        {
+          "hexId": "H2",
+          "tileId": "207",
+          "rotation": "E",
+          "weight": 7
+        },
+        {
+          "hexId": "I5",
+          "tileId": "8",
+          "rotation": "SW",
+          "weight": 7
+        },
+        {
+          "hexId": "K7",
+          "tileId": "18",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "H2",
+          "tileId": "202",
+          "rotation": "SE",
+          "weight": 4
+        },
+        {
+          "hexId": "H4",
+          "tileId": "1",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "H2",
+          "tileId": "207",
+          "rotation": "NE",
+          "weight": 3
+        },
+        {
+          "hexId": "G3",
+          "tileId": "215",
+          "rotation": "W",
+          "weight": 8
+        },
+        {
+          "hexId": "H12",
+          "tileId": "8",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "H14",
+          "tileId": "19",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "K7",
+          "tileId": "23",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "I3",
+          "tileId": "202",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "G11",
+          "tileId": "3",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "E5",
+          "tileId": "8",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "F8",
+          "tileId": "8",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "I3",
+          "tileId": "208",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "K5",
+          "tileId": "18",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "H4",
+          "tileId": "2",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "K3",
+          "tileId": "58",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "K3",
+          "tileId": "203",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "G3",
+          "tileId": "211",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "I5",
+          "tileId": "16",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "L4",
+          "tileId": "7",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "I3",
+          "tileId": "207",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "K7",
+          "tileId": "8",
+          "rotation": "W",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "SX",
+        "phase": "2",
+        "friendlyCompanyIds": []
+      },
+      "moves": [
+        {
+          "hexId": "H16",
+          "tileId": "5",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "I17",
+          "tileId": "69",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "H20",
+          "tileId": "202",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "H16",
+          "tileId": "12",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "H18",
+          "tileId": "28",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "C19",
+          "tileId": "24",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "H16",
+          "tileId": "5",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "I15",
+          "tileId": "3",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "H16",
+          "tileId": "205",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "G17",
+          "tileId": "7",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "H14",
+          "tileId": "9",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "I15",
+          "tileId": "58",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "J14",
+          "tileId": "7",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "H20",
+          "tileId": "201",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "F18",
+          "tileId": "9",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "L6",
+          "tileId": "212",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "E17",
+          "tileId": "28",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "H10",
+          "tileId": "3",
+          "rotation": "NE",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "BY",
+        "phase": "2",
+        "friendlyCompanyIds": []
+       },
+      "moves": [
+        {
+          "hexId": "O15",
+          "tileId": "202",
+          "rotation": "E",
+          "weight": 4
+        },
+        {
+          "hexId": "O13",
+          "tileId": "8",
+          "rotation": "NW",
+          "weight": 5
+        },
+        {
+          "hexId": "N12",
+          "tileId": "6",
+          "rotation": "SW",
+          "weight": 6
+        },
+        {
+          "hexId": "M13",
+          "tileId": "9",
+          "rotation": "SW",
+          "weight": 6
+        },
+        {
+          "hexId": "M15",
+          "tileId": "3",
+          "rotation": "NW",
+          "weight": 2
+        },
+        {
+          "hexId": "L16",
+          "tileId": "8",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "K15",
+          "tileId": "7",
+          "rotation": "SE",
+          "weight": 2
+        },
+        {
+          "hexId": "O15",
+          "tileId": "202",
+          "rotation": "NE",
+          "weight": 5
+        },
+        {
+          "hexId": "O13",
+          "tileId": "9",
+          "rotation": "NW",
+          "weight": 5
+        },
+        {
+          "hexId": "N14",
+          "tileId": "8",
+          "rotation": "NE",
+          "weight": 3
+        },
+        {
+          "hexId": "M15",
+          "tileId": "58",
+          "rotation": "SW",
+          "weight": 3
+        },
+        {
+          "hexId": "O15",
+          "tileId": "207",
+          "rotation": "W",
+          "weight": 2
+        },
+        {
+          "hexId": "N12",
+          "tileId": "205",
+          "rotation": "NE",
+          "weight": 2
+        },
+        {
+          "hexId": "G19",
+          "tileId": "8",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "H20",
+          "tileId": "202",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "N12",
+          "tileId": "5",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "M17",
+          "tileId": "8",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "K9",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "N12",
+          "tileId": "57",
+          "rotation": "NW",
+          "weight": 2
+        },
+        {
+          "hexId": "M11",
+          "tileId": "9",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "M11",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "N14",
+          "tileId": "9",
+          "rotation": "NW",
+          "weight": 2
+        },
+        {
+          "hexId": "M9",
+          "tileId": "5",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "M9",
+          "tileId": "14",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "M7",
+          "tileId": "56",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "L8",
+          "tileId": "55",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "L6",
+          "tileId": "210",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "K7",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "N10",
+          "tileId": "88",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "N12",
+          "tileId": "13",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "N10",
+          "tileId": "56",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "N12",
+          "tileId": "6",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "N10",
+          "tileId": "69",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "M13",
+          "tileId": "8",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "M9",
+          "tileId": "57",
+          "rotation": "NW",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "M6",
+        "phase": "2",
+        "friendlyCompanyIds": [
+          "M5"
+        ]
+      },
+      "moves": [
+        {
+          "hexId": "B10",
+          "tileId": "9",
+          "rotation": "NW",
+          "weight": 6
+        },
+        {
+          "hexId": "A11",
+          "tileId": "6",
+          "rotation": "NW",
+          "weight": 6
+        },
+        {
+          "hexId": "B12",
+          "tileId": "58",
+          "rotation": "NW",
+          "weight": 6
+        },
+        {
+          "hexId": "A11",
+          "tileId": "12",
+          "rotation": "W",
+          "weight": 5
+        },
+        {
+          "hexId": "B12",
+          "tileId": "204",
+          "rotation": "SE",
+          "weight": 3
+        },
+        {
+          "hexId": "B14",
+          "tileId": "58",
+          "rotation": "SE",
+          "weight": 2
+        },
+        {
+          "hexId": "C15",
+          "tileId": "8",
+          "rotation": "NW",
+          "weight": 2
+        },
+        {
+          "hexId": "B14",
+          "tileId": "4",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "B14",
+          "tileId": "87",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "B12",
+          "tileId": "203",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "C17",
+          "tileId": "9",
+          "rotation": "W",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "M5",
+        "phase": "2",
+        "friendlyCompanyIds": [
+          "M6"
+        ]
+      },
+      "moves": [
+        {
+          "hexId": "D18",
+          "tileId": "7",
+          "rotation": "E",
+          "weight": 2
+        },
+        {
+          "hexId": "D20",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 2
+        },
+        {
+          "hexId": "F20",
+          "tileId": "8",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "H20",
+          "tileId": "208",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "H18",
+          "tileId": "19",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "G17",
+          "tileId": "26",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "F20",
+          "tileId": "9",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "G19",
+          "tileId": "9",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "H18",
+          "tileId": "18",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "H16",
+          "tileId": "12",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "J14",
+          "tileId": "26",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "I3",
+          "tileId": "208",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "G11",
+          "tileId": "88",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "J10",
+          "tileId": "27",
+          "rotation": "W",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "M2",
+        "phase": "2",
+        "friendlyCompanyIds": [
+          "M5"
+        ]
+      },
+      "moves": [
+        {
+          "hexId": "E17",
+          "tileId": "8",
+          "rotation": "E",
+          "weight": 3
+        },
+        {
+          "hexId": "F16",
+          "tileId": "8",
+          "rotation": "W",
+          "weight": 3
+        },
+        {
+          "hexId": "E19",
+          "tileId": "209",
+          "rotation": "SE",
+          "weight": 2
+        },
+        {
+          "hexId": "F20",
+          "tileId": "8",
+          "rotation": "NE",
+          "weight": 2
+        },
+        {
+          "hexId": "H18",
+          "tileId": "18",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "E17",
+          "tileId": "8",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "D16",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 1
+        },
+        {
+          "hexId": "D14",
+          "tileId": "8",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "B14",
+          "tileId": "3",
+          "rotation": "SE",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "M3",
+        "phase": "2",
+        "friendlyCompanyIds": [
+          "M6"
+        ]
+      },
+      "moves": [
+        {
+          "hexId": "F14",
+          "tileId": "5",
+          "rotation": "NE",
+          "weight": 7
+        },
+        {
+          "hexId": "E13",
+          "tileId": "9",
+          "rotation": "NW",
+          "weight": 7
+        },
+        {
+          "hexId": "D12",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 7
+        },
+        {
+          "hexId": "D10",
+          "tileId": "7",
+          "rotation": "NE",
+          "weight": 7
+        },
+        {
+          "hexId": "F14",
+          "tileId": "205",
+          "rotation": "NW",
+          "weight": 6
+        },
+        {
+          "hexId": "F10",
+          "tileId": "6",
+          "rotation": "W",
+          "weight": 2
+        },
+        {
+          "hexId": "F10",
+          "tileId": "13",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "F16",
+          "tileId": "8",
+          "rotation": "W",
+          "weight": 6
+        },
+        {
+          "hexId": "G9",
+          "tileId": "8",
+          "rotation": "W",
+          "weight": 2
+        },
+        {
+          "hexId": "F10",
+          "tileId": "57",
+          "rotation": "W",
+          "weight": 2
+        },
+        {
+          "hexId": "I5",
+          "tileId": "8",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "J6",
+          "tileId": "212",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "G9",
+          "tileId": "8",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "F14",
+          "tileId": "206",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "G15",
+          "tileId": "58",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "G11",
+          "tileId": "4",
+          "rotation": "SW",
+          "weight": 2
+        },
+        {
+          "hexId": "B10",
+          "tileId": "26",
+          "rotation": "NW",
+          "weight": 2
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "M6",
+        "phase": "2",
+        "friendlyCompanyIds": [
+          "M3"
+        ]
+      },
+      "moves": [
+        {
+          "hexId": "B10",
+          "tileId": "9",
+          "rotation": "NW",
+          "weight": 10
+        },
+        {
+          "hexId": "A11",
+          "tileId": "6",
+          "rotation": "NW",
+          "weight": 10
+        },
+        {
+          "hexId": "B12",
+          "tileId": "58",
+          "rotation": "SW",
+          "weight": 10
+        },
+        {
+          "hexId": "C15",
+          "tileId": "8",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "B12",
+          "tileId": "204",
+          "rotation": "SE",
+          "weight": 7
+        },
+        {
+          "hexId": "B10",
+          "tileId": "26",
+          "rotation": "NW",
+          "weight": 5
+        },
+        {
+          "hexId": "E17",
+          "tileId": "25",
+          "rotation": "NW",
+          "weight": 6
+        },
+        {
+          "hexId": "C17",
+          "tileId": "9",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "C19",
+          "tileId": "16",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "C15",
+          "tileId": "7",
+          "rotation": "NW",
+          "weight": 5
+        },
+        {
+          "hexId": "H20",
+          "tileId": "207",
+          "rotation": "NW",
+          "weight": 2
+        },
+        {
+          "hexId": "F18",
+          "tileId": "29",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "A11",
+          "tileId": "12",
+          "rotation": "W",
+          "weight": 3
+        },
+        {
+          "hexId": "B16",
+          "tileId": "3",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "B16",
+          "tileId": "4",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "B18",
+          "tileId": "7",
+          "rotation": "W",
+          "weight": 1
+        },
+        {
+          "hexId": "E17",
+          "tileId": "24",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "C15",
+          "tileId": "8",
+          "rotation": "SW",
+          "weight": 1
+        },
+        {
+          "hexId": "H20",
+          "tileId": "201",
+          "rotation": "NE",
+          "weight": 1
+        },
+        {
+          "hexId": "I17",
+          "tileId": "88",
+          "rotation": "NW",
+          "weight": 1
+        },
+        {
+          "hexId": "B16",
+          "tileId": "58",
+          "rotation": "E",
+          "weight": 1
+        },
+        {
+          "hexId": "B18",
+          "tileId": "8",
+          "rotation": "SE",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "context": {
+        "companyId": "M5",
+        "phase": "2",
+        "friendlyCompanyIds": [
+          "M2",
+          "M6"
+        ]
+      },
+      "moves": [
+        {
+          "hexId": "D18",
+          "tileId": "8",
+          "rotation": "NE",
+          "weight": 3
+        },
+        {
+          "hexId": "C19",
+          "tileId": "8",
+          "rotation": "E",
+          "weight": 3
+        },
+        {
+          "hexId": "D18",
+          "tileId": "16",
+          "rotation": "NW",
+          "weight": 2
+        },
+        {
+          "hexId": "H20",
+          "tileId": "208",
+          "rotation": "W",
+          "weight": 2
+        }
+      ]
+    }
+  ]
+}

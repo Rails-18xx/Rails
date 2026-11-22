@@ -1,6 +1,5 @@
 package net.sf.rails.algorithms;
 
-
 import net.sf.rails.game.Train;
 import net.sf.rails.game.TrainType;
 
@@ -37,7 +36,8 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
         log.debug("Created NetworkTrain {} / {}", this, this.attributes());
     }
 
-    static NetworkTrain createFromRailsTrain(Train railsTrain){
+    // CHANGED TO PUBLIC
+    public static NetworkTrain createFromRailsTrain(Train railsTrain){
         int majors = railsTrain.getMajorStops();
         int minors = railsTrain.getMinorStops();
         if (railsTrain.getTownCountIndicator() == 0) {
@@ -107,7 +107,8 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
         log.debug("Train {} added to RC, majors={}", getTrainName(), majors);
     }
 
-    int getMajors(){
+    // CHANGED TO PUBLIC
+    public int getMajors(){
         return majors;
     }
 
@@ -115,7 +116,8 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
         this.majors = majors;
     }
 
-    int getMinors() {
+    // CHANGED TO PUBLIC
+    public int getMinors() {
         return minors;
     }
 

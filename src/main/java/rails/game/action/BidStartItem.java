@@ -70,14 +70,6 @@ public class BidStartItem extends StartItemAction {
         return selectForAuction;
     }
 
-    public void setMinimumBid(int minimumBid) {
-        this.minimumBid = minimumBid;
-    }
-
-    public void setBidIncrement(int bidIncrement) {
-        this.bidIncrement = bidIncrement;
-    }
-
     public void setActualBid(int actualBid) {
         this.actualBid = actualBid;
     }

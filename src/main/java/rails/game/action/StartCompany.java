@@ -14,6 +14,9 @@ public class StartCompany extends BuyCertificate {
 
     // Server parameters
     protected int[] startPrices;
+    protected int playerCash;
+    protected int floatPercentage;
+    protected int shareUnit;
 
     public static final long serialVersionUID = 1L;
 
@@ -21,11 +24,25 @@ public class StartCompany extends BuyCertificate {
             int maximumNumber) {
         super(company, company.getPresidentsShare().getShare(), null, 0, maximumNumber);
         this.startPrices = prices.clone();
+        this.shareUnit = company.getShareUnit();
     }
 
     public StartCompany(PublicCompany company, int[] startPrice) {
         this(company, startPrice, 1);
     }
+
+    /**
+     * Sets context from the UI layer before the dialog is displayed.
+     */
+    public void setUiContext(int cash, int floatPct) {
+        this.playerCash = cash;
+        this.floatPercentage = floatPct;
+    }
+
+    public int getPlayerCash() { return playerCash; }
+    public int getFloatPercentage() { return floatPercentage; }
+    public int getShareUnit() { return shareUnit; }
+
 
     public StartCompany(PublicCompany company, int price,
             int maximumNumber) {
@@ -76,11 +93,12 @@ public class StartCompany extends BuyCertificate {
 
     @Override
     public String toString() {
-        return super.toString() +
+// Use a null-safe approach for the player name in the debug string
+        String pName = (getPlayer() != null) ? getPlayer().getId() : "Unknown";
+        return "StartCompany[" + pName + "] " +
                 RailsObjects.stringHelper(this)
                     .addToString("startPrices", Arrays.toString(startPrices))
-                    .toString()
-        ;
+                    .toString();
     }
 
 }

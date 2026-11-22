@@ -56,9 +56,16 @@ public class StartItem_18Chesapeake extends StartItem {
             rList18CH = compMgr.getAllPublicCompanies();
             Random randomStart = gameManager.getRandomGenerator();
 
-            String rname = rList18CH.get(randomStart.nextInt(6)).getId();
+            // Any of the eight public companies may be associated (rule 3)
+            String rname = rList18CH.get(randomStart.nextInt(rList18CH.size())).getId();
 
             company2 = compMgr.getCompany(type2, rname);
+
+            // The private (P6 Cornelius Vanderbilt) closes when the randomly
+            // associated company buys its first train
+            if (primary instanceof PrivateCompany) {
+                ((PublicCompany) company2).setPrivateToCloseOnFirstTrain((PrivateCompany) primary);
+            }
         } else {
             company2 = compMgr.getCompany(type2, name2);
         }

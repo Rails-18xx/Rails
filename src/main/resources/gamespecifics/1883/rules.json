@@ -1,0 +1,107 @@
+{
+  "game": "1883",
+  "rules": {
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": "Yes, at 5 over par or the current highest bid."
+    },
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "Sell then buy, or buy then sell."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "From the second stock round onwards."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "32 | 21 | 16 |  |  |  |  |  |  | 8 companies available (SEFTA not in play)"
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "Yes."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830."
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Semi-restrictive (rule 6.4.2)."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "No."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "Yes. Players are not required to point out a higher revenue total than that claimed."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "The cheapest train from the bank or bank pool."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "Once a 3 train has been sold; at from half to twice face value. Exception: the FRV can be purchased by a company before the first 3 train is bought, but in this case the price cannot be greater than its face value."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "Only the CNP and the FSF."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "1",
+          "effects": "Yellow tiles, train limit 4, companies can be started with values of 65, 85 or 100,     Anchor marker worth +20, use random events deck 1, use lower value for concessions and     off-board areas, 1 OR"
+        },
+        {
+          "train": "3",
+          "phase": "2",
+          "effects": "Green tiles, companies can also be started with a value of 110, companies may purchase     privates, 2 ORs"
+        },
+        {
+          "train": "3bis",
+          "phase": "3",
+          "effects": "Brown tiles, use random events deck 2, use middle value for concessions and off-board     areas"
+        },
+        {
+          "train": "4",
+          "phase": "4",
+          "effects": "2 and 2G trains rust, train limit 3, Anchor marker worth +10, SEFTA can be created     through merger"
+        },
+        {
+          "train": "5",
+          "phase": "5",
+          "effects": "Brown tiles, 3 trains rust, train limit 2, companies can also be started with a value     of 150, private companies close, CCFR becomes capitalist, SARSA can operate over plain     track, 3 ORs"
+        },
+        {
+          "train": "6",
+          "phase": "6",
+          "effects": "3bis trains rust, use random events deck 3, use higher value for concessions and     off-board areas"
+        },
+        {
+          "train": "7",
+          "phase": "7",
+          "effects": "Grey tiles"
+        },
+        {
+          "train": "8",
+          "phase": "8",
+          "effects": "4 trains rust"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "Has a deck of event cards, one of which is drawn in each operating round. Has a unique numbering system for the hexes, basically numbered sequentially from the left hand column, down and then across the board. Some hexes have no number while others have more than one number. These numbers are for one of the event cards, which use a 10-sided die to determine where to bomb and destroy or downgrade tiles. Thank you, Paolo, for explaining what these numbers mean. The SARSA company is not a railway, being a coach company. It lays no track, but does place coach tokens which are added to the map each operating round. Once the first 4 train is bought, two companies - the FMMSF and the FMV - may merge to form the SEFTA if both presidents agree to it and a route exists between tokens of the two companies."
+    }
+  }
+}

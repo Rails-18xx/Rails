@@ -109,7 +109,7 @@ public class CertificatesModel extends RailsModel implements Iterable<PublicCert
         return certCount.build();
     }
 
-    PortfolioMap<PublicCompany, PublicCertificate> getPortfolio() {
+public PortfolioMap<PublicCompany, PublicCertificate> getPortfolio() {
         return certificates;
     }
 
@@ -229,4 +229,6 @@ public class CertificatesModel extends RailsModel implements Iterable<PublicCert
         }
         return combinations.build();
     }
+
 }
+

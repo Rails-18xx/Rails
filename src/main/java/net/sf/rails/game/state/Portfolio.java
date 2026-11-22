@@ -101,4 +101,6 @@ public abstract class Portfolio<T extends Ownable> extends Model implements Iter
         if (pf != null) pf.moveAll(newOwner);
     }
 
+
+    
 }

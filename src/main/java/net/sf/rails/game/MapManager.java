@@ -44,6 +44,18 @@ public class MapManager extends RailsManager implements Configurable {
     private float mapScale = (float)1.0;
     private boolean mapImageUsed = false;
 
+    private final Set<String> disabledOffboardHexes = new HashSet<>();
+
+    private final Map<String, String> preprintedCityNames = new HashMap<>();
+
+    public String getPreprintedCityName(String hexName) {
+        return preprintedCityNames.get(hexName);
+    }
+
+    public boolean isOffboardValueAllowed(String hexName) {
+        return !disabledOffboardHexes.contains(hexName);
+    }
+
     private static final Logger log = LoggerFactory.getLogger(MapManager.class);
 
     /**
@@ -60,7 +72,23 @@ public class MapManager extends RailsManager implements Configurable {
         
         mapOrientation = MapOrientation.create(tag);
 
+       
+// log.error("########## MAP LOADING DIAGNOSTIC ##########");
         List<Tag> hexTags = tag.getChildren("Hex");
+        // log.error("Hex Count in XML: " + hexTags.size());
+        // if (!hexTags.isEmpty()) {
+        //     // Log the name of the first hex to identify the map (e.g., A20 vs A10)
+        //     log.error("First Hex name: " + hexTags.get(0).getAttributeAsString("name"));
+        // }
+        
+        // Use a unique name for the debug tag to avoid variable collision
+        // Tag debugImageTag = tag.getChild("Image");
+        // if (debugImageTag != null) {
+        //     log.error("SVG path: " + debugImageTag.getAttributeAsString("file"));
+        // }
+        // log.error("############################################");
+
+
         ImmutableMap.Builder<MapHex.Coordinates, MapHex> hexBuilder = ImmutableMap.builder();
         ImmutableSortedSet.Builder<Integer> tileCostsBuilder= ImmutableSortedSet.naturalOrder();
 
@@ -68,6 +96,16 @@ public class MapManager extends RailsManager implements Configurable {
             MapHex hex = MapHex.create(this, hexTag);
             hexBuilder.put(hex.getCoordinates(), hex);
             tileCostsBuilder.addAll(hex.getTileCostsList());
+            // Parse the new XML attribute without breaking legacy schemas
+            String showAttr = hexTag.getAttributeAsString("showoffmapvalues");
+            if (showAttr != null && (showAttr.equals("0") || showAttr.equalsIgnoreCase("false"))) {
+                disabledOffboardHexes.add(hex.getId());
+            }
+            String cityAttr = hexTag.getAttributeAsString("city");
+            if (cityAttr != null && !cityAttr.isEmpty()) {
+                preprintedCityNames.put(hex.getId(), cityAttr);
+            }
+            
         }
         hexes = hexBuilder.build();
         possibleTileCosts = tileCostsBuilder.build();
@@ -94,7 +132,7 @@ public class MapManager extends RailsManager implements Configurable {
     }
 
     public void finishConfiguration (RailsRoot root) throws ConfigurationException {
-
+log.error("MapManager: finishConfiguration started.");
         for (MapHex hex:hexes.values()) {
             hex.finishConfiguration(root);
         }
@@ -160,6 +198,7 @@ public class MapManager extends RailsManager implements Configurable {
             mapImageFilepath = "/" + rootDirectory + "/" + mapImageFilename;
         }
 
+        // log.error("--- MapManager.finishConfiguration END ---"); // <<< ADD
     }
 
     /**
@@ -239,7 +278,7 @@ public class MapManager extends RailsManager implements Configurable {
         if (!log.isDebugEnabled() || sides == null) return;
         Iterator<HexSide> it = sides.iterator();
         while (it.hasNext()) {
-            log.debug("{} {}", prefix, it.next());
+            // log.debug("{} {}", prefix, it.next());
         }
     }
 

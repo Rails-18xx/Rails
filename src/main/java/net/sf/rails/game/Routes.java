@@ -1,6 +1,7 @@
 package net.sf.rails.game;
 
 import net.sf.rails.algorithms.*;
+import org.jgrapht.graph.SimpleGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

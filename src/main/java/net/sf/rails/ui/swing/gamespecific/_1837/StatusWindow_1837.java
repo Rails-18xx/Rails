@@ -2,7 +2,6 @@ package net.sf.rails.ui.swing.gamespecific._1837;
 
 import java.util.List;
 
-import net.sf.rails.game.specific._1837.CoalExchangeRound;
 import net.sf.rails.game.specific._1837.PublicCompany_1837;
 import rails.game.action.DiscardTrain;
 import rails.game.action.FoldIntoNational;
@@ -49,11 +48,11 @@ public class StatusWindow_1837 extends StatusWindow {
         @Override
         public void updateStatus(boolean myTurn) {
             RoundFacade currentRound = gameUIManager.getCurrentRound();
-            if (currentRound instanceof CoalExchangeRound)  {
-                // Not sure why the UI reset is otherwise bypassed.
-                // Somehow the UI update flow in this round type is different
-                gameStatus.initTurn(-1, true);
-            }
+            // if (currentRound instanceof CoalExchangeRound)  {
+            //     // Not sure why the UI reset is otherwise bypassed.
+            //     // Somehow the UI update flow in this round type is different
+            //     gameStatus.initTurn(-1, true);
+            // }
             if (! (currentRound instanceof NationalFormationRound)) {
                 super.updateStatus(myTurn);
             } else if (possibleActions.contains(FoldIntoNational.class)) {

@@ -39,6 +39,7 @@ public class GuiDef {
         DO_BONUS_TOKENS_EXIST,
         HAS_ANY_COMPANY_LOANS,
         HAS_ANY_RIGHTS,
+        SHOW_GAME_END_REPORT,
         NO_MAP_MODE,
         REVENUE_SUGGEST,
         ROUTE_HIGHLIGHT, 

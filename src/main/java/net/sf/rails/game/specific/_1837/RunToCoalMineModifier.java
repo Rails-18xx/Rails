@@ -46,19 +46,19 @@ public class RunToCoalMineModifier
 
         List<RevenueTrainRun> invalidRuns = new ArrayList<>();
         int i = 0;
-        log.debug ("--------------------------------------------------");
+        // log.debug ("--------------------------------------------------");
         for (RevenueTrainRun run:runs) {
-            log.debug ("Run {}: {}", ++i,
-                    run.prettyPrint(true)
-                            .replaceAll("\\n+", "")
-                            .replaceAll("\\s+", " "));
+            // log.debug ("Run {}: {}", ++i,
+            //         run.prettyPrint(true)
+            //                 .replaceAll("\\n+", "")
+            //                 .replaceAll("\\s+", " "));
             if (!run.hasAValidRun()) {
-                log.debug ("Invalid run");
+                // log.debug ("Invalid run");
                 continue;
             }
             String trainCategory = run.getTrain().getRailsTrain().getCategory();
             if (!Util.hasValue(trainCategory)) {
-                log.debug("No category");
+                // log.debug("No category");
                 continue;
             }
 
@@ -77,13 +77,13 @@ public class RunToCoalMineModifier
             if (firstStationIsMine && !(firstStationAccess == null
                         || firstStationAccess.getRunToTrainCategories().contains(trainCategory))) {
                 invalidRuns.add(run);
-                log.debug("Invalid first stop: access={} or wrong category");
+                // log.debug("Invalid first stop: access={} or wrong category");
                 continue;
             }
             if (lastStationIsMine && !(lastStationAccess == null
                     || lastStationAccess.getRunToTrainCategories().contains(trainCategory))) {
                 invalidRuns.add(run);
-                log.debug("Invalid last stop: access={} or wrong category");
+                // log.debug("Invalid last stop: access={} or wrong category");
                 continue;
             }
             // Coal train runs must include just one mine
@@ -91,7 +91,7 @@ public class RunToCoalMineModifier
             // "goods" may be 1837-specific
             if (trainCategory.equalsIgnoreCase("goods")) {
                 if (firstStationIsMine == lastStationIsMine) {
-                    log.debug("Invalid, GT mines: {}, {}",firstStationIsMine,lastStationIsMine);
+                    // log.debug("Invalid, GT mines: {}, {}",firstStationIsMine,lastStationIsMine);
                     invalidRuns.add(run);
                 } else {
                     // Save the revenue from the mine(s), which in 1837
@@ -107,6 +107,7 @@ public class RunToCoalMineModifier
         //evaluateMine = false;
         // Maximize the mine revenue (not sure if this is optimal).
         directRevenueFromMines = Math.max (directRevenueFromMines, totalMineRevenue);
+       
         return invalidRuns;
     }
 

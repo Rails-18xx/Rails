@@ -204,11 +204,22 @@ public class Train extends RailsOwnableItem<Train> implements Creatable {
         return trainCard.getOwner();
     }
 
-    /*
-    public void setTradeable(boolean tradeable) {
-        this.tradeable = tradeable;
-    }*/
+/**
+     * AI Accessor: Restores the obsolete state.
+     */
+    public void setObsolete_AI(boolean isObsolete) {
+        this.obsolete.set(isObsolete);
+    }
 
+    /**
+     * AI Accessor: Moves the internal TrainCard to the restored owner (Company, IPO, ScrapHeap, etc).
+     */
+    public void setOwner_AI(Owner targetOwner) {
+        if (this.trainCard != null && targetOwner != null && this.trainCard.getOwner() != targetOwner) {
+            this.trainCard.moveTo(targetOwner);
+        }
+    }
+    
     @Override
     public int compareTo(Ownable other) {
         if (other instanceof Train) {

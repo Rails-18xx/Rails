@@ -35,6 +35,24 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
     
     /* Usability conditions. Not all of these are already being used. */
     protected boolean usableIfOwnedByPlayer = false;
+
+    public boolean isExercised() {
+        return exercised.value();
+    }
+
+    public int getOccurred() {
+        return occurred.value();
+    }
+
+    public void setExercised_AI(boolean val) {
+        this.exercised.set(val);
+    }
+
+    public void setOccurred_AI(int val) {
+        this.occurred.set(val);
+    }
+
+
     protected boolean usableIfOwnedByCompany = false;
     protected boolean usableDuringSR = false;
     protected boolean usableDuringOR = false;
@@ -205,9 +223,7 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
         }
     }
 
-    public boolean isExercised() {
-        return exercised.value();
-    }
+
     
     public abstract boolean isExecutionable(); 
     

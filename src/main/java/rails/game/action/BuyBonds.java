@@ -54,23 +54,36 @@ public class BuyBonds extends PossibleAction {
         this.numberBought = numberBought;
     }
 
-    public RailsOwner getFrom() {
-        return from;
-    }
+
 
     public String getFromId() {
         return fromId;
     }
 
-    public RailsOwner getTo() {
-        return to;
-    }
+  
 
     public String getToId() {
         return toId;
     }
 
+  public RailsOwner getFrom() {
+        if (from == null && fromId != null && getRoot() != null) {
+            from = getRoot().getPortfolioManager().getPortfolioByName(fromId).getParent();
+        }
+        return from;
+    }
+
+    public RailsOwner getTo() {
+        if (to == null && toId != null && getRoot() != null) {
+            to = getRoot().getPortfolioManager().getPortfolioByName(toId).getParent();
+        }
+        return to;
+    }
+
     public PublicCompany getCompany() {
+        if (company == null && companyId != null && getRoot() != null) {
+            company = getRoot().getCompanyManager().getPublicCompany(companyId);
+        }
         return company;
     }
 

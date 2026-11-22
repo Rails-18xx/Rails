@@ -3,7 +3,6 @@ package rails.game.action;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import net.sf.rails.util.GameLoader;
 import rails.game.specific._1880.StartCompany_1880;
 
 import com.google.common.base.Objects;
@@ -50,6 +49,10 @@ public class BuyCertificate extends PossibleAction {
 
     public static final long serialVersionUID = 1L;
 
+    public void setSharePerCertificate(int sharePerCertificate) {
+        this.sharePerCert = sharePerCertificate;
+    }
+    
     public BuyCertificate(PublicCompany company, int sharePerCert,
             PortfolioOwner from,
             int price, int maximumNumber) {
@@ -74,7 +77,10 @@ public class BuyCertificate extends PossibleAction {
         this(company, sharePerCert, from, price, 1);
     }
 
-    public PortfolioModel getFromPortfolio() {
+public PortfolioModel getFromPortfolio() {
+        if (from == null && fromName != null && getRoot() != null) {
+            from = getRoot().getPortfolioManager().getPortfolioByUniqueName(fromName);
+        }
         return from;
     }
 
@@ -97,7 +103,14 @@ public class BuyCertificate extends PossibleAction {
         this.price = price;
     }
 
-    public PublicCompany getCompany() {
+    public String getFromName() {
+        return fromName;
+    }
+    
+public PublicCompany getCompany() {
+        if (company == null && companyName != null && getRoot() != null) {
+            company = getRoot().getCompanyManager().getPublicCompany(companyName);
+        }
         return company;
     }
 

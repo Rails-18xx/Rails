@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class CorrectionManager extends RailsAbstractItem {
 
-    private static final Logger log = LoggerFactory.getLogger(CorrectionManager.class);
+    protected static final Logger log = LoggerFactory.getLogger(CorrectionManager.class);
 
     private final BooleanState active = new BooleanState(this, "active");
 
@@ -52,36 +52,48 @@ public abstract class CorrectionManager extends RailsAbstractItem {
     /**
      * calls all executeAction
      */
-    public boolean executeCorrection(CorrectionAction action) {
-        if (action instanceof CorrectionModeAction)
+   public boolean executeCorrection(CorrectionAction action) {
+        if (action instanceof CorrectionModeAction) {
             return execute((CorrectionModeAction) action);
-        else {
-            log.debug("This correction action is not registered.");
-            return false;
+        } else {
+            // Execute the concrete subclass correction payload (e.g., Cash or Map adjustment)
+            boolean result = execute(action);
+            
+            // Explicitly clear the correction tracking flags immediately upon successful 
+            // completion so the state machine drops out of the choice block instantly
+            if (result) {
+                active.set(false);
+                getParent().getCorrectionModeActiveModel().set(false);
+            }
+            return result;
         }
     }
 
-    private boolean execute(CorrectionModeAction action) {
-        if (!isActive()) {
-            String text = LocalText.getText("CorrectionModeActivate",
-                    getRoot().getPlayerManager().getCurrentPlayer().getId(),
-                    LocalText.getText(getCorrectionType().name())
-            );
 
-            ReportBuffer.add(this, text);
-            DisplayBuffer.add(this, text);
-        } else {
-            String text = LocalText.getText("CorrectionModeDeactivate",
-                    getRoot().getPlayerManager().getCurrentPlayer().getId(),
-                    LocalText.getText(getCorrectionType().name())
-            );
 
-            ReportBuffer.add(this, text);
+
+private boolean execute(CorrectionModeAction action) {
+        GameManager gm = getParent(); 
+
+        // Open the targeting UI. During live play, it forces open. During reloads, it follows the log.
+        boolean targetState = gm.isReloading() ? action.isActive() : true;
+        
+        active.set(targetState);
+        gm.getCorrectionModeActiveModel().set(targetState);
+
+        // Force a full UI refresh to clear and redraw components immediately
+        if (gm.getGameUIManager() != null) {
+             gm.getGameUIManager().forceFullUIRefresh();
         }
 
-        active.set(!active.value());
-
         return true;
+    }
+
+    /**
+     * Called by GameManager to auto-close this correction state after a payload succeeds.
+     */
+    public void deactivate() {
+        active.set(false);
     }
 
     /* dummy to capture the non-supported actions */
@@ -99,4 +111,6 @@ public abstract class CorrectionManager extends RailsAbstractItem {
         CorrectionManager cm = (CorrectionManager) object;
         return this.getParent() == cm.getParent() && this.correctionType == cm.correctionType;
     }
+
+    
 }

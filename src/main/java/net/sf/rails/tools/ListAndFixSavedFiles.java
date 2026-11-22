@@ -379,9 +379,7 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
     private void edit(int index) {
         editedAction = gameLoader.getActions().get(index);
         editedIndex = index;
-        if (editedAction instanceof BidStartItem) {
-            new BidStartItemDialog ((BidStartItem) editedAction);
-        } else if (editedAction instanceof BuyTrain) {
+        if (editedAction instanceof BuyTrain) {
             new BuyTrainDialog ((BuyTrain) editedAction);
         } else if (editedAction instanceof LayTile) {
             new LayTileDialog((LayTile) editedAction);
@@ -474,51 +472,6 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
 
         abstract PossibleAction processInput();
     }
-
-    private class BidStartItemDialog extends EditDialog {
-        private static final long serialVersionUID = 1L;
-        private BidStartItem action;
-
-        BidStartItemDialog (BidStartItem action) {
-            super ("Edit BidStartItem");
-            this.action = action;
-            addTextField (this, "Minimum bid",
-                    action.getMinimumBid(),
-                    String.valueOf(action.getMinimumBid()));  // 0
-            addTextField (this, "Bid increment",
-                    action.getBidIncrement(),
-                    String.valueOf(action.getBidIncrement()));  // 1
-            addTextField (this, "Actual bid",
-                    action.getActualBid(),
-                    String.valueOf(action.getActualBid()));  // 2
-            finish();
-        }
-
-        @Override
-        PossibleAction processInput() {
-            log.debug("Action was {}", action);
-            try {
-                int minBid = Integer.parseInt(((JTextField)inputElements.get(0)).getText());
-                action.setMinimumBid(minBid);
-            } catch (NumberFormatException e) {
-            }
-            try {
-                int bidIncr = Integer.parseInt(((JTextField)inputElements.get(1)).getText());
-                action.setBidIncrement(bidIncr);
-            } catch (NumberFormatException e) {
-            }
-            try {
-                int actualBid = Integer.parseInt(((JTextField)inputElements.get(2)).getText());
-                action.setActualBid(actualBid);
-            } catch (NumberFormatException e) {
-            }
-
-            log.debug("Action is  {}", action);
-            return action;
-
-        }
-    }
-
 
     private class BuyTrainDialog extends EditDialog {
         private static final long serialVersionUID = 1L;
@@ -1074,9 +1027,7 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             addTextField (this, "Trains",
                     action.getOwnedTrains(),
                     String.valueOf(action.getOwnedTrains()));  // 1
-            addTextField (this, "Forced",
-                    action.isForced(),
-                    String.valueOf(action.isForced()));  // 2
+          
             addTextField (this, "Discarded",
                     action.getDiscardedTrain(),
                     String.valueOf(action.getDiscardedTrain()));  // 3
@@ -1094,8 +1045,6 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
                 ownedTrains.add(root.getTrainManager().getTrainByUniqueId(trainId));
             }
             action.setOwnedTrains(ownedTrains);
-
-            action.setForced(Boolean.valueOf(((JTextField)inputElements.get(2)).getText()));
 
             String trainID = ((JTextField)inputElements.get(3)).getText();
             Train train = root.getTrainManager().getTrainByUniqueId(trainID);

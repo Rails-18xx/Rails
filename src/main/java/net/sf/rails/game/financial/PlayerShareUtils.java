@@ -276,37 +276,57 @@ public class PlayerShareUtils {
         // ... get all combinations for the presidentCert share numbers
         SortedSet<Combination> combinations = CertificatesModel.certificateCombinations(
                 newPresident.getPortfolioModel().getCertificates(company), presidentCert.getShares());
-        log.debug("newPres combinations={} (owned {})", combinations, newPresident.getPortfolioModel().getCertificates(company));
     
+        // Use the user's manual choice if available, otherwise fall back to default behavior.
+        Combination swapToBank = null;
+        
+        if (StockRound.manualSwapChoice != null && !StockRound.manualSwapChoice.isEmpty()) {
+            
+            // Iterate through valid combinations to find the one matching the user's selected sizes
+            for (Combination comb : combinations) {
+                List<Integer> combSizes = new ArrayList<>();
+                for (PublicCertificate c : comb.getCertificates()) {
+                    combSizes.add(c.getShares());
+                }
+                Collections.sort(combSizes);
+                
+                // manualSwapChoice is already sorted in StockRound
+                if (combSizes.equals(StockRound.manualSwapChoice)) {
+                    swapToBank = comb;
+                    break;
+                }
+            }
+            if (swapToBank == null) {
+            }
+            // Clear the choice after use to prevent stale state in future turns
+            StockRound.manualSwapChoice = null;
+        }
+
+        if (swapToBank == null) {
+            swapToBank = combinations.last();
+        }
+
+
         // ... move them to the Bank
-        // FIXME: this should be based on a selection of the new president, however it chooses the combination with most certificates
-        Combination swapToBank = combinations.last();
-        log.debug("swapToBank={} from newPres to pool", swapToBank);
+        // log.debug("swapToBank={} from newPres to pool", swapToBank);
         Portfolio.moveAll(swapToBank, bankTo);
         
         // 2. Move the replace certificates from the bank to the old president
         
         // What is the difference between the shares to sell and the president share number
         int replaceShares = presidentCert.getShares() - presSharesToSell;
-        log.debug("presShares={} presSharesToSell={} replaceShares={}",
-                presidentCert.getShares(), presSharesToSell, replaceShares);
+                // presidentCert.getShares(), presSharesToSell, replaceShares);
         if (replaceShares > 0) {
             combinations = CertificatesModel.certificateCombinations(
                     bankTo.getPortfolioModel().getCertificates(company), replaceShares);
-            log.debug("pool combinations={} (owned {})", combinations, bankTo.getPortfolioModel().getCertificates(company));
-            // FIXME: this should be based on a selection of the previous president, however it chooses the combination with least certificates
             Combination swapFromBank = combinations.first();
-            log.debug("swapFromBank={} from pool to old pres.", swapFromBank);
             // ... move to (old) president
             Portfolio.moveAll(swapFromBank, oldPresident);
         }
         
         // 3. Transfer the president certificate
-        log.debug ("move pres.cert from {} to {}", oldPresident, newPresident);
         presidentCert.moveTo(newPresident);
-        log.debug("newPresident ({}) now has {}", newPresident, newPresident.getPortfolioModel().getCertificates(company));
-        log.debug("oldPresident ({}) now has {}", oldPresident, oldPresident.getPortfolioModel().getCertificates(company));
-        log.debug("pool now has {}", bankTo.getPortfolioModel().getCertificates(company));
+
     }
     
 }

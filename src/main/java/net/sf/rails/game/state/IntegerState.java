@@ -3,8 +3,7 @@ package net.sf.rails.game.state;
 /**
  * A stateful version of an integer variable
  */
-public final class IntegerState extends State {
-
+public final class IntegerState extends State { 
     private int value;
     
     private IntegerState(Item parent, String id, Integer value) {

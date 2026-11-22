@@ -121,12 +121,10 @@ public class Tile extends RailsModel implements Comparable<Tile> {
         if (colourName == null)
             throw new ConfigurationException(LocalText.getText(
                     "TileColorMissing", getId()));
-        if ( "gray".equalsIgnoreCase(colourName)) colourName = "grey";
-        try {
-            colour = TileColour.valueOfIgnoreCase(colourName);
-        } catch (IllegalArgumentException e) {
-            throw new ConfigurationException(LocalText.getText("InvalidTileColourName", getId(), colourName), e);
-        }
+        if ( "grey".equalsIgnoreCase(colourName)) colourName = "gray";
+            
+        colour = TileColour.valueOfIgnoreCase(colourName);
+        
 
         /* Stations */
         List<Tag> stationDefTags = defTag.getChildren("Station");

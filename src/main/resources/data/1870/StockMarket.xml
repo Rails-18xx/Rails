@@ -207,7 +207,7 @@
 	</StockSpace>
 	<StockSpace name="P5" price="180" />
 	<StockSpace name="Q1" price="300" />
-	<StockSpace name="Q2" price="175" />
+	<StockSpace name="Q2" price="275" />
 	<StockSpace name="Q3" price="250">
 		<BelowLedge/>
 	</StockSpace>

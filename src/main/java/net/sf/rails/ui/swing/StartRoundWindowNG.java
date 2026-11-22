@@ -11,7 +11,8 @@ public class StartRoundWindowNG extends StartRoundWindow {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public void init(StartRound round, GameUIManager parent) {
+    public void init(StartRound round, GameUIManager parent, ORUIManager orUIManager) {
+   // public void init(StartRound round, GameUIManager parent) {
         
         List<StartItem> startItems = round.getStartPacket().getItems();
         List<Player> players = parent.getPlayers();

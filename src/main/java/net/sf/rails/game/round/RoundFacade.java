@@ -25,7 +25,11 @@ public interface RoundFacade extends Creatable, RailsItem {
      */
     // can this be moved to GameManager, not yet as there are internal dependencies
     // called from GameManager
-    void processPhaseAction(String name, String value);
+void processPhaseAction(String name, String value);
 
     String getOwnWindowTitle ();
+
+    /** Dynamically resolves the active player for this specific round */
+    net.sf.rails.game.Player getCurrentPlayer();
+    
 }

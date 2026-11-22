@@ -17,6 +17,12 @@ public class PossibleActions {
 
     private PossibleActions() { }
 
+    public void removeAll(List<? extends PossibleAction> actionsToRemove) {
+        if (actionsToRemove != null) {
+            this.actions.removeAll(actionsToRemove);
+        }
+    }
+    
     public static PossibleActions create() {
         return new PossibleActions();
     }
@@ -81,6 +87,10 @@ public class PossibleActions {
         }
     }
     
+    public int size() {
+        return actions.size();
+    }
+
     public boolean containsCorrections() {
         for (PossibleAction action:actions) {
             if (action.isCorrection()) return true;

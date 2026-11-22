@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<CompanyManager>
+	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany">
+		<Tradeable toCompany="no"/>
+		<Tradeable toPlayer="no"/>	
+	</CompanyType>
+	
+<CompanyType name="Public" class="net.sf.rails.game.specific._1817.PublicCompany_1817">
+<CanBuyPrivates/>
+		<PoolPaysOut/>
+		<Float percentage="60"/>
+		<BaseTokens>
+			<HomeBase lay="firstOR"/>
+			<LayCost method="sequence" cost="0,40,100"/>
+		</BaseTokens>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="1" number="8"/>
+		</Shares>
+		<Trains limit="4,4,3,3,2"/>
+        <CanUseSpecialProperties/>
+        <TileLays>
+			<Number number="2"/>
+		</TileLays>
+	</CompanyType>
+	
+	
+<Company name="PSM40" longname="Pittsburgh Steel Mill" 
+             type="Private" basePrice="40" revenue="0" 
+             description="Allows building the unique Pittsburgh tile. Yellow lay, no connectivity required.">
+        <SpecialProperties>
+            <SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialSingleTileLay">
+				<SpecialSingleTileLay location="F13" tile="43800" colour="yellow" connects="no" extra="yes" />
+            </SpecialProperty>
+        </SpecialProperties>
+    </Company>
+
+	
+<Company name="MNE40" longname="Mountain Engineers" type="Private" basePrice="40" revenue="0" 
+             description="Owner gets $20 when building on mountains (after paying terrain fee)."
+	/>
+   
+    <Company name="OBC40" longname="Ohio Bridge Co" type="Private" basePrice="40" revenue="0" 
+             description="1 bridge token. Free river lays. Marker adds $10 to city value." />
+    <Company name="UBC80" longname="Union Bridge Co" type="Private" basePrice="80" revenue="0" 
+             description="2 bridge tokens. Free river lays. Markers add $10 to city value." />
+    <Company name="STA80" longname="Train Station" type="Private" basePrice="80" revenue="0" 
+             description="Provides an extra station marker on the charter." />
+    <Company name="MNM30" longname="Minor Coal Mine" type="Private" basePrice="30" revenue="0" 
+             description="1 coal token. Skips $15 mountain fee. +$10 route value. No upgrades." />
+    <Company name="CLM60" longname="Coal Mine" type="Private" basePrice="60" revenue="0" 
+             description="2 coal tokens. Skips $15 mountain fee. +$10 route value. No upgrades." />
+    <Company name="MJM90" longname="Major Coal Mine" type="Private" basePrice="90" revenue="0" 
+             description="3 coal tokens. Skips $15 mountain fee. +$10 route value. No upgrades." />
+    <Company name="MNM60" longname="Minor Mail Contract" type="Private" basePrice="60" revenue="10" 
+             description="Pays $10/OR if company owns a train." />
+    <Company name="MLC90" longname="Mail Contract" type="Private" basePrice="90" revenue="15" 
+             description="Pays $15/OR if company owns a train." />
+    <Company name="MJM12" longname="Major Mail Contract" type="Private" basePrice="120" revenue="20" 
+             description="Pays $20/OR if company owns a train." />
+
+
+
+	<StartPacket roundClass="net.sf.rails.game.specific._1817.StartRound_1817">
+		<Bidding initial="5" minimum="5" increment="1"/>
+		<Item name="PSM40" type="Private" basePrice="40" />
+		<Item name="MNE40" type="Private" basePrice="40"/>
+		<Item name="OBC40" type="Private" basePrice="40"/>
+		<Item name="UBC80" type="Private" basePrice="80" />
+		<Item name="STA80" type="Private" basePrice="80" />
+		<Item name="MNM30" type="Private" basePrice="30" />
+		<Item name="CLM60" type="Private" basePrice="60" />
+		<Item name="MJM90" type="Private" basePrice="90" />
+		<Item name="MNM60" type="Private" basePrice="60" />
+		<Item name="MLC90" type="Private" basePrice="90" />
+		<Item name="MJM12" type="Private" basePrice="120"/>
+
+	</StartPacket>
+
+
+
+<Company name="AA" type="Public" tokens="8" fgColour="000000" bgColour="F8DE21" longname="Ann Arbor" />
+<Company name="ALT" type="Public" tokens="8" fgColour="FFFFFF" bgColour="D81A21" longname="Alton" />
+<Company name="BA" type="Public" tokens="8" fgColour="FFFFFF" bgColour="D81A21" longname="Bangor &amp; Aroostook" />
+<Company name="BELT" type="Public" tokens="8" fgColour="000000" bgColour="F8EA31" longname="Belt Railway of Chicago" />
+<Company name="BESS" type="Public" tokens="8" fgColour="FFFFFF" bgColour="1C1A1D" longname="Bessemer &amp; Lake Erie" />
+<Company name="EJE" type="Public" tokens="8" fgColour="FFFFFF" bgColour="1C1A1D" longname="Elgin, Joliet &amp; Eastern" />
+<Company name="GTW" type="Public" tokens="8" fgColour="000000" bgColour="F19A1E" longname="Grand Trunk Western" />
+<Company name="HOU" type="Public" tokens="8" fgColour="000000" bgColour="48AEE0" longname="Houston Belt &amp; Terminal" />
+<Company name="LR" type="Public" tokens="8" fgColour="FFFFFF" bgColour="144994" longname="Little Rock &amp; Fort Smith" />
+<Company name="ME" type="Public" tokens="8" fgColour="000000" bgColour="8CC64B" longname="Maine Central" />
+<Company name="NYOW" type="Public" tokens="8" fgColour="000000" bgColour="D3B787" longname="New York, Ontario &amp; Western" />
+<Company name="NYSW" type="Public" tokens="8" fgColour="000000" bgColour="EFC31A" longname="New York, Susquehanna &amp; Western" />
+<Company name="PLE" type="Public" tokens="8" fgColour="FFFFFF" bgColour="DE2D28" longname="Pittsburgh &amp; Lake Erie" />
+<Company name="PSN" type="Public" tokens="8" fgColour="000000" bgColour="FDE110" longname="Pittsburg, Shawmut &amp; Northern" />
+<Company name="PW" type="Public" tokens="8" fgColour="FFFFFF" bgColour="1F7431" longname="Providence &amp; Worcester" />
+<Company name="RUT" type="Public" tokens="8" fgColour="FFFFFF" bgColour="1A523C" longname="Rutland" />
+<Company name="STR" type="Public" tokens="8" fgColour="FFFFFF" bgColour="154122" longname="Staten Island Rapid Transit" />
+<Company name="UR" type="Public" tokens="8" fgColour="FFFFFF" bgColour="74181A" longname="Union Railroad" />
+<Company name="WC" type="Public" tokens="8" fgColour="000000" bgColour="ED7E21" longname="Wisconsin Central" />
+<Company name="W&amp;T" type="Public" tokens="8" fgColour="FFFFFF" bgColour="A61A20" longname="Wrightsville &amp; Tennille" />
+
+
+
+</CompanyManager>

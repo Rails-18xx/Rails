@@ -8,14 +8,19 @@ import net.sf.rails.game.financial.StockMarket;
 import net.sf.rails.game.financial.StockSpace;
 import net.sf.rails.ui.swing.GameUIManager;
 
+import net.sf.rails.game.PublicCompany;
+
 /**
- * The stock-chart component, containing a grid with all stock fields composing the stock-chart
+ * The stock-chart component, containing a grid with all stock fields composing
+ * the stock-chart
  */
 public class FXStockChart extends GridPane {
     /**
      * The stock fields of the model
      */
     private final StockMarket market;
+    private final GameUIManager gameUIManager;
+    private PublicCompany selectedCompany = null;
 
     /**
      * Constructor
@@ -26,6 +31,7 @@ public class FXStockChart extends GridPane {
         super();
 
         this.market = gameUIManager.getRoot().getStockMarket();
+        this.gameUIManager = gameUIManager;
 
         initialize();
         populateStockPanel();
@@ -42,72 +48,11 @@ public class FXStockChart extends GridPane {
     }
 
     /**
-     * Populates the stock field grid
-     */
-    private void populateStockPanel() {
-        // initialize the top left corner
-        FXStockChartLabel corner = new FXStockChartLabel("");
-
-        GridPane.setHgrow(corner, Priority.ALWAYS);
-        GridPane.setVgrow(corner, Priority.ALWAYS);
-
-        getColumnConstraints().add(createColumn(1));
-        getRowConstraints().add(createRow(1));
-
-        add(corner, 0, 0);
-
-        // initialize the header column
-        for (int row = 0; row < market.getNumberOfRows(); row++) {
-            FXStockChartLabel l = new FXStockChartLabel(Integer.toString(row + 1));
-
-            GridPane.setHgrow(l, Priority.ALWAYS);
-            GridPane.setVgrow(l, Priority.ALWAYS);
-
-            add(l, 0, row + 1);
-            getRowConstraints().add(createRow(2));
-        }
-
-        // initialize the header row
-        for (int column = 0; column < market.getNumberOfColumns(); column++) {
-            FXStockChartLabel l = new FXStockChartLabel(Character.toString((char) ('A' + column)));
-
-            GridPane.setHgrow(l, Priority.ALWAYS);
-            GridPane.setVgrow(l, Priority.ALWAYS);
-
-            add(l, column + 1, 0);
-            getColumnConstraints().add(createColumn(2));
-        }
-
-        // initialize the stock field grid
-        for (int row = 0; row < market.getNumberOfRows(); row++) {
-            for (int column = 0; column < market.getNumberOfColumns(); column++) {
-                StockSpace stockSpace = market.getStockSpace(row, column);
-
-                if (stockSpace != null) {
-                    // the market field exists
-                    FXStockField stockField = new FXStockField(stockSpace);
-
-                    GridPane.setHgrow(stockField, Priority.ALWAYS);
-                    GridPane.setVgrow(stockField, Priority.ALWAYS);
-
-                    add(stockField, column + 1, row + 1);
-                } else {
-                    // the market field is null and therefore unused in the game
-                    FXEmptyStockField stockField = new FXEmptyStockField();
-
-                    GridPane.setHgrow(stockField, Priority.ALWAYS);
-                    GridPane.setVgrow(stockField, Priority.ALWAYS);
-
-                    add(stockField, column + 1, row + 1);
-                }
-            }
-        }
-    }
-
-    /**
      * Creates a {@link ColumnConstraints} object with the given width factor.
-     * The width factor defines, how much wider the column is compared to other columns.
-     * A factor of 2 means, that the column is twice as wide as a column with the factor 1
+     * The width factor defines, how much wider the column is compared to other
+     * columns.
+     * A factor of 2 means, that the column is twice as wide as a column with the
+     * factor 1
      *
      * @param factor The width factor
      * @return The created constraint
@@ -122,7 +67,8 @@ public class FXStockChart extends GridPane {
 
     /**
      * Creates a {@link RowConstraints} object with the given height factor.
-     * The height factor defines, how much higher the row is compared to other columns.
+     * The height factor defines, how much higher the row is compared to other
+     * columns.
      * A factor of 2 means, that the row is twice as high as a row with the factor 1
      *
      * @param factor The height factor
@@ -131,8 +77,100 @@ public class FXStockChart extends GridPane {
     private RowConstraints createRow(int factor) {
         RowConstraints constraints = new RowConstraints();
 
-        constraints.setPercentHeight(100d / ((market.getNumberOfRows() * 2) + 1) * factor);
+        if (market.getStockChartType() == StockMarket.ChartType.LINEAR) {
+            constraints.setPercentHeight(100d);
+        } else {
+            constraints.setPercentHeight(100d / ((market.getNumberOfRows() * 2) + 1) * factor);
+        }
 
         return constraints;
     }
+
+    /**
+     * Populates the stock field grid
+     */
+    private void populateStockPanel() {
+
+       if (market.getStockChartType() == StockMarket.ChartType.LINEAR) {
+// 1817-style 1D Linear Market: Render horizontally
+// The single UI row gets 100% height
+getRowConstraints().add(createRow(1));
+
+        // The XML data is entirely in Column 'A' (index 0)
+        int xmlColumn = 0; 
+
+        for (int xmlRow = 0; xmlRow < market.getNumberOfRows(); xmlRow++) {
+            
+            // Ensure each UI column takes an equal percentage of the width
+            ColumnConstraints colConst = new ColumnConstraints();
+            colConst.setPercentWidth(100d / market.getNumberOfRows());
+            getColumnConstraints().add(colConst);
+
+            StockSpace stockSpace = market.getStockSpace(xmlRow, xmlColumn);
+
+            if (stockSpace != null) {
+                FXStockField stockField = new FXStockField(stockSpace);
+                GridPane.setHgrow(stockField, Priority.ALWAYS);
+                GridPane.setVgrow(stockField, Priority.ALWAYS);
+                // Place horizontally: UI column = xmlRow, UI row = 0
+                add(stockField, xmlRow, 0);
+            } else {
+                FXEmptyStockField emptyField = new FXEmptyStockField();
+                GridPane.setHgrow(emptyField, Priority.ALWAYS);
+                GridPane.setVgrow(emptyField, Priority.ALWAYS);
+                // Place horizontally: UI column = xmlRow, UI row = 0
+                add(emptyField, xmlRow, 0);
+            }
+        }
+    } else {
+        
+            // Standard 1830-style 2D Rectangular Market: Render with headers
+            // initialize the top left corner
+            FXStockChartLabel corner = new FXStockChartLabel("");
+            GridPane.setHgrow(corner, Priority.ALWAYS);
+            GridPane.setVgrow(corner, Priority.ALWAYS);
+            getColumnConstraints().add(createColumn(1));
+            getRowConstraints().add(createRow(1));
+            add(corner, 0, 0);
+
+            // initialize the header column
+            for (int row = 0; row < market.getNumberOfRows(); row++) {
+                FXStockChartLabel l = new FXStockChartLabel(Integer.toString(row + 1));
+                GridPane.setHgrow(l, Priority.ALWAYS);
+                GridPane.setVgrow(l, Priority.ALWAYS);
+                add(l, 0, row + 1);
+                getRowConstraints().add(createRow(2));
+            }
+
+            // initialize the header row
+            for (int column = 0; column < market.getNumberOfColumns(); column++) {
+                FXStockChartLabel l = new FXStockChartLabel(Character.toString((char) ('A' + column)));
+                GridPane.setHgrow(l, Priority.ALWAYS);
+                GridPane.setVgrow(l, Priority.ALWAYS);
+                add(l, column + 1, 0);
+                getColumnConstraints().add(createColumn(2));
+            }
+
+            // initialize the stock field grid
+            for (int row = 0; row < market.getNumberOfRows(); row++) {
+                for (int column = 0; column < market.getNumberOfColumns(); column++) {
+                    StockSpace stockSpace = market.getStockSpace(row, column);
+
+                    if (stockSpace != null) {
+                        FXStockField stockField = new FXStockField(stockSpace);
+                        GridPane.setHgrow(stockField, Priority.ALWAYS);
+                        GridPane.setVgrow(stockField, Priority.ALWAYS);
+                        add(stockField, column + 1, row + 1);
+                    } else {
+                        FXEmptyStockField stockField = new FXEmptyStockField();
+                        GridPane.setHgrow(stockField, Priority.ALWAYS);
+                        GridPane.setVgrow(stockField, Priority.ALWAYS);
+                        add(stockField, column + 1, row + 1);
+                    }
+                }
+            }
+        }
+
+    }
+
 }

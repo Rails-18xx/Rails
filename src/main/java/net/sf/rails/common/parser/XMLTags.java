@@ -13,8 +13,8 @@ public final class XMLTags {
 	/* ATTRIBUTES */
 	public static final String NAME_ATTR = "name";
 	public static final String TEXT_ATTR = "text";
-	public static final String MIN_ATTR = "minimum";
-	public static final String MAX_ATTR = "maximum";
+	public static final String MIN_ATTR = "min";
+	public static final String MAX_ATTR = "max";
 	public static final String PARM_ATTR = "parm";
 	public static final String TYPE_ATTR = "type";
 	public static final String DEFAULT_ATTR = "default";

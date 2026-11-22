@@ -35,6 +35,7 @@ public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner
     public static final String POOL_NAME = "Pool";
     public static final String SCRAPHEAP_NAME = "ScrapHeap";
     public static final String UNAVAILABLE_NAME = "Unavailable";
+public static final String OSI_NAME = "OSI";
 
     /**
      * Default limit of shares in the bank pool
@@ -68,6 +69,11 @@ public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner
      * Collection of items that have been discarded (but are kept to allow Undo)
      */
     private final BankPortfolio scrapHeap = BankPortfolio.create(this, SCRAPHEAP_NAME);
+
+    /**
+     * Collection of short certificates available to be shorted (1817)
+     */
+    private final BankPortfolio osi = BankPortfolio.create(this, OSI_NAME);
 
     /**
      * Is the bank broken
@@ -144,6 +150,7 @@ public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner
         pool.finishConfiguration();
         unavailable.finishConfiguration();
         scrapHeap.finishConfiguration();
+        osi.finishConfiguration();
 
         // Add privates
         List<PrivateCompany> privates = root.getCompanyManager().getAllPrivateCompanies();
@@ -190,6 +197,17 @@ public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner
         return unavailable;
     }
 
+    /**
+     * @return Portfolio of Open Short Interest
+     */
+    public BankPortfolio getOSI() {
+        return osi;
+    }
+
+    public static BankPortfolio getOSI(RailsItem item) {
+        return get(item).osi;
+    }
+    
     @Override
     public String toText() {
         return LocalText.getText("BANK");
@@ -246,4 +264,10 @@ public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner
         return get(item).unavailable;
     }
 
+    public void setCash_AI(int newAmount) {
+        this.cash.getPurse().setAmount_AI(newAmount);
+    }
+    public boolean isBroken() {
+        return broken.value();
+    }
 }

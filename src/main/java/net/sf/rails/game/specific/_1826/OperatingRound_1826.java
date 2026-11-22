@@ -180,13 +180,13 @@ public class OperatingRound_1826 extends OperatingRound {
             }
         }
 
-        if (getStep() == GameDef.OrStep.REPAY_LOANS) {
+      if (getStep() == GameDef.OrStep.REPAY_LOANS) {
 
             // The possibility has already been checked in gameSpecificNextStep()
             if (!repayableLoans.isEmpty()) {
                 possibleActions.addAll (repayableLoans);
                 repayableLoans.clear();
-                doneAllowed=true;
+                doneAllowed.set(true);
             }
 
         } else if (getStep() == GameDef.OrStep.BUY_BONDS) {
@@ -195,7 +195,8 @@ public class OperatingRound_1826 extends OperatingRound {
             if (!buyableBonds.isEmpty()) {
                 possibleActions.addAll(buyableBonds);
                 buyableBonds.clear();
-                doneAllowed=true;            }
+                doneAllowed.set(true);
+                       }
         }
 
     }

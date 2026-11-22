@@ -30,7 +30,10 @@ public class NullAction extends PossibleAction {
         this.mode = mode.ordinal();
     }
 
-    public Mode getMode() {
+public Mode getMode() {
+        if (mode_enum == null) {
+            mode_enum = Mode.values()[mode];
+        }
         return mode_enum;
     }
 

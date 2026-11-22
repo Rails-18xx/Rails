@@ -34,7 +34,7 @@
 			longname="Lukas Lokomotivfuehrer">
 		<Home hex="C8"/>
 	</Company>
-	<StartPacket roundClass="net.sf.rails.game.StartRound_1830">
+	<StartPacket roundClass="net.sf.rails.game.specific._1830.StartRound_1830">
 		<Bidding initial="5" minimum="5" increment="1"/>
 		<Item name="Post" type="Private" basePrice="20"/>
 	</StartPacket>

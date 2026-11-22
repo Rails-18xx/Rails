@@ -144,14 +144,6 @@ public class GameUIManager_1837 extends GameUIManager {
         super.dialogActionPerformed(true);
     }
 
-    /* (non-Javadoc)
-     * @see net.sf.rails.ui.swing.GameUIManager#discardTrains(rails.game.action.DiscardTrain)
-     */
-    @Override
-    public void discardTrains(DiscardTrain dt) {
-        // TODO Auto-generated method stub
-        super.discardTrains(dt);
-    }
     
 }
 

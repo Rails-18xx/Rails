@@ -8469,37 +8469,37 @@ object TTilesWrapper
       Junctions = <
         item
           JunType = jtCity
-          Position = tp3SideD
+          Position = tp2CornerD       // Was tp3SideD
           Revenue = 60
           RevenuePosition = tp1SideC
         end
         item
           JunType = jtCity
-          Position = tp3SideE
+          Position = tpCurve2RightE   // Was tp3SideE
           Revenue = 60
           RevenuePosition = tp1SideC
         end
         item
           JunType = jtCity
-          Position = tp3SideF
+          Position = tpCurve2LeftF    // Was tp3SideF -> This caused the crash at index 5
           Revenue = 60
           RevenuePosition = tp1SideC
         end
         item
           JunType = jtCity
-          Position = tp3SideA
+          Position = tp3SideA         // Kept (New station)
           Revenue = 60
           RevenuePosition = tp1SideC
         end
         item
           JunType = jtCity
-          Position = tp3SideB
+          Position = tp2CornerB       // Was tp3SideB
           Revenue = 60
           RevenuePosition = tp1SideC
         end
         item
           JunType = jtCity
-          Position = tp3SideC
+          Position = tp3SideC         // Kept (New station)
           Revenue = 60
           RevenuePosition = tp1SideC
         end>

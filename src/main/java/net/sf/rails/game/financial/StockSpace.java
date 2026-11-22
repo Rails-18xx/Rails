@@ -18,6 +18,16 @@ import com.google.common.collect.ImmutableList;
  */
 public class StockSpace extends RailsModel implements Comparable<StockSpace> {
 
+    private String label = null;
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+    
     /*--- Class attributes ---*/
     /*--- Constants ---*/
     /**

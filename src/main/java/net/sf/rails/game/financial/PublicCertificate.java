@@ -175,6 +175,7 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate>
      * @return The number of shares.
      */
     public int getShares() {
+if (shares == null || company == null) return 0;
         return shares.value();
     }
 
@@ -185,6 +186,7 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate>
      * @return The share percentage.
      */
     public int getShare() {
+        if (shares == null || company == null) return 0;
         return shares.value() * company.getShareUnit();
     }
 
@@ -292,8 +294,9 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate>
         }
     }
 
-        // Item interface
-    /**
+
+
+/**
      * Get the name of a certificate. The name is derived from the company name
      * and the share percentage of this certificate. If it is a 100% share (as
      * occurs with e.g. 1835 minors), only the company name is given. If it is a
@@ -301,6 +304,7 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate>
      */
     @Override
     public String toText() {
+        if (company == null) return "Unknown Cert";
         int share = getShare();
         if (share == 100) {
             /* Applies to shareless minors: just name the company */
@@ -316,8 +320,13 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate>
         }
     }
 
+
+@Override
     public String toString() {
-        return getId();
+        // Use existing toText() for readability + ID for uniqueness
+        return toText() + " [" + getId() + "]";
     }
+
+
 
 }

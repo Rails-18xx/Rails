@@ -35,6 +35,8 @@ public class GameStatus_1837 extends GameStatus {
     @Override
     protected void initGameSpecificActions() {
 
+        super.initGameSpecificActions();
+        
         PublicCompany mergingCompany;
         int index;
 

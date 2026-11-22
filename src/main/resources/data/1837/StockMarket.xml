@@ -1,4 +1,4 @@
-<StockMarket type="rectangular">
+<StockMarket type="hexagonal">
     <!-- I have "rectangularized" the original 1837 hex stock market
          by treating bottom-left-to-top-right diagonals as vertical.
          This means the program needs to be modified to allow two new

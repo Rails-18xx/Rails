@@ -96,7 +96,10 @@ public class SpecialRight extends SpecialProperty implements Configurable, Close
     }
 
     public boolean isExecutionable() {
-        return true;
+        // FIXME: Check if this works correctly
+        // IT is better to rewrite this check
+        // see ExchangeForShare
+        return ((PrivateCompany)originalCompany).getOwner() instanceof Player;
     }
 
     /**

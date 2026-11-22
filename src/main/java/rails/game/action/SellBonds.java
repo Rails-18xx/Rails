@@ -27,7 +27,10 @@ public class SellBonds extends PossibleAction {
         this.maxNumber = maxNumber;
     }
 
-    public PublicCompany getCompany() {
+ public PublicCompany getCompany() {
+        if (company == null && companyId != null && getRoot() != null) {
+            company = getRoot().getCompanyManager().getPublicCompany(companyId);
+        }
         return company;
     }
 

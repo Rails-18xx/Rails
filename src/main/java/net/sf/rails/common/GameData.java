@@ -9,13 +9,7 @@ public class GameData {
 
     private final List<String> players;
 
-    private GameData(GameInfo game, GameOptionsSet gameOptions, List<String> players) {
-        super();
 
-        this.game = game;
-        this.gameOptions = gameOptions;
-        this.players = players;
-    }
 
     public static GameData create(GameInfo game, GameOptionsSet.Builder gameOptions, List<String> players) {
         return new GameData(game, gameOptions.withNumberOfPlayers(players.size()).build(), players);
@@ -32,4 +26,13 @@ public class GameData {
     public List<String> getPlayers() {
         return players;
     }
+
+
+    public GameData(GameInfo game, GameOptionsSet gameOptions, List<String> players) {
+        super();
+        this.game = game;
+        this.gameOptions = gameOptions;
+        this.players = players;
+    }
+
 }

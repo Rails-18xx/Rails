@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.1"
+   id="svg12"
+   sodipodi:docname="tile61100.svg"
+   inkscape:version="1.4.3 (0d15f750, 2025-12-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs12" />
+  <sodipodi:namedview
+     id="namedview12"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="1.4666667"
+     inkscape:cx="-1.7045455"
+     inkscape:cy="-13.977273"
+     inkscape:window-width="2271"
+     inkscape:window-height="1250"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg12" />
+  <path
+     d=" M 98,0 L 294,0 L 392,170 L 294,340 L 98,340 L 0,170 Z"
+     fill="#B46301"
+     stroke="#B46301"
+     stroke-width="1"
+     stroke-linejoin="round"
+     id="path1" />
+  <text
+     x="245"
+     y="318"
+     dy="0.3em"
+     fill="#000000"
+     stroke="#000000"
+     text-anchor="middle"
+     font-family="Arial"
+     font-size="31"
+     font-weight="bold"
+     id="text1">611</text>
+  <polygon
+     points="145,119 247,119 247,221 145,221"
+     fill="#FFFFFF"
+     stroke="#FFFFFF"
+     stroke-width="12"
+     id="polygon1" />
+  <circle
+     cx="145"
+     cy="170"
+     r="51"
+     fill="#FFFFFF"
+     stroke="#FFFFFF"
+     stroke-width="12"
+     id="circle1" />
+  <circle
+     cx="247"
+     cy="170"
+     r="51"
+     fill="#FFFFFF"
+     stroke="#FFFFFF"
+     stroke-width="12"
+     id="circle2" />
+  <path
+     d="M 196,170 L 196,0"
+     fill="none"
+     stroke="#FFFFFF"
+     stroke-width="34"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path2" />
+  <path
+     d="M 196,170 L 343,255"
+     fill="none"
+     stroke="#FFFFFF"
+     stroke-width="34"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path3" />
+  <path
+     d="M 196,170 L 196,340"
+     fill="none"
+     stroke="#FFFFFF"
+     stroke-width="34"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path4" />
+  <path
+     d="M 196,170 L 49,255"
+     fill="none"
+     stroke="#FFFFFF"
+     stroke-width="34"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path5" />
+  <path
+     d="M 348.05517,91.898628 201.05518,176.89863"
+     fill="none"
+     stroke="#ffffff"
+     stroke-width="34"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path5-2" />
+  <path
+     d="M 196,170 L 196,0"
+     fill="none"
+     stroke="#000000"
+     stroke-width="26"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path7" />
+  <path
+     d="M 196,170 L 343,255"
+     fill="none"
+     stroke="#000000"
+     stroke-width="26"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path8" />
+  <path
+     d="M 196,170 L 196,340"
+     fill="none"
+     stroke="#000000"
+     stroke-width="26"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path9" />
+  <path
+     d="m 196,169.31818 -147,85"
+     fill="none"
+     stroke="#000000"
+     stroke-width="26"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path10" />
+  <path
+     d="M 347.14379,92.072212 200.1438,177.07221"
+     fill="none"
+     stroke="#000000"
+     stroke-width="26"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path10-4" />
+  <polygon
+     points="145,119 247,119 247,221 145,221"
+     fill="#FFFFFF"
+     stroke="#000000"
+     stroke-width="4"
+     id="polygon11" />
+  <circle
+     cx="145"
+     cy="170"
+     r="51"
+     fill="#FFFFFF"
+     stroke="#000000"
+     stroke-width="4"
+     id="circle11" />
+  <circle
+     cx="247"
+     cy="170"
+     r="51"
+     fill="#FFFFFF"
+     stroke="#000000"
+     stroke-width="4"
+     id="circle12" />
+  <ellipse
+     rx="31"
+     ry="30"
+     cx="123"
+     cy="43"
+     fill="#FFFFFF"
+     stroke="#000000"
+     stroke-width="2"
+     stroke-linejoin="round"
+     id="ellipse12" />
+  <text
+     x="123"
+     y="43"
+     dy="0.3em"
+     fill="#000000"
+     stroke="#000000"
+     text-anchor="middle"
+     font-family="Bookman Old Style"
+     font-size="43"
+     id="text12">40</text>
+  <path
+     d=" M 98,0 L 294,0 L 392,170 L 294,340 L 98,340 L 0,170 Z"
+     fill="none"
+     stroke="black"
+     stroke-width="1"
+     stroke-linejoin="round"
+     id="path12" />
+</svg>

@@ -13,10 +13,10 @@
 				</IfOption>
 			</PlayerShareLimit>
 			<BankPoolLimit percentage="50"/>
-			<StockRound class="net.sf.rails.game.specific._18VA.StockRound_18VA">
+			<StockRound>
 				<NoSaleInFirstSR/>
 			</StockRound>
-			<OperatingRound class="net.sf.rails.game.specific._18VA.OperatingRound_18VA">
+			<OperatingRound>
 				<EmergencyTrainBuying mustBuyCheapestTrain="no"
 					mayBuyFromCompany="yes"/>
 			</OperatingRound>
@@ -55,10 +55,10 @@
 			<Score towns="yes"/> <!-- would otherwise exclude ports as well -->
 		</Defaults>
 		<Defaults category="goods">
-			<Reach base="stops" countTowns="no"/>
-			<Score towns="yes"/><!-- Actually mines and ports-->
+			<Reach base="stops" countTowns="yes"/>
+			<Score towns="yes"/>
 		</Defaults>
-		<TrainType name="2/1G" quantity="6" oneTrainPerTypePerTurn="yes">
+		<TrainType name="2/1G" quantity="6">
 			<Train name="2" majorStops="2" cost="100"/>
 			<Train name="1G" category="goods" majorStops="1" cost="100"/>
 		</TrainType>
@@ -82,7 +82,7 @@
 			<Train name="5G" category="goods" majorStops="5" cost="600"/>
 			<NewPhase phaseName="6"/>
 		</TrainType>
-		<TrainType name="4D" majorStops="4" cost="800" quantity="10">
+		<TrainType name="4D" majorStops="99" cost="800" quantity="10">
 			<Score cities="double"/>
 			<NewPhase phaseName="4D"/>
 		</TrainType>
@@ -96,7 +96,7 @@
 			<Tiles colour="yellow"/>
 			<Privates sellingAllowed="no"/>
 			<OperatingRounds number="1"/>
-			<Trains onePerTypePerTurn="yes" tradingAllowed="yes"/>
+			<Trains tradingAllowed="yes"/>
 		</Phase>
 		<Phase name="3">
 			<Tiles colour="yellow,green"/>
@@ -117,11 +117,11 @@
 			<Trains released="4D"/>
 		</Phase>
 		<Phase name="4D">
-			<Tiles colour="yellow,green,brown,grey"/>
+			<Tiles colour="yellow,green,brown,gray"/>
 			<Trains rusted="4/3G"/>
 		</Phase>
 	</Component>
-	<Component name="RevenueManager" class="net.sf.rails.game.specific._18VA.RevenueManager_18VA">
+	<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
 		<Modifier class="net.sf.rails.game.specific._18VA.TrainRunModifier" />
 	</Component>
 </ComponentManager>

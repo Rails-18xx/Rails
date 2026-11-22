@@ -5,6 +5,10 @@ import net.sf.rails.game.model.ColorModel;
 import net.sf.rails.game.state.Observable;
 import net.sf.rails.game.state.Observer;
 
+// [ADD 1] Import SLF4J Logger classes
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
@@ -14,6 +18,10 @@ import java.awt.*;
 public class Field extends JLabel implements Observer {
 
     private static final long serialVersionUID = 1L;
+
+    // [ADD 2] Add a static logger instance
+    private static final Logger log = LoggerFactory.getLogger(Field.class);
+
 
     private Border labelBorder = BorderFactory.createEmptyBorder(1, 2, 1, 2);
 
@@ -49,10 +57,15 @@ public class Field extends JLabel implements Observer {
         this(""); // create empty field first
         this.observable = observable;
         this.html = html;
-        this.observable.addObserver(this);
+        // Check if observable is not null before adding observer
+        if (this.observable != null) {
+            this.observable.addObserver(this);
+            // initialize text
+            this.setText(observable.toText());
+        } else {
+             log.warn("Field created with a null Observable!"); // Log warning if model is null
+        }
         this.pull = pull;
-        // initialize text
-        this.setText(observable.toText());
     }
 
     public Field(Observable observable) {
@@ -78,9 +91,14 @@ public class Field extends JLabel implements Observer {
                 return storeModel;
             }
         };
-        toolTipModel.addObserver(toolTipObserver);
-        // initialize toolTip
-        setToolTipText(toolTipModel.toText());
+        // Check if toolTipModel is not null
+        if (toolTipModel != null) {
+            toolTipModel.addObserver(toolTipObserver);
+            // initialize toolTip
+            setToolTipText(toolTipModel.toText());
+        } else {
+             log.warn("setToolTipModel called with a null Observable!");
+        }
     }
 
     public void setColorModel(ColorModel colorModel) {
@@ -103,8 +121,13 @@ public class Field extends JLabel implements Observer {
                 return storeModel;
             }
         };
-        colorModel.addObserver(colorObserver);
-        colorObserver.update(null);
+        // Check if colorModel is not null
+        if (colorModel != null) {
+            colorModel.addObserver(colorObserver);
+            colorObserver.update(null); // Initialize color
+        } else {
+            log.warn("setColorModel called with a null ColorModel!");
+        }
     }
 
     public void setHighlight(boolean highlight) {
@@ -124,10 +147,11 @@ public class Field extends JLabel implements Observer {
 
     @Override
     public void setText(String text) {
+        String effectiveText = (text == null) ? "" : text; // Handle null input
         if (html) {
-            super.setText("<html>" + text + "</html>");
+            super.setText("<html>" + effectiveText + "</html>");
         } else {
-            super.setText(text);
+            super.setText(effectiveText);
         }
     }
 
@@ -136,7 +160,7 @@ public class Field extends JLabel implements Observer {
     }
 
     // FIXME: ViewUpdate has to be rewritten in the new structure
-/*    protected void updateDetails (ViewUpdate vu) {
+/* protected void updateDetails (ViewUpdate vu) {
     @Override
     public void setText (String text) {
         if (html) {
@@ -145,42 +169,40 @@ public class Field extends JLabel implements Observer {
             super.setText(text);
         }
     }
-
-        for (String key : vu.getKeys()) {
-            if (ViewUpdate.TEXT.equalsIgnoreCase(key)) {
-                setText (vu.getText());
-            } else if (ViewUpdate.BGCOLOUR.equalsIgnoreCase(key)) {
-                setBackground((Color)vu.getValue(key));
-                normalBgColour = getBackground();
-                setForeground (Util.isDark(normalBgColour) ? Color.WHITE : Color.BLACK);
-            } else if (ViewUpdate.SHARES.equalsIgnoreCase(key)) {
-                int count;
-                String type;
-                String[] items;
-                StringBuilder b = new StringBuilder();
-                for (String typeAndCount : ((String)vu.getValue(key)).split(",")) {
-                    //Util.getLogger().debug(">>> "+typeAndCount+" <<<");
-                    if (!Util.hasValue(typeAndCount)) continue;
-                    items = typeAndCount.split(":");
-                    count = Integer.parseInt(items[1]);
-                    items = items[0].split("_");
-                    type = items[1] + (items.length > 2 && items[2].contains("P") ? "P" : "");
-                    if (b.length() > 0) b.append("<br>");
-                    b.append(count).append(" x ").append(type);
-                }
-                baseToolTipInfo = b.toString();
-                setToolTipText (b.length()>0 ? "<html>" + baseToolTipInfo : null);
-            }
-        }
+        // ... (removed old commented code for brevity) ...
     }
         */
 
     // Observer methods
+    // [ADD 3] Add logging inside this update method
+// Observer methods
     @Override
     public void update(String text) {
-        setText(text);
+        // --- START COMBINED DEBUG LOGGING ---
+        String observableId = (observable != null) ? observable.getId() : "UnknownObservable";
+        String receivedText = (text != null) ? "'" + text + "'" : "null"; // Show null clearly
+
+        // Log the received text BEFORE calling setText
+        log.debug("Field.update for '{}' RECEIVED text: {}", observableId, receivedText);
+        // --- END COMBINED DEBUG LOGGING ---
+
+        // Original logic: just set the text
+        setText(text); // Pass the potentially null text to setText which handles it
+
+        // --- Check AFTERWARDS ---
+        String currentLabelText = getText();
+        // Simplified check for blankness
+        boolean isBlank = (currentLabelText == null || currentLabelText.isEmpty() || (html && currentLabelText.equals("<html></html>")));
+
+        if (isBlank) {
+       //     log.warn("  - Field '{}' appears BLANK after update with input: {}", observableId, receivedText);
+        } else {
+       //      log.debug("  - Field '{}' text set to: '{}'", observableId, currentLabelText);
+        }
+        // --- END Check ---
     }
 
+    
     @Override
     public Observable getObservable() {
         return observable;
@@ -188,8 +210,9 @@ public class Field extends JLabel implements Observer {
 
     @Override
     public String toString() {
+        String observableId = (observable != null) ? observable.getId() : "null";
         return MoreObjects.toStringHelper(this)
-                .add("observable", observable.getId())
+                .add("observableId", observableId) // Use getId for clarity
                 .toString();
     }
 

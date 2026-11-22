@@ -193,8 +193,24 @@ public class NetworkGraph {
         MapManager mapManager = root.getMapManager();
         RevenueManager revenueManager = root.getRevenueManager();
         for (MapHex hex : mapManager.getHexes()) {
-            // Don't add any inaccessible hexes to the graph
+
+                        // Don't add any inaccessible hexes to the graph
             if (!hex.isOpen()) continue;
+
+
+// *** ADD LOGGING FOR F14 ***
+            String hexId = hex.getId();
+            if ("F14".equals(hexId)) {
+                // Log the state *as the graph builder sees it*
+        //        log.error(">>> GRAPH_BUILDER: Reading Hex {}: Tile={}, Rot={}",
+            //              hexId,
+            //              (hex.getCurrentTile() != null ? hex.getCurrentTile().getId() : "null"),
+              //            hex.getCurrentTileRotation());
+            }
+            // *** END LOGGING ***
+
+
+
 
             // get Tile
             Tile tile = hex.getCurrentTile();

@@ -11,7 +11,7 @@
 	<Hex name="B2" tile="0" cost="60">
 	</Hex>
 	<Hex name="B4" tile="0"/>
-	<Hex name="B6" tile="0" cost="60">
+	<Hex name="B6" tile="0" cost="60" terrain="mountain">
 	</Hex>
 	<Hex name="B8" tile="0" cost="60">
 	</Hex>

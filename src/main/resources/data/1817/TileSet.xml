@@ -1,0 +1,81 @@
+<TileManager tiles="Tiles.xml">
+    <Tile id="0" quantity="-1"><Upgrade id="7,8,9"/></Tile>
+    <Tile id="-5" quantity="-1"/>
+    <Tile id="-901" quantity="-1"/>
+    <Tile id="-902" quantity="-1"/>
+    <Tile id="-903" quantity="-1"/>
+    <Tile id="-905" quantity="1"/>
+    <Tile id="-906" quantity="1"/>
+    <Tile id="-907" quantity="1"/>
+    <Tile id="-39" quantity="1"/>
+    <Tile id="-1144" quantity="1"/>
+    <Tile id="-5016" quantity="1"/>
+
+    <Tile id="-10" quantity="-1"><Upgrade id="5,6,57,43800"/></Tile>
+    <Tile id="-11" quantity="3"><Upgrade id="2053"/></Tile> 
+    <Tile id="11111" quantity="3"><Upgrade id="2053"/></Tile> 
+    <Tile id="43800" quantity="1"><Upgrade id="2053"/></Tile> 
+    <Tile id="212121" quantity="-1"><Upgrade id="54"/></Tile>
+
+
+
+    <!-- YELLOW -->
+    <Tile id="5" quantity="-1"><Upgrade id="14,15,619"/></Tile>
+    <Tile id="6" quantity="-1"><Upgrade id="14,15,619"/></Tile>
+    <Tile id="57" quantity="-1"><Upgrade id="14,15,619"/></Tile>
+
+    <Tile id="7" quantity="-1"><Upgrade id="80,82,83"/></Tile>
+    <Tile id="8" quantity="-1"><Upgrade id="80,81,82,83"/></Tile>
+    <Tile id="9" quantity="-1"><Upgrade id="82,83"/></Tile>
+  
+<!-- GREEN -->
+    <Tile id="14" quantity="-1"><Upgrade id="63,61100"/></Tile>
+    <Tile id="15" quantity="-1"><Upgrade id="63,61100,448"/></Tile>
+    <Tile id="54" quantity="1"><Upgrade id="62"/></Tile>
+    <Tile id="619" quantity="-1"><Upgrade id="63,61100"/></Tile>
+
+    <!-- B (baltimore) green -->
+    <Tile id="2053" quantity="4"><Upgrade id="148400"/></Tile>
+
+    <Tile id="80" quantity="-1"> <Upgrade id="545,546"/></Tile>
+    <Tile id="81" quantity="-1"> <Upgrade id="546"/></Tile>
+    <Tile id="82" quantity="-1"> <Upgrade id="544,545,546"/></Tile>
+    <Tile id="83" quantity="-1"> <Upgrade id="544,545,546"/></Tile>
+
+
+<!-- BROWN   -->
+
+
+    <Tile id="544" quantity="-1"> <Upgrade id="82,83"/></Tile>
+    <Tile id="545" quantity="-1"> <Upgrade id="80,82,83"/></Tile>
+    <Tile id="546" quantity="-1"> <Upgrade id="80,81,82,83"/></Tile>
+
+
+
+    <Tile id="62" quantity="1"><Upgrade id="124"/></Tile>
+    <Tile id="63" quantity="-1"></Tile>
+    <Tile id="448" quantity="-1"/>
+    <Tile id="61100" quantity="-1"></Tile>
+
+    <!-- previous: 523 -->
+    <Tile id="148400" quantity="4"><Upgrade id="368"/></Tile>
+
+
+
+<!-- gray -->
+    <Tile id="124" quantity="1"></Tile>
+
+    <!-- previous: 597 -->
+    <Tile id="368" quantity="-1"/>
+
+
+
+
+
+   
+    
+    
+  
+    
+    
+</TileManager>

@@ -113,7 +113,7 @@
 		<FirstTrainCloses type="Private" name="P-6"/>
 	</Company>
 	
-	<StartPacket roundClass="net.sf.rails.game.StartRound_1830">
+	<StartPacket roundClass="net.sf.rails.game.specific._1830.StartRound_1830">
 		<Bidding initial="5" minimum="5" increment="1"/>
 		<Item name="P-1" type="Private" basePrice="20"/>
 		<!-- P-2 is reducable, as P-1 has no revenue -->

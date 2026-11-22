@@ -1,0 +1,17 @@
+{
+  "game": "Basic_Game",
+  "rules": {
+    "multiStation": {
+      "question": "Can you lay more than one station marker per turn?",
+      "answer": "No."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "No."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "Not applicable."
+    }
+  }
+}

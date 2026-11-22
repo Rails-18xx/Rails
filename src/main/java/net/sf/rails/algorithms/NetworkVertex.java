@@ -49,7 +49,6 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     // only for station objects
     private final Stop stop;
 
-    private RevenueManager revenueManager;
 
     /** constructor for station on mapHex */
     public NetworkVertex(MapHex hex, Station station) {
@@ -58,15 +57,13 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         this.trackPoint = station;
         this.stop = hex.getRelatedStop(station);
         if (stop != null) {
-            log.debug("Found stop {}", stop);
+       //     log.debug("Found stop {}", stop);
         } else {
-            log.error("No stop found for hex {} station {}", hex, station);
+        //    log.error("No stop found for hex {} station {}", hex, station);
         }
 
         this.virtual = false;
         this.virtualId = null;
-
-        this.revenueManager = hex.getRoot().getRevenueManager();
     }
 
     /** constructor for side on mapHex */
@@ -160,7 +157,6 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         return value;
     }
 
-    /*
     public int getValueByTrain(NetworkTrain train) {
         int valueByTrain;
         if (isMajor()) {
@@ -178,41 +174,6 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
             valueByTrain = value;
         }
         return valueByTrain;
-    }*/
-    public int getValueByTrain (NetworkTrain train) {
-        /*
-        int valueByTrain = 0;
-        switch (stop.getType()) {
-            case CITY:
-                valueByTrain = value * train.getMultiplyMajors();
-                break;
-            case TOWN:
-                if (!train.ignoresMinors()) {
-                    valueByTrain = value * train.getMultiplyMinors();
-                }
-                break;
-            case OFFMAP:
-                valueByTrain = hex.getCurrentValueForPhase(
-                        hex.getRoot().getPhaseManager().getCurrentPhase());
-                break;
-            case MINE:
-                // For 18VA (see GameManager_18VA). Default return value is 0.
-                valueByTrain = hex.getValuePerTrain(train.getRailsTrain());
-                break;
-            case PASS:
-                valueByTrain = 0;
-                break;
-            default:
-                valueByTrain = value;
-                break;
-        }
-        return valueByTrain;*/
-        Train railsTrain= train.getRailsTrain();
-        PublicCompany company = (PublicCompany)railsTrain.getOwner();
-        int revenue = revenueManager.getActualAsInteger(stop, railsTrain,
-                company);
-        log.debug("+++++ Vertex {} has value {} for train {} of {}", this, revenue, train, company);
-        return revenue;
     }
 
     public NetworkVertex setValue(int value) {
@@ -283,7 +244,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         // if company == null, then no vertex gets removed
         if (company != null && !stop.isRunToAllowedFor(company, running)
                 && !stop.isRunThroughAllowedFor(company)) {
-           log.debug("Vertex is removed");
+      //     log.info("Vertex is removed");
            return false;
         }
 
@@ -291,11 +252,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         if (stop.getScoreType() == Access.Score.MAJOR) {
             setStationType(StationType.MAJOR);
         } else if (stop.getScoreType() == Access.Score.MINOR) {
-            //if (stop.getAccess() != null && stop.getAccess().getType() == Stop.Type.MINE) {
-            //    setStationType(StationType.COALMINE);
-            //} else {
-                setStationType(StationType.MINOR);
-            //}
+            setStationType(StationType.MINOR);
         } else if (stop.getScoreType() == Access.Score.NO) { // Used in 18EU Alpine variant
             setStationType(StationType.PASS); // Not sure if this is sensible for 18EU
         }
@@ -328,6 +285,8 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     public void setRailsVertexValue(Phase phase) {
         // side vertices and  virtuals cannot use this function
         if (virtual || type == VertexType.SIDE) return;
+
+        // define value
         value = stop.getValueForPhase(phase);
     }
 
@@ -565,7 +524,6 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
      * over the vertices in the LinkedList behind DLLGraph.Segment.
      */
     public boolean equals (NetworkVertex otherVertex) {
-
         return toString().equals(otherVertex.toString());
     }
 }

@@ -73,24 +73,49 @@ public class MergeCompanies extends PossibleAction {
         this (mergingCompany, Collections.singletonList(targetCompany), forced);
     }
 
+
+    
+
     /** Required for deserialization */
     public MergeCompanies() {
         super((RailsRoot) null); // not defined by an activity yet
     }
 
-    public PublicCompany getMergingCompany() {
-        return mergingCompany;
-    }
-
-    public List<PublicCompany> getTargetCompanies() {
-        return targetCompanies;
-    }
 
     public boolean canReplaceToken(int index) {
         return canReplaceToken.get(index);
     }
 
+ 
+
+
+
+    public PublicCompany getMergingCompany() {
+        if (mergingCompany == null && mergingCompanyName != null && getRoot() != null) {
+            mergingCompany = getRoot().getCompanyManager().getPublicCompany(mergingCompanyName);
+        }
+        return mergingCompany;
+    }
+
+    public List<PublicCompany> getTargetCompanies() {
+        if (targetCompanies == null && targetCompanyNames != null && getRoot() != null) {
+            targetCompanies = new ArrayList<>();
+            for (String name : targetCompanyNames.split(",")) {
+                if (name.equals("null")) {
+                    targetCompanies.add(null);
+                } else {
+                    targetCompanies.add(getRoot().getCompanyManager().getPublicCompany(name));
+                }
+            }
+        }
+        return targetCompanies;
+    }
+
     public PublicCompany getSelectedTargetCompany() {
+        if (selectedTargetCompany == null && selectedTargetCompanyName != null 
+                && !selectedTargetCompanyName.equals("null") && getRoot() != null) {
+            selectedTargetCompany = getRoot().getCompanyManager().getPublicCompany(selectedTargetCompanyName);
+        }
         return selectedTargetCompany;
     }
 

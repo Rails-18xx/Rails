@@ -37,16 +37,10 @@
 	
 	<Company name="NF"	longname="N&#252;rnberg-F&#252;rth" type="Private" basePrice="100" revenue="5">
 		<SpecialProperties>
-			<IfOption name="NF_PfB_Westermann" value ="yes">
 				<SpecialProperty condition="ifOwnedByPlayer" when="tokenLayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
 					<SpecialBaseTokenLay location="L14" extra="yes" free="yes"/>
 				</SpecialProperty>
-			</IfOption>				
-			<IfOption name="NF_PfB_Westermann" value ="no">
-				<SpecialProperty condition="ifOwnedByPlayer" when="tileAndTokenLayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
-					<SpecialBaseTokenLay location="L14" extra="yes" free="yes"/>
-				</SpecialProperty>
-			</IfOption>				
+			
 		</SpecialProperties>
 		<ClosingConditions>
             <Phase>5</Phase>
@@ -73,16 +67,10 @@
 			<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" closesPrivate="no" class="net.sf.rails.game.special.SpecialSingleTileLay">
 				<SpecialSingleTileLay location="L6" colour="green" extra="yes" free="yes" />
 			</SpecialProperty>
-			<IfOption name="NF_PfB_Westermann" value ="yes">
 				<SpecialProperty condition="ifOwnedByPlayer" when="tokenLayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
 					<SpecialBaseTokenLay location="L6" extra="yes" free="yes" requiresTile="yes" />
 				</SpecialProperty>
-			</IfOption>
-			<IfOption name="NF_PfB_Westermann" value ="no">
-				<SpecialProperty condition="ifOwnedByPlayer" when="tileAndTokenLayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
-					<SpecialBaseTokenLay location="L6" extra="yes" free="yes" requiresTile="yes" />
-				</SpecialProperty>
-			</IfOption>
+			
 		</SpecialProperties>
 		<ClosingConditions>
             <Phase>5</Phase>
@@ -90,7 +78,7 @@
 			<SpecialProperties condition="ifAnyExercised"/>
 		</ClosingConditions>
 	</Company>
-	<Company name="LD" longname="Leipzig-Dresdner Bahn" type="Private" basePrice="190">
+	<Company name="LD" longname="Leipzig-Dresdner Bahn" type="Private" basePrice="190" revenue="20">
         <IfOption name="LDIncome" value="20M">
 			<Attributes revenue="20"/>
         </IfOption>
@@ -116,7 +104,7 @@
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
-	<Company name="M1" longname="Bergisch-M&#228;rkische Bahn" type="Minor" price="80" tokens="1">
+	<Company name="M1" longname="Bergisch-M&#228;rkische Bahn" type="Minor" price="80" tokens="1" revenue="0">
 		<Home hex="H2"/>
 		<!-- The Minor Special Properties may be replaced by some other device, 
 			as Public Companies normally have no special properties.
@@ -128,7 +116,7 @@
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
-	<Company name="M2" longname="Berlin-Potsdamer Bahn" type="Minor" price="170" tokens="1">
+	<Company name="M2" longname="Berlin-Potsdamer Bahn" type="Minor" price="170" tokens="1" revenue="0">
 		<Home hex="E19" city="1"/>
 		<!--Info key="SwapPrivateForCertificate" parm="M2,10,Pr"/-->
 		<SpecialProperties>
@@ -137,7 +125,7 @@
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
-	<Company name="M3" longname="Magdeburger Bahn" type="Minor" price="80" tokens="1">
+	<Company name="M3" longname="Magdeburger Bahn" type="Minor" price="80" tokens="1" revenue="0">
 		<Home hex="F14"/>
 		<!--Info key="SwapPrivateForCertificate" parm="M3,5,Pr"/-->
 		<SpecialProperties>
@@ -146,7 +134,7 @@
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
-	<Company name="M4" longname="K&#246;ln-Mindener Bahn" type="Minor" price="160" tokens="1">
+	<Company name="M4" longname="K&#246;ln-Mindener Bahn" type="Minor" price="160" tokens="1" revenue="0">
 		<Home hex="G5"/>
 		<!--Info key="SwapPrivateForCertificate" parm="M4,10,Pr"/-->
 		<SpecialProperties>
@@ -155,7 +143,7 @@
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
-	<Company name="M5" longname="Berlin-Stettiner Bahn" type="Minor" price="80" tokens="1">
+	<Company name="M5" longname="Berlin-Stettiner Bahn" type="Minor" price="80" tokens="1" revenue="0">
 		<Home hex="E19" city="2"/>
 		<!--Info key="SwapPrivateForCertificate" parm="M5,5,Pr"/-->
 		<SpecialProperties>
@@ -164,7 +152,7 @@
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
-	<Company name="M6" longname="Altona-Kiel Bahn" type="Minor" price="80" tokens="1">
+	<Company name="M6" longname="Altona-Kiel Bahn" type="Minor" price="80" tokens="1" revenue="0">
 		<Home hex="C11" city="1"/>
 		<!--Info key="SwapPrivateForCertificate" parm="M6,5,Pr"/-->
 		<SpecialProperties>

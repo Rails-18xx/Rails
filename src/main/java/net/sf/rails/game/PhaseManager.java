@@ -97,4 +97,16 @@ public class PhaseManager extends RailsManager implements Configurable {
         return phaseList;
     }
 
+    // ++ START AI STATE RESTORATION SETTER ++
+    /**
+     * Bypasses ALL logic and notifications (e.g., phase.activate()).
+     * Directly sets the current phase for state re-hydration.
+     */
+    public void setPhase_AI(String phaseName) {
+        Phase phase = phaseMap.get(phaseName);
+        if (phase != null) {
+            this.currentPhase.set(phase); // Directly set the GenericState
+        }
+    }
+    
 }

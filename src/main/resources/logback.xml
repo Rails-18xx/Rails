@@ -27,8 +27,17 @@
         <MaxSize>1024</MaxSize>
     </appender>
 
+    <appender name="AI_LOGFILE" class="ch.qos.logback.core.FileAppender">
+        <file>ai_decisions.log</file> 
+        <append>false</append> <encoder>
+            <pattern>%d{HH:mm:ss.SSS} - %msg%n</pattern> 
+        </encoder>
+    </appender>
     <logger name="net.sf.rails.algorithms" level="WARN"/>
 
+    <logger name="AI_Decision_Log" level="TRACE" additivity="false">
+    <appender-ref ref="AI_LOGFILE" />
+    </logger>
     <root level="DEBUG">
         <appender-ref ref="stdout" />
         <appender-ref ref="file" />

@@ -10,37 +10,29 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-
-/**
- * @author martin, erik
- *
- */
 public class GameManager_1837 extends GameManager {
 
     private static final Logger log = LoggerFactory.getLogger(GameManager_1837.class);
 
     private StringState newPhaseId = StringState.create(this, "newPhaseId", null);
+    protected final GenericState<Round> previousSRorOR = new GenericState<>(this, "previousSRorOR");
+    private SetState<String> doneThisRound = HashSetState.create(this, "doneThisRound");
+    protected final BooleanState buyOnly = new BooleanState(this, "buyOnly", false);
 
-    protected final GenericState<Round> previousSRorOR =
-            new GenericState<> (this, "previousSRorOR");
+    private java.util.List<String> tempSkippedMinors = new java.util.ArrayList<>();
 
-    private SetState<String> doneThisRound = HashSetState.create (this, "doneThisRound");
-
-    protected final BooleanState buyOnly =
-            new BooleanState(this, "buyOnly", false);
-
-    protected CompanyManager companyManager;
-    protected PhaseManager phaseManager;
+    public java.util.List<String> popTempSkippedMinors() {
+        java.util.List<String> list = new java.util.ArrayList<>(tempSkippedMinors);
+        tempSkippedMinors.clear();
+        return list;
+    }
 
     public GameManager_1837(RailsRoot parent, String id) {
-
         super(parent, id);
     }
 
     public void init() {
         super.init();
-        companyManager = getRoot().getCompanyManager();
-        phaseManager = getRoot().getPhaseManager();
     }
 
     @Override
@@ -48,177 +40,195 @@ public class GameManager_1837 extends GameManager {
         newPhaseId.set(round.getId());
     }
 
-    public void nextRound(Round prevRound) {
+    public boolean checkAndRunKK(String newPhaseId, Round namingRound, Round interruptedRound) {
+        if (doneThisRound.contains("KK")) return false;
+        
+        CompanyManager cm = getRoot().getCompanyManager();
+        if (cm == null) return false;
+        
+        PublicCompany_1837 kk = (PublicCompany_1837) cm.getPublicCompany("KK");
+        if (kk == null || NationalFormationRound.nationalIsComplete(kk)) return false;
 
-        if (prevRound instanceof StartRound) {
-            // In version 2, any subsequent start round will be buy-only (no bidding).
-            buyOnly.set(true);
-            if (((StartRound) prevRound).getStartPacket().areAllSold()) { // This start round was "completed"
-                // check if there are other StartPackets, otherwise stockRounds start
-                beginStartRound();
-            } else {
-                startOperatingRound(runIfStartPacketIsNotCompletelySold());
+        boolean canStart = getRoot().getPhaseManager().hasReachedPhase(kk.getFormationStartPhase());
+        boolean forced = false;
+
+        boolean hasForcingTrain = false;
+        try {
+            hasForcingTrain = getRoot().getBank().getPool().getPortfolioModel().getTrainList().stream()
+                    .anyMatch(t -> t != null && t.getType() != null && (t.getType().getName().equals("4+1") || t.getType().getName().equals("5")));
+            if (!hasForcingTrain) {
+                hasForcingTrain = cm.getAllPublicCompanies().stream()
+                        .flatMap(c -> c.getPortfolioModel().getTrainList().stream())
+                        .anyMatch(t -> t != null && t.getType() != null && (t.getType().getName().equals("4+1") || t.getType().getName().equals("5")));
             }
-        } else if (prevRound instanceof CoalExchangeRound) {
-            //Since the CoalExchangeRound can happen after both types of rounds we need to move the
-            //round decision down to this class and cant call the superclass :(
-
-            doneThisRound.add("CER");
-            if (checkAndRunNFR(newPhaseId.value(), previousSRorOR.value(), (Round)getInterruptedRound())) {
-                return;
-            } else if (previousSRorOR.value() instanceof StockRound) {
-                // Start the first OR after an SR.
-                Phase currentPhase = getRoot().getPhaseManager().getCurrentPhase();
-                if (currentPhase == null) log.error("Current Phase is null??", new Exception(""));
-                numOfORs.set(currentPhase.getNumberOfOperatingRounds());
-                log.debug("Phase={} ORs={}", currentPhase.toText(), numOfORs.value());
-
-                // Create a new OperatingRound (never more than one Stock Round)
-                relativeORNumber.set(0);
-                startOperatingRound(true);
-            } else if (relativeORNumber.value() < numOfORs.value()) {
-                // There will be another OR
-                startOperatingRound(true);
-            } else {
-                startStockRound();
-            }
-
-            getCurrentRound().setPossibleActions();
-
-        } else if (prevRound instanceof NationalFormationRound) {
-            doneThisRound.add(((NationalFormationRound) prevRound).getNational().getId());
-            OperatingRound_1837 interruptedRound = (OperatingRound_1837) getInterruptedRound();
-            if (checkAndRunNFR(newPhaseId.value(), previousSRorOR.value(), interruptedRound)) {
-                return;
-            }
-
-            if (interruptedRound != null) {
-                setRound(interruptedRound);
-                interruptedRound.resume();
-            } else {
-                super.nextRound(previousSRorOR.value());
-            }
-        } else if (prevRound instanceof StockRound_1837 || prevRound instanceof OperatingRound_1837) {
-            previousSRorOR.set (prevRound); // Remember where we came from!
-            doneThisRound.clear();
-            setInterruptedRound(prevRound);
-            if (!checkAndRunCER(null, prevRound, null)
-                    && !checkAndRunNFR(null, prevRound, null)) {
-                super.nextRound(prevRound);
-            }
-        } else {
-            setInterruptedRound(null);
-            super.nextRound(prevRound);
+        } catch (Exception e) {
+            log.error("1837_ERROR: Failed evaluating KK forcing trains: ", e);
         }
+        
+        if (hasForcingTrain) {
+            // log.info("1837_TRIGGER: Compulsory KK formation forced by train (4+1 or 5).");
+            forced = true;
+        }
+
+        if (canStart || forced) {
+            startNationalFormationRound("KK", newPhaseId, namingRound, interruptedRound);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean checkAndRunUG(String newPhaseId, Round namingRound, Round interruptedRound) {
+        if (doneThisRound.contains("Ug")) return false;
+        
+        CompanyManager cm = getRoot().getCompanyManager();
+        if (cm == null) return false;
+        
+        PublicCompany_1837 ug = (PublicCompany_1837) cm.getPublicCompany("Ug");
+        if (ug == null || NationalFormationRound.nationalIsComplete(ug)) return false;
+
+        boolean canStart = false;
+        boolean forced = false;
+        
+        try {
+            boolean has4E = getRoot().getBank().getPool().getPortfolioModel().getTrainList().stream()
+                    .anyMatch(t -> t != null && t.getType() != null && t.getType().getName().equals("4E"));
+            if (!has4E) {
+                has4E = cm.getAllPublicCompanies().stream()
+                        .flatMap(c -> c.getPortfolioModel().getTrainList().stream())
+                        .anyMatch(t -> t != null && t.getType() != null && t.getType().getName().equals("4E"));
+            }
+            if (has4E) canStart = true;
+
+            boolean has5 = getRoot().getBank().getPool().getPortfolioModel().getTrainList().stream()
+                    .anyMatch(t -> t != null && t.getType() != null && t.getType().getName().equals("5"));
+            if (!has5) {
+                has5 = cm.getAllPublicCompanies().stream()
+                        .flatMap(c -> c.getPortfolioModel().getTrainList().stream())
+                        .anyMatch(t -> t != null && t.getType() != null && t.getType().getName().equals("5"));
+            }
+            
+            if (has5) {
+                // log.info("1837_TRIGGER: Compulsory Ug formation forced by train (5).");
+                forced = true;
+            }
+        } catch (Exception e) {
+            log.error("1837_ERROR: Failed evaluating UG triggers: ", e);
+        }
+
+        if (canStart || forced) {
+            startNationalFormationRound("Ug", newPhaseId, namingRound, interruptedRound);
+            return true;
+        }
+        return false;
+    }
+
+    public void startNationalFormationRound(String nationalName, String phaseId, Round safeNamingRound, Round interruptedRound) {
+        String roundId;
+        String nfrReportName;
+
+        if (safeNamingRound == null) safeNamingRound = interruptedRound;
+        if (safeNamingRound == null) safeNamingRound = (Round) currentRound.value();
+
+        if (phaseId == null) {
+            if (safeNamingRound instanceof OperatingRound_1837) {
+                nfrReportName = safeNamingRound.getId().replaceFirst("OR_(\\d+)(\\.\\d+)?", "$1$2");
+                if (!nfrReportName.contains(".")) nfrReportName += ".1";
+            } else if (safeNamingRound instanceof StockRound_1837) {
+                nfrReportName = safeNamingRound.getId().replaceFirst("SR_(\\d+)", "$1.0");
+            } else {
+                nfrReportName = "Recovery";
+            }
+            roundId = "NFR_" + nationalName + "_" + nfrReportName + "_" + System.currentTimeMillis();
+        } else {
+            nfrReportName = "phase " + phaseId;
+            roundId = "NFR_" + nationalName + "_phase_" + phaseId + "_" + System.currentTimeMillis();
+        }
+
+        CompanyManager cm = getRoot().getCompanyManager();
+        if (cm == null) return;
+        PublicCompany_1837 national = (PublicCompany_1837) cm.getPublicCompany(nationalName);
+        
+        // Explicitly suspend the current round and register the new one
+        setInterruptedRound(interruptedRound);
+        
+        if (nationalName.equals("KK")) {
+            KKFormationRound kkRound = createRound(KKFormationRound.class, roundId);
+            setRound(kkRound);
+            kkRound.start(national, phaseId != null, nfrReportName);
+        } else if (nationalName.equals("Ug")) {
+            UgFormationRound ugRound = createRound(UgFormationRound.class, roundId);
+            setRound(ugRound);
+            ugRound.start(national, phaseId != null, nfrReportName);
+        }
+
     }
 
     public boolean checkAndRunCER(String newPhaseId, Round namingRound, Round interruptedRound) {
         if (doneThisRound.contains("CER")) return false;
-        List<PublicCompany> coalCompanies =
-                getRoot().getCompanyManager().getPublicCompaniesByType("Coal");
+
+        CompanyManager cm = getRoot().getCompanyManager();
+        if (cm == null) return false;
+        
+        List<PublicCompany> coalCompanies = cm.getPublicCompaniesByType("Coal");
         boolean runCER = false;
-        for (PublicCompany coalComp : coalCompanies) {
-            if (!coalComp.isClosed()
-                    && coalComp.getRelatedPublicCompany().hasFloated()) {
-                runCER = true;
-                setInterruptedRound(interruptedRound);
-                setNewPhaseId(newPhaseId);
-                break;
+        
+        try {
+            if (coalCompanies != null) {
+                for (PublicCompany coalComp : coalCompanies) {
+                    if (coalComp.isClosed()) continue;
+                    PublicCompany target = Merger1837.getMergeTarget(this, coalComp);
+                    if (target != null && target.hasFloated()) {
+                        runCER = true;
+                        break;
+                    }
+                }
             }
+        } catch (Exception e) {
+            log.error("1837_ERROR: Failed checking CER eligibility: ", e);
+            return false;
         }
+
         if (runCER) {
-            //CoalRoundFollowedByOR.set(prevRound instanceof StockRound_1837);
-            // Number the CER with the numeric part of the previous round.
-            // After SR_n: CER_n.0
-            // After OR_n.m: CER_n.m; if OR_n then CER_n.1
-            String cerId;
-            if (newPhaseId != null) {
-                cerId = "CER_phase_"+newPhaseId;
-            } else if (namingRound instanceof StockRound_1837) {
-                cerId = namingRound.getId().replaceFirst("SR_(\\d+)", "CER_$1.0");
-            } else {
-                cerId = namingRound.getId().replaceFirst("OR_(\\d+)(\\.\\d+)?", "CER_$1$2");
-                if (!cerId.contains(".")) cerId += ".1";
+            try {
+                String cerId;
+                Round safeNamingRound = interruptedRound;
+                if (safeNamingRound == null) safeNamingRound = namingRound;
+                if (safeNamingRound == null) safeNamingRound = (Round) currentRound.value();
+
+                if (newPhaseId != null) {
+                    cerId = "CER_phase_" + newPhaseId;
+                } else if (safeNamingRound instanceof StockRound_1837) {
+                    cerId = safeNamingRound.getId().replaceFirst("SR_(\\d+)", "CER_$1.0");
+                } else if (safeNamingRound != null) {
+                    cerId = safeNamingRound.getId().replaceFirst("OR_(\\d+)(\\.\\d+)?", "CER_$1$2");
+                    if (!cerId.contains(".")) {
+                        cerId += ".1";
+                    }
+                } else {
+                    cerId = "CER_Recovery_" + System.currentTimeMillis();
+                }
+log.info("1837_TRACE: Starting CER with ID: " + cerId);
+                
+                // Explicitly suspend the current round and register the new one
+                setInterruptedRound(interruptedRound);
+                CoalExchangeRound cer = createRound(CoalExchangeRound.class, cerId);
+                setRound(cer);
+                cer.start();
+                
+                return true;
+                
+            } catch (Throwable t) {
+                log.error("1837_CRITICAL: Fatal error during CER creation", t);
+                return false;
             }
-            log.debug("Prev round {}, new round {}", namingRound.getId(), cerId);
-            createRound(CoalExchangeRound.class, cerId).start();
         } else {
             doneThisRound.add("CER");
         }
-        return runCER;
-    }
-
-    /**
-     * Check if a national formation (or minor merge) round needs be started
-     * @param namingRound The OR in which a phase has changed. Null if we are between rounds.
-     * @param interruptedRound The OR in which a phase has changed. Null if we are between rounds.
-     */
-    public boolean checkAndRunNFR(String newPhaseId, Round namingRound, Round interruptedRound) {
-        // Check the nationals for having reached one of their formation steps
-        // TODO Can namingRound be removed? Where is the NFR named then?
-
-        this.newPhaseId.set(newPhaseId);
-        setInterruptedRound(interruptedRound);
-        String[] nationalNames = GameDef_1837.Nationals;
-        for (String nationalName : nationalNames) {
-            if (doneThisRound.contains(nationalName)) continue;
-            PublicCompany_1837 national = (PublicCompany_1837) companyManager.getPublicCompany(nationalName);
-            if (phaseManager.hasReachedPhase(national.getFormationStartPhase())
-                    && !NationalFormationRound.nationalIsComplete(national)) {
-                // Check if this national is affected by a phase change
-                if (newPhaseId != null) {
-                    if (newPhaseId.equals(national.getFormationStartPhase())
-                                && NationalFormationRound.presidencyIsInPool(national)
-                            || newPhaseId.equals(national.getForcedStartPhase())
-                            || newPhaseId.equals(national.getForcedMergePhase())) {
-                        startNationalFormationRound(nationalName);
-                        return true;
-                    } else {
-                        doneThisRound.add(nationalName);
-                    }
-                } else {
-                    startNationalFormationRound(nationalName);
-                    return true;
-                }
-            }
-        }
-        doneThisRound.clear();
-
         return false;
     }
 
-    public void startNationalFormationRound(String nationalName) {
-
-        String roundId;
-        String nfrReportName;
-        if (newPhaseId.value() == null) {
-            // After a round
-            if (previousSRorOR.value() instanceof OperatingRound_1837) {
-                nfrReportName = previousSRorOR.value().getId().replaceFirst(
-                        "OR_(\\d+)(\\.\\d+)?", "$1$2");
-                if (!nfrReportName.contains(".")) nfrReportName += ".1";
-            } else {
-                nfrReportName = previousSRorOR.value().getId().replaceFirst(
-                        "SR_(\\d+)", "$1.0");
-            }
-            roundId = "NFR_" + nationalName + "_" + nfrReportName;
-        } else {
-            // At starting a new phase
-            nfrReportName = "phase " + newPhaseId.value();
-            roundId = "NFR_" + nationalName + "_phase_" + newPhaseId.value();
-        }
-
-        PublicCompany_1837 national = (PublicCompany_1837) companyManager.getPublicCompany(nationalName);
-        createRound(NationalFormationRound.class, roundId)
-                .start(national, newPhaseId.value() != null, nfrReportName);
-    }
-
-    /* (non-Javadoc)
-     * @see net.sf.rails.game.GameManager#runIfStartPacketIsNotCompletelySold()
-     */
     @Override
     protected boolean runIfStartPacketIsNotCompletelySold() {
-        //After the first Startpacket sold out there will be Operation Rounds
         StartPacket nextStartPacket = getRoot().getCompanyManager().getNextUnfinishedStartPacket();
         return !(nextStartPacket.getId().equalsIgnoreCase("Coal Mines"));
     }
@@ -228,13 +238,10 @@ public class GameManager_1837 extends GameManager {
         String startRoundClassName = startPacket.getRoundClassName();
         startRoundNumber.add(1);
         String variant = GameOption.getValue(this, GameOption.VARIANT);
-        if (variant.equalsIgnoreCase("1837-2ndEd.")
-                && buyOnly.value()) {
-            // For subsequent start rounds, we need the buy-only version.
+        if (variant.equalsIgnoreCase("1837-2ndEd.") && buyOnly.value()) {
             startRoundClassName += "_buying";
         }
-        StartRound startRound = createRound(startRoundClassName,
-                "startRound_" + startRoundNumber.value());
+        StartRound startRound = createRound(startRoundClassName, "startRound_" + startRoundNumber.value());
         startRound.start();
     }
 
@@ -242,26 +249,229 @@ public class GameManager_1837 extends GameManager {
     public void setGuiParameters() {
         super.setGuiParameters();
         guiParameters.put(GuiDef.Parm.HAS_SPECIAL_COMPANY_INCOME, true);
-
     }
 
     public boolean isBuyOnly() {
         return buyOnly.value();
     }
 
-    /**
-     * NewPhaseId is the value of the currentPhase, and must be set
-     * immediately when a new phase has been reached, insofar such a
-     * phase may trigger special rounds that interrupt an OR.
-     * Otherwise, when such special rounds run after completing an SR or OR,
-     * the value must be null.
-     *
-     * In 1837, this refers to CoalExchangeRound and NationalFormationRound
-     * instances. These can occur both in and between regular rounds.
-     * @param newPhaseId String value representing the phase just started, or null.
-     */
     public void setNewPhaseId(String newPhaseId) {
         this.newPhaseId.set(newPhaseId);
     }
 
+    @Override
+    public boolean process(rails.game.action.PossibleAction action) {
+        if (action instanceof rails.game.action.NullAction) {
+            rails.game.action.NullAction incoming = (rails.game.action.NullAction) action;
+
+            if (incoming.getMode() == rails.game.action.NullAction.Mode.SKIP ||
+                    incoming.getMode() == rails.game.action.NullAction.Mode.PASS) {
+
+                net.sf.rails.game.round.RoundFacade facade = currentRound.value();
+
+                if (facade instanceof net.sf.rails.game.Round) {
+                    net.sf.rails.game.Round activeRound = (net.sf.rails.game.Round) facade;
+
+                    for (rails.game.action.PossibleAction valid : activeRound.getPossibleActionsList()) {
+                        if (valid instanceof rails.game.action.NullAction) {
+                            rails.game.action.NullAction validNa = (rails.game.action.NullAction) valid;
+
+                            if (validNa.getMode() == incoming.getMode()) {
+
+                                return super.process(validNa);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return super.process(action);
+    }
+
+    @Override
+    public void nextRound(Round prevRound) {
+        log.info("Transitioning Round. Previous: {} ({})", prevRound.getId(), prevRound.getClass().getSimpleName());
+
+        if (prevRound instanceof StartRound) {
+            buyOnly.set(true);
+            if (((StartRound) prevRound).getStartPacket().areAllSold()) {
+                beginStartRound();
+            } else {
+                startOperatingRound(runIfStartPacketIsNotCompletelySold());
+            }
+        } else if (prevRound instanceof CoalExchangeRound) {
+            doneThisRound.add("CER");
+
+            tempSkippedMinors.clear();
+            for (String minorId : ((CoalExchangeRound) prevRound).skippedMinors) {
+                tempSkippedMinors.add(minorId);
+            }
+
+            Round interrupted = (Round) getInterruptedRound();
+            
+            try {
+                if (checkAndRunKK(newPhaseId.value(), previousSRorOR.value(), interrupted)) return;
+                if (checkAndRunUG(newPhaseId.value(), previousSRorOR.value(), interrupted)) return;
+            } catch (Exception e) {
+                log.error("1837_CRITICAL: Crash intercept during CER cascading triggers.", e);
+            }
+
+            if (interrupted != null) {
+                log.info("1837_LOGIC: Returning from exchanges to interrupted round: " + interrupted.getId());
+                setInterruptedRound(null); 
+                setRound(interrupted);
+                if (interrupted instanceof OperatingRound_1837) {
+                    ((OperatingRound_1837) interrupted).resume();
+                } else if (interrupted instanceof StockRound_1837) {
+                    ((StockRound_1837) interrupted).resume();
+                }
+                return;
+            }
+
+            boolean cameFromStockRound = (previousSRorOR.value() instanceof StockRound);
+            if (cameFromStockRound) {
+                Phase currentPhase = getRoot().getPhaseManager().getCurrentPhase();
+                if (currentPhase != null) {
+                    numOfORs.set(currentPhase.getNumberOfOperatingRounds());
+                }
+                relativeORNumber.set(0);
+                startOperatingRound(true);
+            } else if (relativeORNumber.value() < numOfORs.value()) {
+                startOperatingRound(true);
+            } else {
+                startStockRound();
+            }
+
+        } else if (prevRound instanceof NationalFormationRound) {
+            
+            try {
+                if (prevRound instanceof KKFormationRound || prevRound instanceof UgFormationRound) {
+                    PublicCompany_1837 national = ((NationalFormationRound) prevRound).getNational();
+                    if (national != null) {
+                        doneThisRound.add(national.getId());
+                        log.info("1837_TRACE: Added " + national.getId() + " to doneThisRound");
+                    }
+                }
+            } catch (Exception e) {
+                log.error("1837_ERROR: Failed evaluating NFR completion: ", e);
+            }
+            
+            Round interruptedRound = (Round) getInterruptedRound();
+
+            try {
+                if (!doneThisRound.contains("CER") && checkAndRunCER(newPhaseId.value(), previousSRorOR.value(), interruptedRound)) return;
+                if (!doneThisRound.contains("KK") && checkAndRunKK(newPhaseId.value(), previousSRorOR.value(), interruptedRound)) return;
+                if (!doneThisRound.contains("Ug") && checkAndRunUG(newPhaseId.value(), previousSRorOR.value(), interruptedRound)) return;
+            } catch (Exception e) {
+                log.error("1837_CRITICAL: Crash intercept during NFR cascading triggers.", e);
+            }
+
+            if (interruptedRound != null) {
+                log.info("1837_TRACE: Resuming interrupted round: " + interruptedRound.getId());
+                setInterruptedRound(null); 
+                setRound(interruptedRound);
+                if (interruptedRound instanceof OperatingRound_1837) {
+                    ((OperatingRound_1837) interruptedRound).resume();
+                } else if (interruptedRound instanceof StockRound_1837) {
+                    ((StockRound_1837) interruptedRound).resume();
+                } else {
+                    super.nextRound(interruptedRound);
+                }
+            } else {
+                Round safeRound = previousSRorOR.value();
+                if (safeRound == null) safeRound = (Round) currentRound.value(); 
+                super.nextRound(safeRound);
+            }
+
+        } else if (prevRound instanceof StockRound_1837 || prevRound instanceof OperatingRound_1837) {
+            previousSRorOR.set(prevRound);
+            doneThisRound.clear();
+
+            try {
+                if (checkAndRunCER(newPhaseId.value(), prevRound, null)) return;
+                if (checkAndRunKK(newPhaseId.value(), prevRound, null)) return;
+                if (checkAndRunUG(newPhaseId.value(), prevRound, null)) return;
+            } catch (Exception e) {
+                log.error("1837_CRITICAL: Crash intercept during standard round cascading triggers.", e);
+            }
+
+            super.nextRound(prevRound);
+        } else {
+            setInterruptedRound(null);
+            super.nextRound(prevRound);
+        }
+    }
+
+
+@Override
+    public List<PublicCompany> getCompaniesInDisplayOrder(List<PublicCompany> companies) {
+        List<PublicCompany> displayOrder = new java.util.ArrayList<>(companies);
+
+        // Capture original running order for stable sorting of minors and fallbacks
+        final java.util.Map<String, Integer> originalOrder = new java.util.HashMap<>();
+        for (int i = 0; i < companies.size(); i++) {
+            originalOrder.put(companies.get(i).getId(), i);
+        }
+
+
+
+        displayOrder.sort((c1, c2) -> {
+
+
+
+
+
+            // Explicitly identify standard Majors, including KK, SD, and UG.
+            boolean isMajor1 = (c1.getType() != null && "Major".equalsIgnoreCase(c1.getType().getId()))
+                    || "KK".equalsIgnoreCase(c1.getId())
+                    || "SD".equalsIgnoreCase(c1.getId())
+                    || "UG".equalsIgnoreCase(c1.getId());
+                    
+            boolean isMajor2 = (c2.getType() != null && "Major".equalsIgnoreCase(c2.getType().getId()))
+                    || "KK".equalsIgnoreCase(c2.getId())
+                    || "SD".equalsIgnoreCase(c2.getId())
+                    || "UG".equalsIgnoreCase(c2.getId());
+
+          
+          
+          // Group 1: Minors/Coal, Group 2: Majors with a share value, Group 3: Unopened Majors, Group 4: Closed Majors
+            int cat1 = !isMajor1 ? 1 : (c1.isClosed() ? 4 : (c1.getCurrentSpace() != null ? 2 : 3));
+            int cat2 = !isMajor2 ? 1 : (c2.isClosed() ? 4 : (c2.getCurrentSpace() != null ? 2 : 3));
+
+            if (cat1 != cat2) {
+                return Integer.compare(cat1, cat2);
+            }
+
+            // If both are Majors with a share value (Category 2), sort strictly by share value (highest first)
+            if (cat1 == 2) {
+                StockSpace space1 = c1.getCurrentSpace();
+                StockSpace space2 = c2.getCurrentSpace();
+
+                // Primary Sort: Price (Highest first)
+                if (space1.getPrice() != space2.getPrice()) {
+                    return Integer.compare(space2.getPrice(), space1.getPrice());
+                }
+                // Tie-breakers: column (rightmost first), row (top first), stack position (top first)
+                if (space1.getColumn() != space2.getColumn()) {
+                    return Integer.compare(space2.getColumn(), space1.getColumn());
+                }
+                if (space1.getRow() != space2.getRow()) {
+                    return Integer.compare(space1.getRow(), space2.getRow());
+                }
+                return Integer.compare(space1.getStackPosition(c1), space2.getStackPosition(c2));
+            }
+
+            // Fallback for Minors (in running order), Unopened, or Closed majors: keep original order
+            return Integer.compare(originalOrder.get(c1.getId()), originalOrder.get(c2.getId()));
+          
+          
+          
+                });
+
+        return displayOrder;
+    }
+
+
+
+    
 }

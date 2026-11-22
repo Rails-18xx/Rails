@@ -25,7 +25,6 @@ public class ORUIManager_18Scan extends ORUIManager {
 
     }
 
-    @Override
     protected void checkForGameSpecificActions(PublicCompany orComp,
                                                GameDef.OrStep orStep,
                                                PossibleActions possibleActions) {

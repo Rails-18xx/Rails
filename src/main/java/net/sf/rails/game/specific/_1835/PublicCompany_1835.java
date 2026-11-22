@@ -7,8 +7,9 @@ import net.sf.rails.game.financial.BankPortfolio;
 import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.Owner;
+import java.io.Serializable;
 
-public class PublicCompany_1835 extends PublicCompany {
+public class PublicCompany_1835 extends PublicCompany implements Serializable {
 
     /**
      * If during emergency train buying the president gets bankrupt,
@@ -40,21 +41,5 @@ public class PublicCompany_1835 extends PublicCompany {
         return true;
     }
 
-    /* moved to parent
-    public int getBankLoan() {
-        return bankLoan.value();
-    }
-
-    public void setBankLoan(int bankLoan) {
-        this.bankLoan.set(bankLoan);
-    }
-
-    public void repayBankLoan (int repayment) {
-        this.bankLoan.add (-repayment);
-    }
-
-    public boolean hasBankLoan () {
-        return getBankLoan() > 0;
-    }
-    */
+    
 }

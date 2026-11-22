@@ -59,8 +59,8 @@ public class PublicCompany_1826 extends PublicCompany {
 
         Tag bondsTag = tag.getChild("Bonds");
         if (bondsTag != null) {
-            numberOfBonds = bondsTag.getAttributeAsInteger("number", 0);
-            portfolio.getBondsModel(this).setBondsCount(numberOfBonds);
+            numberOfBonds.set(bondsTag.getAttributeAsInteger("number", 0));
+            portfolio.getBondsModel(this).setBondsCount(numberOfBonds.value());
             priceOfBonds = bondsTag.getAttributeAsInteger("price", 0);
             bondsInterest = bondsTag.getAttributeAsInteger("interest", 0);
         }
@@ -114,7 +114,7 @@ public class PublicCompany_1826 extends PublicCompany {
         for (int i = 0; i < extraTokens; i++) {
             baseTokens.addBaseToken(BaseToken.create(this), false);
         }
-        numberOfBaseTokens.add(extraTokens);
+        numberOfBaseTokens += extraTokens;
 
         super.setFloated();
 
@@ -149,7 +149,49 @@ public class PublicCompany_1826 extends PublicCompany {
 
         if (!validateGrow(checkDestination)) return false;
 
-        return super.grow();
+        growStep.add(1);
+        setShareUnit(shareUnitSizes.get(growStep.value()));
+
+        BankPortfolio reserved = getRoot().getBank().getUnavailable();
+        BankPortfolio ipo = getRoot().getBank().getIpo();
+        Set<PublicCertificate> last5Shares = reserved.getPortfolioModel().getCertificates(this);
+        for (PublicCertificate cert : last5Shares) {
+            if (hasStarted()) {
+                cert.moveTo(this);
+            } else {
+                // Still in IPO, put the reserved shares there too
+                cert.moveTo(ipo);
+            }
+        }
+
+        ReportBuffer.add(this, LocalText.getText("CompanyHasGrown",
+                this, getActiveShareCount()));
+
+        currentTrainLimits.setTo(trainLimits.get(growStep.value()));
+        ReportBuffer.add(this,
+                LocalText.getText("PhaseDependentTrainLimitsSetTo",
+                        this, currentTrainLimits.view(), getCurrentTrainLimit()));
+
+
+        // For some reason the shareUnit change does not update
+        // the percentages shown in the GameStatus window.
+        // E.g. 60% should become 30%, etc.
+        // There must be a nicer way to accomplish that,
+        // but for now the below code works.
+        Set<Model> modelsToUpdate = new HashSet<>();
+        PortfolioOwner owner;
+        Model model;
+        for (PublicCertificate cert : getCertificates()) {
+            owner = (PortfolioOwner) cert.getOwner();
+            model = owner.getPortfolioModel().getShareModel(this);
+            if (!modelsToUpdate.contains(model)) modelsToUpdate.add(model);
+        }
+        for (Model m : modelsToUpdate) {
+            for (Observer obs : m.getObservers()) {
+                obs.update(m.toText());
+            }
+        }
+        return true;
     }
 
     protected boolean validateGrow(boolean checkDestination) {

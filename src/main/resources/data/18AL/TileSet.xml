@@ -122,6 +122,6 @@
 		<Upgrade id="446" hex="G4"/>
 	</Tile>
 	
-	<!-- Grey tiles -->
+	<!-- gray tiles -->
 	<Tile id="446" quantity="1" /><!--Missing!-->
 </TileManager>

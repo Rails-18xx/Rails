@@ -32,7 +32,6 @@ public abstract class StartRound extends Round {
     // static at start
     protected Player startPlayer;
 
-
     // The following have to be initialized by the sub-classes
     /**
      * Should the UI present bidding into and facilities? This value MUST be set
@@ -49,7 +48,7 @@ public abstract class StartRound extends Round {
     protected final boolean hasBasePrices;
 
     /**
-     * Is buying allowed in the start round?  Not in the first start round of
+     * Is buying allowed in the start round? Not in the first start round of
      * 1880, for example, where everything is auctioned.
      */
     protected final boolean hasBuying;
@@ -61,7 +60,7 @@ public abstract class StartRound extends Round {
     protected final IntegerState numPasses = IntegerState.create(this, "numPasses");
 
     protected StartRound(GameManager parent, String id,
-                         Bidding bidding, boolean hasBasePrices, boolean hasBuying) {
+            Bidding bidding, boolean hasBasePrices, boolean hasBuying) {
         super(parent, id);
 
         this.hasBidding = bidding;
@@ -77,12 +76,12 @@ public abstract class StartRound extends Round {
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setActivePanel(GuiDef.Panel.START_ROUND);
-        log.info("Starting initial round type: {}", getId());
+        // log.info("Starting initial round type: {}", getId());
     }
 
     // For backwards compatibility
     protected StartRound(GameManager parent, String id, boolean hasBidding, boolean hasBasePrices, boolean hasBuying) {
-        this (parent, id, hasBidding ? Bidding.ON_ITEMS : Bidding.NO, hasBasePrices, hasBuying);
+        this(parent, id, hasBidding ? Bidding.ON_ITEMS : Bidding.NO, hasBasePrices, hasBuying);
     }
 
     protected StartRound(GameManager parent, String id) {
@@ -116,7 +115,7 @@ public abstract class StartRound extends Round {
     public boolean process(PossibleAction action) {
         boolean result = false;
 
-        log.debug("Processing action {}", action);
+        // log.debug("Processing action {}", action);
 
         if (action instanceof NullAction &&
                 ((NullAction) action).getMode() == NullAction.Mode.PASS) {
@@ -129,7 +128,7 @@ public abstract class StartRound extends Round {
             StartItemAction startItemAction = (StartItemAction) action;
             String playerName = action.getPlayerName();
 
-            log.debug("Item details: {}", startItemAction);
+            // log.debug("Item details: {}", startItemAction);
 
             if (startItemAction instanceof BuyStartItem) {
 
@@ -170,7 +169,8 @@ public abstract class StartRound extends Round {
     /**
      * Stub to allow start packet cleanups in subclasses
      */
-    protected void startPacketChecks() {}
+    protected void startPacketChecks() {
+    }
 
     /*----- Processing player actions -----*/
 
@@ -205,7 +205,8 @@ public abstract class StartRound extends Round {
                 }
 
                 price = item.getBasePrice();
-                if (item.getBid() > price) price = item.getBid();
+                if (item.getBid() > price)
+                    price = item.getBid();
 
                 if (player.getFreeCash() < price) {
                     errMsg = LocalText.getText("NoMoney");
@@ -219,15 +220,13 @@ public abstract class StartRound extends Round {
                 shareCompName = boughtItem.getCompanyToSetPriceFor();
                 sharePrice = boughtItem.getAssociatedSharePrice();
                 if (sharePrice == 0) {
-                    errMsg =
-                            LocalText.getText("NoSharePriceSet", shareCompName);
+                    errMsg = LocalText.getText("NoSharePriceSet", shareCompName);
                     break;
                 }
                 if ((stockMarket.getStartSpace(sharePrice)) == null) {
-                    errMsg =
-                            LocalText.getText("InvalidStartPrice",
-                                    Bank.format(this, sharePrice),
-                                    shareCompName);
+                    errMsg = LocalText.getText("InvalidStartPrice",
+                            Bank.format(this, sharePrice),
+                            shareCompName);
                     break;
                 }
             }
@@ -257,34 +256,6 @@ public abstract class StartRound extends Round {
 
     }
 
-    /**
-     * This method executes the start item buy action.
-     *
-     * @param player Buying player.
-     * @param item   Start item being bought.
-     * @param price  Buy price.
-     */
-    protected void assignItem(Player player, StartItem item, int price,
-                              int sharePrice) {
-        Certificate primary = item.getPrimary();
-        String priceText = Currency.toBank(player, price);
-        ReportBuffer.add(this, LocalText.getText("BuysItemFor",
-                player.getId(),
-                primary.toText(),
-                priceText));
-        primary.moveTo(player);
-        checksOnBuying(primary, sharePrice);
-        if (item.hasSecondary()) {
-            Certificate extra = item.getSecondary();
-            ReportBuffer.add(this, LocalText.getText("ALSO_GETS",
-                    player.getId(),
-                    extra.toText()));
-            extra.moveTo(player);
-            checksOnBuying(extra, sharePrice);
-        }
-        item.setSold(player, price);
-    }
-
     protected void checksOnBuying(Certificate cert, int sharePrice) {
         if (cert instanceof PublicCertificate) {
             PublicCertificate pubCert = (PublicCertificate) cert;
@@ -302,17 +273,19 @@ public abstract class StartRound extends Round {
                         // Company has a known start price
                         comp.start();
                     } else {
-                        log.error("No start price for {}", comp.getId());
+                        // log.error("No start price for {}", comp.getId());
                     }
                 }
             }
             if (comp.hasStarted() && !comp.hasFloated()) {
                 checkFlotation(comp);
             }
-            if (comp.hasStarted()) comp.checkPresidency();  // Needed for 1835 BY
+            if (comp.hasStarted())
+                comp.checkPresidency(); // Needed for 1835 BY
         } else if (cert instanceof PrivateCompany) {
-            Set<SpecialProperty> sps = ((PrivateCompany)cert).getSpecialProperties();
-            if (sps != null) getRoot().getGameManager().allocateSpecialProperties((MoneyOwner) cert.getOwner(), sps);
+            Set<SpecialProperty> sps = ((PrivateCompany) cert).getSpecialProperties();
+            if (sps != null)
+                getRoot().getGameManager().allocateSpecialProperties((MoneyOwner) cert.getOwner(), sps);
         }
     }
 
@@ -323,13 +296,6 @@ public abstract class StartRound extends Round {
      * @param playerName The name of the current player (for checking purposes).
      */
     protected abstract boolean pass(NullAction action, String playerName);
-
-    @Override
-    protected void finishRound() {
-        super.finishRound();
-    }
-
-    /*----- Setting up the UI for the next action -----*/
 
     public List<StartItem> getStartItems() {
         return itemsToSell.view();
@@ -406,6 +372,35 @@ public abstract class StartRound extends Round {
      */
     public void setStartRoundName(String startRoundName) {
         StartRoundName = startRoundName;
+    }
+
+    @Override
+    protected void finishRound() {
+        super.finishRound();
+        // UI Refresh removed (Handled by StatusWindow automatically)
+    }
+
+    protected void assignItem(Player player, StartItem item, int price,
+            int sharePrice) {
+        Certificate primary = item.getPrimary();
+        String priceText = Currency.toBank(player, price);
+        ReportBuffer.add(this, LocalText.getText("BuysItemFor",
+                player.getId(),
+                primary.toText(),
+                priceText));
+        primary.moveTo(player);
+        checksOnBuying(primary, sharePrice);
+        if (item.hasSecondary()) {
+            Certificate extra = item.getSecondary();
+            ReportBuffer.add(this, LocalText.getText("ALSO_GETS",
+                    player.getId(),
+                    extra.toText()));
+            extra.moveTo(player);
+            checksOnBuying(extra, sharePrice);
+        }
+        item.setSold(player, price);
+
+        // UI Refresh removed (Handled by StatusWindow automatically)
     }
 
 }

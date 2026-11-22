@@ -52,7 +52,6 @@ public class SpecialTrainBuy extends SpecialProperty {
             relativeDeduction = true;
             deductionAmountString = deductionString.replaceAll("%", "");
         } else {
-            absoluteDeduction = true;
             deductionAmountString = deductionString;
         }
         try {

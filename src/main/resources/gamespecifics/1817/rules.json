@@ -1,0 +1,130 @@
+{
+  "game": "1817",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "No. If no private companies are purchased they are all removed from the game."
+    },
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": "Yes. The bid plus the available seed money from the bank must be at face value or a multiple of 5 over it or any previous bid."
+    },
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "Sell then buy."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "After it has operated."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "No."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "| 20 | 16 | 13 | 11 | 9 |  |  |  |"
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "All selling precedes all buying."
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "Their own, in SRs, when the president chooses to act on behalf of the company instead of for himself."
+    },
+    "parPrice": {
+      "question": "How is a share company's initial (par) price determined?",
+      "answer": "The President's certificates are auctioned. The initial share price is the final auction bid divided by two, rounded down to the nearest stock price."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830. (rule 6.3.1)"
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Permissive."
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "All 0. They were paid for at flotation time: 5-share companies pay 50, 10-share companies pay 150 (total), for 3 tokens."
+    },
+    "multiStation": {
+      "question": "Can you lay more than one station marker per turn?",
+      "answer": "No."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "A company's home station is placed when the President's certificate is put up for auction."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "No."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "Yes."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "A company does not have to own a train."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "No, but they be acquired in mergers, liquidations or takeovers."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "No."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "2",
+          "effects": "Yellow tiles, train limit 4, new companies may only be started as 2-share companies,     use yellow values for grey and off-board areas"
+        },
+        {
+          "train": "3",
+          "phase": "3",
+          "effects": "Green tiles, new companies may be strarted as 2-share or 5-share companies, use green     values for grey and off-board areas"
+        },
+        {
+          "train": "4",
+          "phase": "4",
+          "effects": "2 trains rust, train limit 3, 2+ trains may not be bought or sold and will be     discarded without compensation after running trains, new companies can only be started as     5-share companies"
+        },
+        {
+          "train": "5",
+          "phase": "5",
+          "effects": "Brown tiles, new companies may be started as 5-share or 10-share companies, use brown     values for grey and off-board areas"
+        },
+        {
+          "train": "6",
+          "phase": "6",
+          "effects": "3 trains rust, train limit 2, new companies may only be started as 10-share companies"
+        },
+        {
+          "train": "7",
+          "phase": "7",
+          "effects": "Grey tiles, use grey values for grey and off-board areas"
+        },
+        {
+          "train": "8",
+          "phase": "8",
+          "effects": "4 trains rust, short selling is no longer permitted"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "The sequence of play is a stock round, an operating round, a merger and acquisition round, an operating round and a merger and acquisition round. This sequence is repeated for the duration of the game. A feature of this game is the ability to sell stock short, which is the practice of selling stock that is not owned, with the intention of buying the stock back at a later date. The short seller hopes to profit from a decline in the price of the stock between the sale and the repurchase, as he will pay less to buy the stock than he received on selling it. There is no requirement to close the short position (by buying a share) during the game, but while you own a short share, it is a liability. You must pay to the bank any dividends the company pays. The Bank of New York makes loans available to companies in $100 increments. Companies may take loans for any purpose at times specified in the stock round, operating round and the merger and acquisition round. The Bank of New York charges interest on loans. As more loans are issued, the interest rate rises. At the end of each operating round, the next available train is exported, i.e. removed from the game. This may cause a phase change. The following special case is to be followed for exporting trains: After a 2 train is exported at the end of the first operating round, all unsold 2 trains     are removed from the game. During the merger and acquisition rounds, the following actions may take place: 2-share companies may convert or merge to form 5-share companies 5-share companies may convert or merger to form 10-share companies Companies in the liquidation area of the stock marker are liquidated Companies in the grey area of the stock market may be acquired Other companies may be offered for sale"
+    }
+  }
+}

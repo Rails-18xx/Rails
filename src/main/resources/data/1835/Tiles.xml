@@ -124,6 +124,18 @@
 		<Station id="city1" position="0" type="OffMapCity" value="-1"/>
 		<Track from="city1" gauge="normal" to="side2"/>
 	</Tile>
+
+	<Tile colour="red" id="-901_1835" name="OM 1 way">
+		<Station id="city1" position="0" type="OffMapCity" value="-1"/>
+		<Track from="city1" gauge="normal" to="side2"/>
+	</Tile>
+	
+		<Tile colour="red" id="-901_18352" name="OM 1 way">
+		<Station id="city1" position="0" type="OffMapCity" value="-1"/>
+		<Track from="city1" gauge="normal" to="side2"/>
+	</Tile>
+	
+	
 	<Tile colour="white" id="-3007" name="Y city (cent)">
 		<Station id="city1" position="0" slots="1" type="City"/>
 	</Tile>

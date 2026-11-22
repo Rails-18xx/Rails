@@ -5,7 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
-
+import net.sf.rails.common.Config;
 import net.sf.rails.game.MapManager;
 import net.sf.rails.ui.swing.hexmap.GUIHex;
 import net.sf.rails.ui.swing.hexmap.HexMap;
@@ -20,7 +20,8 @@ import org.slf4j.LoggerFactory;
 public class MapPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
-    //defines how many pixels should be left as safety margin when calculating fit zooms
+    // defines how many pixels should be left as safety margin when calculating fit
+    // zooms
     private static final int ZOOM_FIT_SAFETY_MARGIN = 4;
 
     private MapManager mmgr;
@@ -34,7 +35,7 @@ public class MapPanel extends JPanel {
     private Dimension originalMapSize;
     private Dimension currentMapSize;
 
-    //active fit-to zoom options
+    // active fit-to zoom options
     private boolean fitToWidth = false;
     private boolean fitToHeight = false;
 
@@ -43,34 +44,49 @@ public class MapPanel extends JPanel {
     public MapPanel(GameUIManager gameUIManager) {
         this.gameUIManager = gameUIManager;
 
-
         setLayout(new BorderLayout());
 
         mmgr = gameUIManager.getRoot().getMapManager();
         try {
-            map =(HexMap) Class.forName(mmgr.getMapUIClassName()).newInstance();
+            map = (HexMap) Class.forName(mmgr.getMapUIClassName()).newInstance();
             map.init(gameUIManager.getORUIManager(), mmgr);
             originalMapSize = map.getOriginalSize();
+
+            // Load persistent map layer settings
+            map.setDisplayCityNames(Config.getBoolean("layer.displayCityNames", map.getDisplayCityNames()));
+            map.setDisplayOffboardValues(
+                    Config.getBoolean("layer.displayOffboardValues", map.getDisplayOffboardValues()));
+            map.setDisplayLastRevenueRuns(
+                    Config.getBoolean("layer.displayLastRevenueRuns", map.getDisplayLastRevenueRuns()));
+
         } catch (Exception e) {
-            log.error("Map class instantiation error:", e);
+
+            log.error("CRITICAL: Map class instantiation or initialization error:", e);
+            e.printStackTrace(); // Force output to the console
+
             return;
         }
 
-        //lightwight tooltip possible since tool tip has its own layer in hex map
+        // lightwight tooltip possible since tool tip has its own layer in hex map
         ToolTipManager.sharedInstance().setLightWeightPopupEnabled(true);
 
-        //tooltip should not be dismissed after at all
+        // tooltip should not be dismissed after at all
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
 
         layeredPane = new JLayeredPane();
         layeredPane.setLayout(null);
+        setupLayersButton(gameUIManager.getORUIManager());
+
+        setupGamePhasesButton();
+
         layeredPane.setPreferredSize(originalMapSize);
+
         map.setBounds(0, 0, originalMapSize.width, originalMapSize.height);
         map.addLayers(layeredPane, 1);
 
         if (mmgr.isMapImageUsed()) {
-            mapImage = new HexMapImage ();
-            mapImage.init(mmgr,map);
+            mapImage = new HexMapImage();
+            mapImage.init(mmgr, map);
             mapImage.setPreferredSize(originalMapSize);
             mapImage.setBounds(0, 0, originalMapSize.width, originalMapSize.height);
             layeredPane.add(mapImage, -1);
@@ -83,20 +99,73 @@ public class MapPanel extends JPanel {
         setSize(originalMapSize);
         setLocation(25, 25);
 
-        //add listener for auto fit upon resize events
+        // add listener for auto fit upon resize events
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 super.componentResized(e);
-                zoomFit (fitToWidth, fitToHeight);
+                zoomFit(fitToWidth, fitToHeight);
             }
         });
+
+        // NEW: Load saved layer properties from window settings ini
+        loadLayerSettings();
+
     }
 
+    /**
+     * Redirects the panel's data source to the current MapManager of the active
+     * root.
+     */
+    public void updateData() {
+        this.mmgr = gameUIManager.getRoot().getMapManager();
+        if (this.map != null) {
+            // Re-initialize the HexMap with the new manager's data
+            this.map.init(gameUIManager.getORUIManager(), mmgr);
+        }
+        this.repaint();
+    }
+
+    public void zoomIn() {
+        if (map != null) {
+            zoom(true); // Call LOCAL method, not map.zoomIn()
+            this.revalidate();
+            this.repaint();
+        }
+    }
+
+    public void zoomOut() {
+        if (map != null) {
+            zoom(false); // Call LOCAL method
+            this.revalidate();
+            this.repaint();
+        }
+    }
+
+    public void toggleDisplayHexNames() {
+        if (map != null) {
+            // Fix: Use getDisplayHexNames() instead of isDisplayHexNames()
+            // If getDisplayHexNames() doesn't exist, check HexMap.java for the correct
+            // getter
+            boolean current = map.getDisplayHexNames();
+            map.setDisplayHexNames(!current);
+            this.repaint(); // Call repaint on the Panel, not the map object
+        }
+    }
+
+    public void toggleDisplayBuildNumbers() {
+        if (map != null) {
+            // Fix: Use getDisplayBuildNumbers() instead of isDisplayBuildNumbers()
+            boolean current = map.getDisplayBuildNumbers();
+            map.setDisplayBuildNumbers(!current);
+            this.repaint(); // Call repaint on the Panel
+        }
+    }
 
     public void scrollPaneShowRectangle(Rectangle rectangle) {
 
-        if (rectangle == null) return;
+        if (rectangle == null)
+            return;
 
         JViewport viewport = scrollPane.getViewport();
         log.debug("ScrollPane viewPort ={}", viewport);
@@ -107,13 +176,13 @@ public class MapPanel extends JPanel {
         log.debug("viewport size ={}", viewport.getSize());
 
         double setX, setY;
-        setX = Math.max(0, (rectangle.getCenterX() - viewport.getWidth() / (double)2));
-        setY = Math.max(0, (rectangle.getCenterY() - viewport.getHeight() / (double)2));
+        setX = Math.max(0, (rectangle.getCenterX() - viewport.getWidth() / (double) 2));
+        setY = Math.max(0, (rectangle.getCenterY() - viewport.getHeight() / (double) 2));
 
-        setX = Math.min(setX, Math.max(0, map.getSize().getWidth() -  viewport.getWidth()));
+        setX = Math.min(setX, Math.max(0, map.getSize().getWidth() - viewport.getWidth()));
         setY = Math.min(setY, Math.max(0, map.getSize().getHeight() - viewport.getHeight()));
 
-        final Point viewPosition = new Point((int)setX, (int)setY);
+        final Point viewPosition = new Point((int) setX, (int) setY);
         log.debug("ViewPosition for ScrollPane = {}", viewPosition);
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -122,21 +191,22 @@ public class MapPanel extends JPanel {
         });
     }
 
-    private void adjustToNewMapZoom () {
+    private void adjustToNewMapZoom() {
         currentMapSize = map.getCurrentSize();
         log.debug("Map.size = {}", currentMapSize);
         layeredPane.setPreferredSize(currentMapSize);
         map.setBounds(0, 0, currentMapSize.width, currentMapSize.height);
         if (mapImage != null) {
-            mapImage.setBoundsAndResize(currentMapSize,map.getZoomStep());
+            mapImage.setBoundsAndResize(currentMapSize, map.getZoomStep());
         }
-        //access from map panel to or panel not nice but currently necessary for route drawing
+        // access from map panel to or panel not nice but currently necessary for route
+        // drawing
         if (gameUIManager.getORUIManager() != null && gameUIManager.getORUIManager().getORPanel() != null)
             gameUIManager.getORUIManager().getORPanel().redrawRoutes();
         layeredPane.revalidate();
     }
 
-    public void zoom (boolean in) {
+    public void zoom(boolean in) {
         removeFitToOption();
         map.zoom(in);
         adjustToNewMapZoom();
@@ -147,29 +217,35 @@ public class MapPanel extends JPanel {
      * In order to achieve correctly fitting zoom, continuous adjustment factors are
      * determined on top of that.
      */
-    private void zoomFit (boolean fitToWidth, boolean fitToHeight) {
-        if (!fitToWidth && !fitToHeight) return;
+    private void zoomFit(boolean fitToWidth, boolean fitToHeight) {
+        if (!fitToWidth && !fitToHeight)
+            return;
+
+        if (originalMapSize == null) {
+            log.error("zoomFit aborted: originalMapSize is null. The Map failed to initialize.");
+            return;
+        }
 
         ImageLoader imageLoader = ImageLoader.getInstance();
         int zoomStep = map.getZoomStep();
 
-        //reset adjustment factor
+        // reset adjustment factor
         imageLoader.resetAdjustmentFactor();
 
-        //determine the available size to fit to
-        //(double needed for subsequent calculations)
+        // determine the available size to fit to
+        // (double needed for subsequent calculations)
         double width = getSize().width - ZOOM_FIT_SAFETY_MARGIN;
         double height = getSize().height - ZOOM_FIT_SAFETY_MARGIN;
 
         double idealFactorWidth = width / originalMapSize.width;
         double idealFactorHeight = height / originalMapSize.height;
 
-        //determine which dimension will be the critical one for the resize
-        boolean isWidthCritical = ( !fitToHeight
+        // determine which dimension will be the critical one for the resize
+        boolean isWidthCritical = (!fitToHeight
                 || (fitToWidth && idealFactorWidth < idealFactorHeight));
 
-        //check whether scrollbar will appear in the fit-to dimension and
-        //reduce available size accordingly (not relevant for fit-to-window)
+        // check whether scrollbar will appear in the fit-to dimension and
+        // reduce available size accordingly (not relevant for fit-to-window)
         if (isWidthCritical && idealFactorWidth > idealFactorHeight) {
             width -= scrollPane.getVerticalScrollBar().getPreferredSize().width;
             idealFactorWidth = width / originalMapSize.width;
@@ -179,77 +255,71 @@ public class MapPanel extends JPanel {
             idealFactorHeight = height / originalMapSize.height;
         }
 
-        //abort resize if no space available
-        if (width < 0 || height < 0) return;
+        // abort resize if no space available
+        if (width < 0 || height < 0)
+            return;
 
-        //increase zoomFactor until constraints do not hold
-        //OR zoom cannot be increased any more
-        while
-            (
-                    (
-                            (!fitToWidth || idealFactorWidth > imageLoader.getZoomFactor(zoomStep))
-                            &&
-                            (!fitToHeight || idealFactorHeight > imageLoader.getZoomFactor(zoomStep))
-                    )
-                    &&
-                    imageLoader.getZoomFactor(zoomStep+1) != imageLoader.getZoomFactor(zoomStep)
-            )
+        // increase zoomFactor until constraints do not hold
+        // OR zoom cannot be increased any more
+        while (((!fitToWidth || idealFactorWidth > imageLoader.getZoomFactor(zoomStep))
+                &&
+                (!fitToHeight || idealFactorHeight > imageLoader.getZoomFactor(zoomStep)))
+                &&
+                imageLoader.getZoomFactor(zoomStep + 1) != imageLoader.getZoomFactor(zoomStep))
             zoomStep++;
 
-        //decrease zoomFactor until constraints do hold
-        //OR zoom cannot be decreased any more
-        while
-            (
-                    (
-                            (fitToWidth && idealFactorWidth < imageLoader.getZoomFactor(zoomStep))
-                            ||
-                            (fitToHeight && idealFactorHeight < imageLoader.getZoomFactor(zoomStep))
-                    )
-                    &&
-                    imageLoader.getZoomFactor(zoomStep-1) != imageLoader.getZoomFactor(zoomStep)
-            )
+        // decrease zoomFactor until constraints do hold
+        // OR zoom cannot be decreased any more
+        while (((fitToWidth && idealFactorWidth < imageLoader.getZoomFactor(zoomStep))
+                ||
+                (fitToHeight && idealFactorHeight < imageLoader.getZoomFactor(zoomStep)))
+                &&
+                imageLoader.getZoomFactor(zoomStep - 1) != imageLoader.getZoomFactor(zoomStep))
             zoomStep--;
 
-        //Determine and apply adjustment factor for precise fit
+        // Determine and apply adjustment factor for precise fit
         double idealFactor = isWidthCritical ? idealFactorWidth : idealFactorHeight;
-        imageLoader.setZoomAdjustmentFactor (
+        imageLoader.setZoomAdjustmentFactor(
                 idealFactor / imageLoader.getZoomFactor(zoomStep));
 
-        //trigger zoom execution
+        // trigger zoom execution
         map.setZoomStep(zoomStep);
 
         adjustToNewMapZoom();
     }
 
-    private void fitToOption (boolean fitToWidth, boolean fitToHeight) {
-        //ignore if nothing has changed
-        if (this.fitToWidth == fitToWidth && this.fitToHeight == fitToHeight ) return;
+    private void fitToOption(boolean fitToWidth, boolean fitToHeight) {
+        // ignore if nothing has changed
+        if (this.fitToWidth == fitToWidth && this.fitToHeight == fitToHeight)
+            return;
 
         this.fitToWidth = fitToWidth;
         this.fitToHeight = fitToHeight;
         zoomFit(fitToWidth, fitToHeight);
     }
 
-    public void fitToWindow () {
-        fitToOption (true, true);
+    public void fitToWindow() {
+        fitToOption(true, true);
     }
 
-    public void fitToWidth () {
-        fitToOption (true, false);
+    public void fitToWidth() {
+        fitToOption(true, false);
     }
 
-    public void fitToHeight () {
-        fitToOption (false, true);
+    public void fitToHeight() {
+        fitToOption(false, true);
     }
 
-    public void removeFitToOption () {
+    public void removeFitToOption() {
         fitToWidth = false;
         fitToHeight = false;
     }
 
-    public void keyPressed(KeyEvent e) {}
+    public void keyPressed(KeyEvent e) {
+    }
 
-    public void keyReleased(KeyEvent e) {}
+    public void keyReleased(KeyEvent e) {
+    }
 
     public HexMap getMap() {
         return map;
@@ -258,4 +328,358 @@ public class MapPanel extends JPanel {
     public GUIHex getSelectedHex() {
         return map.getSelectedHex();
     }
+
+    /**
+     * Aggressively clears map overlays (build numbers) AND resets highlighting.
+     * Iterates ALL hexes to ensure no "ghost" state remains from previous phases.
+     */
+    public void clearOverlays() {
+        if (map != null) {
+            // log.info("MapPanel: Aggressive clear invoked. Resetting all hex states and
+            // overlays.");
+
+            // 1. Force the global flag to false
+            // map.setDisplayBuildNumbers(false);
+
+            // 2. NUCLEAR OPTION: Iterate EVERY hex to scrub state
+            // This fixes "Ghost in some cases" where the upgrade list might be stale
+            for (GUIHex hex : map.getHexes()) {
+                boolean changed = false;
+
+                // Clear Red/Selectable Highlights (Fixes Token Phase issue)
+                if (hex.getState() != GUIHex.State.NORMAL) {
+                    hex.setState(GUIHex.State.NORMAL);
+                    changed = true;
+                }
+
+                // Clear Ghost Numbers
+                if (hex.getCustomOverlayText() != null) {
+                    hex.setCustomOverlayText(null);
+                    changed = true;
+                }
+            }
+
+            // 3. Force a full repaint
+            this.repaint();
+        }
+    }
+
+    private void setupLayersButton(final ORUIManager orUIManager) {
+        // 1. Create the Button
+        final JButton layersBtn = new JButton("Layers");
+        layersBtn.setFocusable(false);
+        // Increase font size
+        layersBtn.setFont(new Font("SansSerif", Font.BOLD, 14));
+
+        // Solid white background with black text for maximum contrast
+        layersBtn.setBackground(Color.BLUE);
+        layersBtn.setForeground(Color.WHITE);
+
+        // Force the background to paint correctly across all operating systems
+        layersBtn.setOpaque(true);
+        layersBtn.setContentAreaFilled(true);
+
+        // Use a raised bevel border to create a "drop shadow" floating effect
+        layersBtn.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createRaisedBevelBorder(),
+                BorderFactory.createEmptyBorder(2, 5, 2, 5)));
+
+        // 2. Position it (Top Left, moved slightly further in, made larger)
+        layersBtn.setBounds(20, 20, 95, 35);
+
+        // 3. Create the "Pop-out" Menu
+        layersBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JPopupMenu menu = new JPopupMenu();
+                WindowSettings ws = gameUIManager.getWindowSettings();
+
+                // Section 1: ALWAYS OVERLAYS
+                JLabel alwaysHeader = new JLabel(" ALWAYS");
+                alwaysHeader.setFont(alwaysHeader.getFont().deriveFont(Font.BOLD));
+                alwaysHeader.setForeground(Color.GRAY);
+                menu.add(alwaysHeader);
+
+                menu.add(new JCheckBoxMenuItem("Terrain Costs", orUIManager.isShowTerrainCosts()))
+                        .addActionListener(evTerrain -> {
+                            orUIManager.toggleTerrainCosts();
+                            ws.setProperty("layer.TerrainCosts", String.valueOf(orUIManager.isShowTerrainCosts()));
+                            ws.save();
+                        });
+                menu.add(new JCheckBoxMenuItem("Destination Markers", orUIManager.isShowDestinationMarkers()))
+                        .addActionListener(evDest -> {
+                            orUIManager.toggleDestinationMarkers();
+                            ws.setProperty("layer.DestinationMarkers",
+                                    String.valueOf(orUIManager.isShowDestinationMarkers()));
+                            ws.save();
+                        });
+                menu.add(new JCheckBoxMenuItem("Home Identifiers", orUIManager.isShowHomeIdentifiers()))
+                        .addActionListener(evHome -> {
+                            orUIManager.toggleHomeIdentifiers();
+                            ws.setProperty("layer.HomeIdentifiers",
+                                    String.valueOf(orUIManager.isShowHomeIdentifiers()));
+                            ws.save();
+                        });
+
+                JCheckBoxMenuItem offboardItem = new JCheckBoxMenuItem("Offboard Values",
+                        map.getDisplayOffboardValues());
+                offboardItem.addActionListener(evOffboard -> {
+                    boolean newState = !map.getDisplayOffboardValues();
+                    map.setDisplayOffboardValues(newState);
+                    ws.setProperty("layer.OffboardValues", String.valueOf(newState));
+                    ws.save();
+                    map.repaintAll(new Rectangle(map.getSize()));
+                });
+                menu.add(offboardItem);
+
+                JCheckBoxMenuItem cityNamesItem = new JCheckBoxMenuItem("City Names", map.getDisplayCityNames());
+                cityNamesItem.addActionListener(ae -> {
+                    boolean newState = !map.getDisplayCityNames();
+                    map.setDisplayCityNames(newState);
+                    ws.setProperty("layer.CityNames", String.valueOf(newState));
+                    ws.save();
+                    map.repaintAll(new Rectangle(map.getSize()));
+                });
+                menu.add(cityNamesItem);
+
+                menu.addSeparator();
+
+                // Section 2: BUILDING PHASE OVERLAYS
+                JLabel buildingHeader = new JLabel(" BUILDING PHASE");
+                buildingHeader.setFont(buildingHeader.getFont().deriveFont(Font.BOLD));
+                buildingHeader.setForeground(Color.GRAY);
+                menu.add(buildingHeader);
+
+                menu.add(new JCheckBoxMenuItem("Hex Names", orUIManager.isShowHexNames()))
+                        .addActionListener(evHex -> {
+                            orUIManager.toggleHexNames();
+                            ws.setProperty("layer.HexNames", String.valueOf(orUIManager.isShowHexNames()));
+                            ws.save();
+                        });
+                menu.add(new JCheckBoxMenuItem("Friendly Hexes", orUIManager.isShowFriendlyHexes()))
+                        .addActionListener(evFriendly -> {
+                            orUIManager.toggleFriendlyHexes();
+                            ws.setProperty("layer.FriendlyHexes", String.valueOf(orUIManager.isShowFriendlyHexes()));
+                            ws.save();
+                        });
+
+                JCheckBoxMenuItem lastRunsItem = new JCheckBoxMenuItem("Last Revenue Runs",
+                        map.getDisplayLastRevenueRuns());
+                lastRunsItem.addActionListener(ae -> {
+                    boolean newState = !map.getDisplayLastRevenueRuns();
+                    map.setDisplayLastRevenueRuns(newState);
+                    ws.setProperty("layer.LastRevenueRuns", String.valueOf(newState));
+                    ws.save();
+                    if (gameUIManager.getORUIManager() != null && gameUIManager.getORUIManager().getORPanel() != null) {
+                        gameUIManager.getORUIManager().getORPanel().redrawRoutes();
+                    }
+                    map.repaintAll(new Rectangle(map.getSize()));
+                });
+                menu.add(lastRunsItem);
+
+                menu.addSeparator();
+
+                // Section 3: REVENUE PHASE OVERLAYS
+                JLabel revenueHeader = new JLabel(" REVENUE PHASE");
+                revenueHeader.setFont(revenueHeader.getFont().deriveFont(Font.BOLD));
+                revenueHeader.setForeground(Color.GRAY);
+                menu.add(revenueHeader);
+
+                menu.add(new JCheckBoxMenuItem("Current Revenue Runs", orUIManager.isShowRevenueRoutes()))
+                        .addActionListener(evRoute -> {
+                            orUIManager.toggleRevenueRoutes();
+                            ws.setProperty("layer.RevenueRoutes", String.valueOf(orUIManager.isShowRevenueRoutes()));
+                            ws.save();
+                        });
+
+                menu.add(new JCheckBoxMenuItem("Fancy City Values", orUIManager.isShowFancyCityValues()))
+                        .addActionListener(evFancy -> {
+                            orUIManager.toggleFancyCityValues();
+                            ws.setProperty("layer.FancyCityValues",
+                                    String.valueOf(orUIManager.isShowFancyCityValues()));
+                            ws.save();
+                        });
+
+                menu.add(new JCheckBoxMenuItem("Show Revenue Spinner", orUIManager.isShowRevenueSpinner()))
+                        .addActionListener(evRevSpinner -> {
+                            orUIManager.toggleRevenueSpinner();
+                            ws.setProperty("layer.RevenueSpinner", String.valueOf(orUIManager.isShowRevenueSpinner()));
+                            ws.save();
+                        });
+
+                menu.show(layersBtn, 0, layersBtn.getHeight());
+            }
+        });
+
+        // 4. Add to the Layered Pane at a high level
+        layeredPane.add(layersBtn, JLayeredPane.PALETTE_LAYER);
+    }
+
+    private void setupGamePhasesButton() {
+        // 1. Create the Button
+        final JButton phasesBtn = new JButton("Game Phases");
+        phasesBtn.setFocusable(false);
+        phasesBtn.setFont(new Font("SansSerif", Font.BOLD, 14));
+
+        // Use a contrasting color (e.g., Dark Gray) to distinguish from the Layers button
+        phasesBtn.setFont(new Font("SansSerif", Font.BOLD, 14));
+        phasesBtn.setBackground(Color.BLUE);
+        phasesBtn.setForeground(Color.WHITE);
+
+        phasesBtn.setOpaque(true);
+        phasesBtn.setContentAreaFilled(true);
+        phasesBtn.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createRaisedBevelBorder(),
+                BorderFactory.createEmptyBorder(2, 5, 2, 5)));
+
+// 2. Set dynamic positioning (Top Right)
+    // We use a ComponentListener to update bounds on resize
+    this.addComponentListener(new ComponentAdapter() {
+        @Override
+        public void componentResized(ComponentEvent e) {
+            int width = MapPanel.this.getWidth();
+            // Positioned 20px from right edge, 20px from top
+            phasesBtn.setBounds(width - 160, 20, 110, 35);
+        }
+    });
+
+    // 3. Attach layout renderer action listener to map panel button
+        phasesBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                net.sf.rails.game.GameManager gm = gameUIManager.getRoot().getGameManager();
+                java.util.List<net.sf.rails.game.GamePhaseInfo> phases = gm.getLoadedGamePhases();
+
+                if (phases == null || phases.isEmpty()) {
+                    JOptionPane.showMessageDialog(MapPanel.this, 
+                        "No game phase data has been parsed or loaded for this session.", 
+                        "Information Missing", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
+
+                // Define structural columns for our display table
+               String[] columns = {"Train", "ORs", "Limit", "Colour", "Effects"};
+                Object[][] data = new Object[phases.size()][5];
+
+                for (int i = 0; i < phases.size(); i++) {
+                    net.sf.rails.game.GamePhaseInfo info = phases.get(i);
+                    data[i][0] = info.onTrain;
+                    data[i][1] = info.operatingRounds;
+                    data[i][2] = info.trainLimit;
+                    data[i][3] = info.colour;
+                    data[i][4] = info.effects; // Replaced status with effects payload
+                }
+
+                JTable table = new JTable(data, columns);
+                table.setRowHeight(26);
+                table.setFont(new Font("SansSerif", Font.PLAIN, 13));
+                table.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 13));
+                table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+                table.setShowGrid(true);
+                table.setGridColor(Color.LIGHT_GRAY);
+                
+                // Color renderer to dynamically style rows based on the "Colour" column content
+                table.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+                    @Override
+                    public Component getTableCellRendererComponent(JTable t, Object v, boolean s, boolean f, int r, int c) {
+                        Component cell = super.getTableCellRendererComponent(t, v, s, f, r, c);
+                        String colName = String.valueOf(t.getValueAt(r, 3)).toLowerCase();
+                        
+                        if (!s) {
+                            switch (colName) {
+                                case "yellow": cell.setBackground(new Color(255, 255, 210)); cell.setForeground(Color.BLACK); break;
+                                case "green":  cell.setBackground(new Color(215, 255, 215)); cell.setForeground(Color.BLACK); break;
+                                case "brown":  cell.setBackground(new Color(240, 215, 195)); cell.setForeground(Color.BLACK); break;
+                                case "gray":   cell.setBackground(new Color(230, 230, 230)); cell.setForeground(Color.BLACK); break;
+                                default:       cell.setBackground(Color.WHITE); cell.setForeground(Color.BLACK); break;
+                            }
+                        }
+                        return cell;
+                    }
+                });
+
+                // Auto-fit column width matching cell content and headers precisely
+                int totalWidth = 0;
+                for (int col = 0; col < table.getColumnCount(); col++) {
+                    javax.swing.table.TableColumn tableColumn = table.getColumnModel().getColumn(col);
+                    
+                    // Start with header width calculation
+                    Component headerComp = table.getTableHeader().getDefaultRenderer()
+                        .getTableCellRendererComponent(table, tableColumn.getHeaderValue(), false, false, 0, col);
+                    int maxWidth = headerComp.getPreferredSize().width + 25; // added padding
+                    
+                    // Evaluate cell row text constraints
+                    for (int row = 0; row < table.getRowCount(); row++) {
+                        Component cellComp = table.getCellRenderer(row, col)
+                            .getTableCellRendererComponent(table, table.getValueAt(row, col), false, false, row, col);
+                        maxWidth = Math.max(maxWidth, cellComp.getPreferredSize().width + 20);
+                    }
+                    
+                    tableColumn.setPreferredWidth(maxWidth);
+                    totalWidth += maxWidth;
+                }
+
+                // Match exact window matrix panel sizing parameters to wipe out scrollbars entirely
+                int totalHeight = table.getTableHeader().getPreferredSize().height + (table.getRowHeight() * table.getRowCount()) + 5;
+                
+                JScrollPane pane = new JScrollPane(table);
+                pane.setPreferredSize(new Dimension(totalWidth + 4, totalHeight));
+                pane.setBorder(BorderFactory.createEmptyBorder());
+                pane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+                pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+                
+                JOptionPane.showMessageDialog(MapPanel.this, pane, 
+                    "Game Phases Configuration Summary - " + gm.getGameName(), 
+                    JOptionPane.PLAIN_MESSAGE);
+            }
+        });
+
+        // 4. Add to the Layered Pane
+        layeredPane.add(phasesBtn, JLayeredPane.PALETTE_LAYER);
+    }
+
+    // Add these helper methods to the class body of MapPanel.java
+    private void loadLayerSettings() {
+        WindowSettings ws = gameUIManager.getWindowSettings();
+        if (ws == null)
+            return;
+
+        ORUIManager orui = gameUIManager.getORUIManager();
+
+        // Synchronize ORUIManager's state properties using its dynamic toggles
+        if (orui != null) {
+            if (parseLayerBoolean(ws.getProperty("layer.TerrainCosts"), true) != orui.isShowTerrainCosts())
+                orui.toggleTerrainCosts();
+            if (parseLayerBoolean(ws.getProperty("layer.DestinationMarkers"), true) != orui.isShowDestinationMarkers())
+                orui.toggleDestinationMarkers();
+            if (parseLayerBoolean(ws.getProperty("layer.HomeIdentifiers"), true) != orui.isShowHomeIdentifiers())
+                orui.toggleHomeIdentifiers();
+            if (parseLayerBoolean(ws.getProperty("layer.HexNames"), true) != orui.isShowHexNames())
+                orui.toggleHexNames();
+            if (parseLayerBoolean(ws.getProperty("layer.FriendlyHexes"), true) != orui.isShowFriendlyHexes())
+                orui.toggleFriendlyHexes();
+            if (parseLayerBoolean(ws.getProperty("layer.RevenueRoutes"), true) != orui.isShowRevenueRoutes())
+                orui.toggleRevenueRoutes();
+            if (parseLayerBoolean(ws.getProperty("layer.FancyCityValues"), false) != orui.isShowFancyCityValues())
+                orui.toggleFancyCityValues();
+            if (parseLayerBoolean(ws.getProperty("layer.RevenueSpinner"), true) != orui.isShowRevenueSpinner())
+                orui.toggleRevenueSpinner();
+        }
+
+        // Synchronize direct HexMap properties via their standard public setters
+        if (map != null) {
+            map.setDisplayOffboardValues(
+                    parseLayerBoolean(ws.getProperty("layer.OffboardValues"), map.getDisplayOffboardValues()));
+            map.setDisplayCityNames(parseLayerBoolean(ws.getProperty("layer.CityNames"), map.getDisplayCityNames()));
+            map.setDisplayLastRevenueRuns(
+                    parseLayerBoolean(ws.getProperty("layer.LastRevenueRuns"), map.getDisplayLastRevenueRuns()));
+        }
+    }
+
+    private boolean parseLayerBoolean(String val, boolean defaultValue) {
+        if (val == null || val.trim().isEmpty())
+            return defaultValue;
+        return "true".equalsIgnoreCase(val.trim()) || "yes".equalsIgnoreCase(val.trim());
+    }
+
 }

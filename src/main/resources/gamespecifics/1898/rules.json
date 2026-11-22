@@ -1,0 +1,103 @@
+{
+  "game": "1898",
+  "rules": {
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": "Initial sale is by tender. 1849v1&3 Yes, at 5 over any other bid, for the initial concessions."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "50%. But more can get there as the result of an emergency money-raising step."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "31 | 21 | 16 | 13 | 11 |  |  |  |  |"
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "Yes, up to five certificates, but not their own; in ORs; or they may buy back per turn one of their own from the bank pool to their initial offering."
+    },
+    "parPrice": {
+      "question": "How is a share company's initial (par) price determined?",
+      "answer": "There are no par prices. The initial price is set by the player who purchases the President's certificate, choosing a value selected from a range of predefined prices. All further share dealing is done at the current market price."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830. (rules 4.1.1, 4.1.2)"
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Permissive (final sentence of section 'Lay or Upgrade Track')."
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "All 0. They were paid for at flotation time: 50 each for historics, 25/50/100/200 depending on remoteness for non-historics."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "Yes. Only YY-tiles (which start as two villages)."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "All Levels, 18MW,"
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "The cheapest train available in the bank, or a train from another company at an agreed price not exceeding its face value. The President of the selling company makes the deal before any necessary share sales."
+    },
+    "forcedTrainMinor": {
+      "question": "Must a minor company buy a train if it does not have one?",
+      "answer": "Yes."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "1",
+          "phase": "-",
+          "effects": "Start of the game, concessions phase"
+        },
+        {
+          "train": "2",
+          "phase": "2",
+          "effects": "train limit 4 for majors, 2 for minors"
+        },
+        {
+          "train": "3",
+          "phase": "3",
+          "effects": "Green tiles, 2 ORs, two track-lays per major, non-historic companies may start"
+        },
+        {
+          "train": "4",
+          "phase": "4",
+          "effects": "2 trains rust, TDF split, Rh\u00f4ne Valley merge, second values for OBHs, train limit 3     for majors, 2 for minors, 2 track-lays per minor"
+        },
+        {
+          "train": "5",
+          "phase": "5",
+          "effects": "3 trains rust, brown tiles, 3 ORs"
+        },
+        {
+          "train": "6",
+          "phase": "6",
+          "effects": "Third values for OBHs, train limit 2 for majors, 1 for minors"
+        },
+        {
+          "train": "7",
+          "phase": "7",
+          "effects": "4 trains rust, grey tiles, 4 ORs"
+        },
+        {
+          "train": "8",
+          "phase": "8",
+          "effects": "Highest values for OBHs, 5trains rust"
+        }
+      ]
+    }
+  }
+}

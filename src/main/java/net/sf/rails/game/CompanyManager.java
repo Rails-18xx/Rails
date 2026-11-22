@@ -85,7 +85,7 @@ public class CompanyManager extends RailsManager implements Configurable {
         Map<String, CompanyType> mCompanyTypes
               = new HashMap<>();
 
-        //NEW//
+   
         Map<String, Tag> typeTags = new HashMap<>();
 
         for (Tag compTypeTag : tag.getChildren(CompanyType.ELEMENT_ID)) {
@@ -99,6 +99,8 @@ public class CompanyManager extends RailsManager implements Configurable {
             String className =
                     compTypeTag.getAttributeAsString(CompanyType.CLASS_TAG);
             if (className == null) {
+                log.error("CompanyTypeHasNoClass: " + LocalText.getText(
+                        "CompanyTypeHasNoClass", name));
                 throw new ConfigurationException(LocalText.getText(
                         "CompanyTypeHasNoClass", name));
             }
@@ -148,7 +150,8 @@ public class CompanyManager extends RailsManager implements Configurable {
                 if (company instanceof PrivateCompany) {
                     mPrivateCompanies.put(name, (PrivateCompany) company);
                     lPrivateCompanies.add((PrivateCompany) company);
-
+                    // Debugging: Verify if revenue is actually loaded from XML
+    
                 } else if (company instanceof PublicCompany) {
                     ((PublicCompany)company).setIndex (numberOfPublicCompanies++);
                     mPublicCompanies.put(name, (PublicCompany) company);
@@ -365,6 +368,13 @@ public class CompanyManager extends RailsManager implements Configurable {
           }
       }
       return null;
+    }
+
+    /**
+     * AI Accessor: Returns the list of start packets for state synchronization.
+     */
+    public java.util.List<StartPacket> getStartPackets() {
+        return startPackets;
     }
 
     /**

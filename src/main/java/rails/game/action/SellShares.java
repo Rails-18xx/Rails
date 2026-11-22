@@ -118,20 +118,22 @@ public class SellShares extends PossibleAction {
         ;
         // no asAction attributes to be checked
     }
-
-    @Override
+@Override
     public String toString() {
-        return super.toString() +
-                RailsObjects.stringHelper(this)
-                    .addToString("company", company)
-                    .addToString("shareUnit", shareUnit)
-                    .addToString("shareUnits", shareUnits)
-                    .addToString("share", share)
-                    .addToString("price", price)
-                    .addToString("number", number)
-                    .addToString("presidentExchange", presidentExchange)
-                    .toString()
-        ;
+        StringBuilder sb = new StringBuilder();
+        // Calculate total percentage: number of certs * units per cert * percent per unit
+        int totalPercent = number * shareUnits * shareUnit; 
+        
+        sb.append("Sells ")
+          .append(totalPercent).append("% of ")
+          .append(companyName)
+          .append(" for ").append(price); // 'price' usually stores price per unit/share
+        
+        if (presidentExchange > 0) {
+            sb.append(" (Director Swap)");
+        }
+        
+        return sb.toString();
     }
 
     /** Deserialize */

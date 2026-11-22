@@ -1,0 +1,120 @@
+{
+  "game": "1856",
+  "rules": {
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "Sell then buy, or buy then sell."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "From the second stock round onwards. As soon as you like; but you may not sell a share in the same share turn in which you bought it, though you may sell other identical ones. (The rules say ' certificate ', but author Bill Dixon explains that ' share ' is meant.)"
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "50%."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "| 20 | 16 | 13 | 11 |  |  |  |  |  After sale of first 6 train, depends on the number     of companies closed. 5% CGR shares count half"
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "Yes, but you can't sell the particular certificate that you just bought."
+    },
+    "parPrice": {
+      "question": "How is a share company's initial (par) price determined?",
+      "answer": "For most companies, the price is set by the player who purchases the President's certificate, choosing a value selected from a range of predefined prices. For the CGR, the price is calculated from the prices of the companies that form the CGR."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830. (pages 15, 16)"
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Semi-restrictive."
+    },
+    "multiStation": {
+      "question": "Can you lay more than one station marker per turn?",
+      "answer": "No."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "When it first operates."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "Yes."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "Yes. Stockholders of the operating company may point out a higher revenue total than that claimed, which must then be taken."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "Only W&S and GLSC are closed."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "phase": "2",
+          "onTrain": "2'",
+          "ors": "1",
+          "trainLimit": "4",
+          "colour": "Yellow",
+          "rustsTrains": "",
+          "effects": "Yellow tiles, train limit 4, Escrow Cap 30%"
+        },
+        {
+          "phase": "3",
+          "onTrain": "3",
+          "ors": "2",
+          "trainLimit": "4",
+          "colour": "Green",
+          "rustsTrains": "",
+          "effects": "Green tiles, privates may be bought by companies, 2 ORs, Escrow Cap 40%"
+        },
+        {
+          "phase": "4",
+          "onTrain": "4",
+          "ors": "2",
+          "trainLimit": "3",
+          "colour": "Green",
+          "rustsTrains": "2",
+          "effects": "2 trains rust, train limit 3"
+        },
+        {
+          "phase": "5",
+          "onTrain": "5",
+          "ors": "3",
+          "trainLimit": "2",
+          "colour": "Brown",
+          "rustsTrains": "",
+          "effects": "Brown tiles, train limit 2, privates close, use middle value for off-board areas, 3 ORs"
+        },
+        {
+          "phase": "6",
+          "onTrain": "6",
+          "ors": "3",
+          "trainLimit": "2",
+          "colour": "Gray",
+          "rustsTrains": "3",
+          "effects": "Grey tiles, 3 trains rust, repay loans, CGR starts, villages can go, port token dies, Diesels available"
+        },
+        {
+          "phase": "Diesel",
+          "onTrain": "Diesel",
+          "ors": "3",
+          "trainLimit": "2",
+          "colour": "Gray",
+          "rustsTrains": "4",
+          "effects": "4 trains rust, use highest value for off-board areas, gray tiles"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "Has government loans. After the sale of a 6 train, villages may be removed, either by promoting them to cities, or by downgrading them to plain track. Double villages may be promoted but not removed. A company can fall off the bottom of the stock market. It then ceases to exist. The initial state of Toronto is two value 30 cities, as on the map - the tile manifest says 40 and is wrong (Bill Dixon, rgb, May '97) ."
+    }
+  }
+}

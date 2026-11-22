@@ -119,7 +119,7 @@
 	<Company name="UR" longname="Uwajima Railway" type="Public" tokens="3" fgColour="255,255,255" bgColour="140,70,20">
     <Home hex="B7"/> <!--Uwajima-->
   </Company>
-	<StartPacket roundClass="net.sf.rails.game.StartRound_1830">
+	<StartPacket roundClass="net.sf.rails.game.specific._1830.StartRound_1830">
 		<Bidding initial="5" minimum="5" increment="1"/>
 		<IfOption name="BeginnerGame" value="yes">
 			<IfOption name="NumberOfPlayers" value="2">

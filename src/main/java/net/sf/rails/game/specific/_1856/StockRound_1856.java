@@ -40,30 +40,21 @@ public class StockRound_1856 extends StockRound {
      */
     // change: checks required number of shares in the hand of the president
     // requires: add a floatation strategy to publicCompany
-    @Override
-    protected void checkFlotation(PublicCompany company) {
+    // In StockRound_1856.java
+@Override
+protected void checkFlotation(PublicCompany company) {
+    if (!company.hasStarted() || company.hasFloated()) return;
 
-        if (!company.hasStarted() || company.hasFloated()) return;
+    // Get the dynamic, currently available train number
+    GameManager_1856 gm = (GameManager_1856) gameManager;
+    int currentAvailableTrainNumber = gm.getNextTrainNumberFromIpo();
+    int floatPercentage = 10 * currentAvailableTrainNumber;
 
-        int soldPercentage = company.getSoldPercentage();
-
-        PublicCompany_1856 comp = (PublicCompany_1856) company;
-        int trainNumberAtStart = comp.getTrainNumberAvailableAtStart();
-        int floatPercentage = 10 * trainNumberAtStart;
-
-        log.debug("Floatpercentage is {}", floatPercentage);
-
-        if (soldPercentage >= floatPercentage) {
-            // Company floats.
-            // In 1856 this does not mean that the company will operate,
-            // only that it will be added to the list of companies
-            // being considered for an OR turn.
-            // See OperatingRound_1856 for the actual check.
-            if (!company.hasFloated()) {
-                floatCompany(company);
-            }
-        }
+    if (company.getSoldPercentage() >= floatPercentage) {
+        floatCompany(company);
     }
+}
+
 
     // change: see adjustSharePrice
     // requires: add an adjustSharePrice strategy (or a general implementation)

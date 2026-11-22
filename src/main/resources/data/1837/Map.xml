@@ -14,7 +14,7 @@
         <Hex name="B10" tile="0"/>
         <Hex name="B12" tile="0"/>
         <Hex name="B14" tile="0"/>
-        <Hex name="B16" tile="0" cost="70"/>
+        <Hex name="B16" tile="0" cost="70" terrain="Hills"/>
         <Hex name="B26" tile="-8" orientation="1"/>
         <Hex name="B28" tile="0"/>
         <Hex name="B30" tile="0"/>
@@ -25,14 +25,14 @@
         <Hex name="C11" tile="-37402" city="Prag"/>
         <Hex name="C13" tile="0"/>
         <Hex name="C15" tile="-1"/>
-        <Hex name="C17" tile="0" cost="70"/>
+        <Hex name="C17" tile="0" cost="70" terrain="Hills"/>
         <Hex name="C19" tile="-37001" value="20,40" orientation="3" city="EOD" mutexId="Mine"
              extraText="EOD,0,5"/>
         <Hex name="C21" tile="-37001" value="25,45" orientation="2" city="EKT" mutexId="Mine"
              extraText="EKT,0,5"/>
         <Hex name="C23" tile="-37007" city="Krakau"/>
-        <Hex name="C25" tile="0" cost="70"/>
-        <Hex name="C27" tile="-1" cost="70"/>
+        <Hex name="C25" tile="0" cost="70" terrain="Hills"/>
+        <Hex name="C27" tile="-1" cost="70" terrain="Hills"/>
         <Hex name="C29" tile="0"/>
         <Hex name="C31" tile="-2"/>
         <Hex name="C33" tile="-3007" city="Lemberg"/>
@@ -46,8 +46,8 @@
         <Hex name="D22" tile="-1"/>
         <Hex name="D24" tile="0"/>
         <Hex name="D26" tile="0"/>
-        <Hex name="D28" tile="0" cost="70"/>
-        <Hex name="D30" tile="0" cost="70"/>
+        <Hex name="D28" tile="0" cost="70" terrain="Hills"/>
+        <Hex name="D30" tile="0" cost="70" terrain="Hills"/>
         <Hex name="D32" tile="0"/>
         <Hex name="D34" tile="0"/>
         <Hex name="D36" tile="-3007" city="Tarnopol"/>
@@ -65,20 +65,20 @@
         <Hex name="E15" tile="-1"/>
         <Hex name="E17" tile="-37008" city="Br&#252;nn"/>
         <Hex name="E19" tile="0"/>
-        <Hex name="E21" tile="0" cost="70"/>
-        <Hex name="E23" tile="0" cost="70"/>
-        <Hex name="E25" tile="-1" cost="70"/>
-        <Hex name="E27" tile="0" cost="70"/>
+        <Hex name="E21" tile="0" cost="70" terrain="Hills"/>
+        <Hex name="E23" tile="0" cost="70" terrain="Hills"/>
+        <Hex name="E25" tile="-1" cost="70" terrain="Hills"/>
+        <Hex name="E27" tile="0" cost="70" terrain="Hills"/>
         <Hex name="E29" tile="0"/>
-        <Hex name="E31" tile="0" cost="70"/>
-        <Hex name="E33" tile="0" cost="70"/>
+        <Hex name="E31" tile="0" cost="70" terrain="Hills"/>
+        <Hex name="E33" tile="0" cost="70" terrain="Hills"/>
         <Hex name="E35" tile="-1"/>
         <Hex name="E37" tile="0"/>
-        <Hex name="F12" tile="0" cost="70"/>
+        <Hex name="F12" tile="0" cost="70" terrain="Hills"/>
         <Hex name="F14" tile="0"/>
         <Hex name="F16" tile="-1"/>
         <Hex name="F18" tile="-37156"/>
-        <Hex name="F20" tile="0" cost="70"/>
+        <Hex name="F20" tile="0" cost="70" terrain="Hills"/>
         <Hex name="F22" tile="-1"/>
         <Hex name="F24" tile="0"/>
         <Hex name="F26" tile="-37003" orientation="2" value="20,40" city="EHS" mutexId="Mine"
@@ -86,14 +86,14 @@
         <Hex name="F28" tile="-10" city="Kaschau"/>
         <Hex name="F30" tile="-1"/>
         <Hex name="F32" tile="-1"/>
-        <Hex name="F34" tile="0" cost="70"/>
+        <Hex name="F34" tile="0" cost="70" terrain="Hills"/>
         <Hex name="F36" tile="0"/>
         <Hex name="F38" tile="-37007" city="Czernowitz"/>
         <Hex name="G9" tile="-7"/>
         <Hex name="G11" tile="-1"/>
         <Hex name="G13" tile="-20" city="Linz/Wels" label="OO"/>
         <IfOption name="Variant" value="Basegame,1837-2ndEd.">
-                <Hex name="G15" tile="0" cost="50"/>
+                <Hex name="G15" tile="0" cost="50" terrain="River"/>
         </IfOption>
         <IfOption name="Variant" value="Romoth">
                 <Hex name="G15" tile="0" cost="30"/>
@@ -101,21 +101,21 @@
         <Hex name="G17" tile="-37012" city="Wien">
                 <Access mutexId="Wien"/>
         </Hex>
-        <Hex name="G19" tile="-37008" city="Pre&#233;burg" cost="50"/>
-        <Hex name="G21" tile="0" cost="50"/>
-        <Hex name="G23" tile="-1" cost="50"/>
+        <Hex name="G19" tile="-37008" city="Pre&#233;burg" cost="50" terrain="River"/>
+        <Hex name="G21" tile="0" cost="50" terrain="River"/>
+        <Hex name="G23" tile="-1" cost="50" terrain="River"/>
         <Hex name="G25" tile="0"/>
         <Hex name="G27" tile="-37103"/>
-        <Hex name="G29" tile="0" cost="50"/>
+        <Hex name="G29" tile="0" cost="50" terrain="River"/>
         <Hex name="G31" tile="0"/>
-        <Hex name="G33" tile="0" cost="70"/>
-        <Hex name="G35" tile="0" cost="70"/>
+        <Hex name="G33" tile="0" cost="70" terrain="Hills"/>
+        <Hex name="G35" tile="0" cost="70" terrain="Hills"/>
         <Hex name="G37" tile="-42"/>
         <Hex name="H8" tile="-3"/>
         <Hex name="H10" tile="-3007" city="Salzburg"/>
         <Hex name="H12" tile="0"/>
-        <Hex name="H14" tile="0" cost="70"/>
-        <Hex name="H16" tile="0" cost="110"/>
+        <Hex name="H14" tile="0" cost="70" terrain="Hills"/>
+        <Hex name="H16" tile="0" cost="110" terrain="Mountain"/>
         <Hex name="H18" tile="-2"/>
         <Hex name="H20" tile="-20" city="Raab/Tatabanya" label="OO"/>
         <Hex name="H22" tile="-37010" city="Buda/Pest"/>
@@ -123,58 +123,58 @@
         <Hex name="H26" tile="-37109"/>
         <Hex name="H28" tile="0"/>
         <Hex name="H30" tile="-20" city="Debrecin/Gro&#233;wardein" label="OO"/>
-        <Hex name="H32" tile="0" cost="70"/>
+        <Hex name="H32" tile="0" cost="70" terrain="Hills"/>
         <Hex name="H34" tile="-10" city="Klausenburg"/>
-        <Hex name="H36" tile="-1" cost="70"/>
+        <Hex name="H36" tile="-1" cost="70" terrain="Hills"/>
         <Hex name="I3" tile="-37009" city="Bregenz"/>
-        <Hex name="I5" tile="0" cost="110"/>
+        <Hex name="I5" tile="0" cost="110" terrain="Mountain"/>
         <Hex name="I7" tile="-3007" city="Innsbruck"/>
-        <Hex name="I9" tile="0" cost="70"/>
-        <Hex name="I11" tile="0" cost="70"/>
-        <Hex name="I13" tile="0" cost="70"/>
+        <Hex name="I9" tile="0" cost="70" terrain="Hills"/>
+        <Hex name="I11" tile="0" cost="70" terrain="Hills"/>
+        <Hex name="I13" tile="0" cost="70" terrain="Hills"/>
         <Hex name="I15" tile="-10" city="Graz"/>
         <Hex name="I17" tile="0"/>
         <Hex name="I19" tile="0"/>
         <Hex name="I21" tile="-1"/>
-        <Hex name="I23" tile="-2" cost="50"/>
-        <Hex name="I25" tile="0" cost="50"/>
+        <Hex name="I23" tile="-2" cost="50" terrain="River"/>
+        <Hex name="I25" tile="0" cost="50" terrain="River"/>
         <Hex name="I27" tile="-1"/>
         <Hex name="I29" tile="-37123"/>
         <Hex name="I31" tile="0"/>
         <Hex name="I33" tile="-1"/>
         <Hex name="I35" tile="0" orientation="1"/>
         <Hex name="I37" tile="0"/>
-        <Hex name="J4" tile="0" cost="70"/>
-        <Hex name="J6" tile="0" cost="110"/>
-        <Hex name="J8" tile="0" cost="70"/>
-        <Hex name="J10" tile="0" cost="110"/>
-        <Hex name="J12" tile="-2" cost="110"/>
+        <Hex name="J4" tile="0" cost="70" terrain="Hills"/>
+        <Hex name="J6" tile="0" cost="110" terrain="Mountain"/>
+        <Hex name="J8" tile="0" cost="70" terrain="Hills"/>
+        <Hex name="J10" tile="0" cost="110" terrain="Mountain"/>
+        <Hex name="J12" tile="-2" cost="110" terrain="Mountain"/>
         <Hex name="J14" tile="0"/>
         <Hex name="J16" tile="-37011" city="Marburg"/>
         <Hex name="J18" tile="-1"/>
         <Hex name="J20" tile="0"/>
-        <Hex name="J22" tile="0" cost="50"/>
+        <Hex name="J22" tile="0" cost="50" terrain="River"/>
         <Hex name="J24" tile="-1"/>
         <Hex name="J26" tile="-37008" city="Szegedin"/>
         <Hex name="J28" tile="-20" city="Arad/Temesvar" label="OO"/>
         <Hex name="J30" tile="0"/>
-        <Hex name="J32" tile="0" cost="70"/>
+        <Hex name="J32" tile="0" cost="70" terrain="Hills"/>
         <Hex name="J34" tile="-37002" orientation="1" value="25,50" city="ZKB" mutexId="Mine"
              extraText="ZKB,0,35"/>
         <Hex name="J36" tile="-37007" city="Kronstadt"/>
         <Hex name="K1" tile="-800" orientation="5"/>
-        <Hex name="K3" tile="0" border="J4,K5" cost="70"/>
+        <Hex name="K3" tile="0" border="J4,K5" cost="70" terrain="Hills"/>
         <Hex name="K5" tile="-10" city="Bozen"/>
-        <Hex name="K7" tile="0"  border="K5,J6,J8" cost="70"/>
+        <Hex name="K7" tile="0"  border="K5,J6,J8" cost="70" terrain="Hills"/>
         <Hex name="K9" tile="-1" border="J8.J10,K11"/>
-        <Hex name="K11" tile="0" cost="110"/>
-        <Hex name="K13" tile="-1" cost="110"/>
+        <Hex name="K11" tile="0" cost="110" terrain="Mountain"/>
+        <Hex name="K13" tile="-1" cost="110" terrain="Mountain"/>
         <Hex name="K15" tile="0"/>
         <Hex name="K17" tile="-10" city="Agram"/>
-        <Hex name="K19" tile="0" cost="50"/>
+        <Hex name="K19" tile="0" cost="50" terrain="River"/>
         <Hex name="K21" tile="-37206" city="F&#252;nfkirchen"/>
-        <Hex name="K23" tile="0" cost="50"/>
-        <Hex name="K25" tile="0" cost="50"/>
+        <Hex name="K23" tile="0" cost="50" terrain="River"/>
+        <Hex name="K25" tile="0" cost="50" terrain="River"/>
         <Hex name="K27" tile="0"/>
         <Hex name="K29" tile="-1"/>
         <Hex name="K31" tile="-37001" value="20,50" orientation="5" city="SPB" mutexId="Mine"
@@ -191,12 +191,12 @@
         <Hex name="L6" tile="-2" border="K5"/>
         <Hex name="L8" tile="-10" city="Venedig"/>
         <Hex name="L12" tile="-37007" city="Triest"/>
-        <Hex name="L14" tile="0" cost="70"/>
+        <Hex name="L14" tile="0" cost="70" terrain="Hills"/>
         <Hex name="L16" tile="0" border="M15,L14,K15,K17" open="no"/>
         <Hex name="L18" tile="-1" border="K17,K19" open="no"/>
         <Hex name="L20" tile="0" border="K19,K21,L22" open="no"/>
         <Hex name="L22" tile="-37158"/>
-        <Hex name="L24" tile="-2" cost="50"/>
+        <Hex name="L24" tile="-2" cost="50" terrain="River"/>
         <Hex name="L26" tile="0"/>
         <Hex name="L28" tile="0"/>
         <Hex name="L30" tile="-37001" value="25,50" orientation="5" city="LRB" mutexId="Mine"
@@ -206,12 +206,12 @@
         <Hex name="M7" tile="0"/>
         <Hex name="M13" tile="-3" orientation="4"/>
         <Hex name="M15" tile="0"/>
-        <Hex name="M17" tile="0" border="M15,N16" cost="70" open="no"/>
-        <Hex name="M19" tile="0" cost="70" open="no"/>
-        <Hex name="M21" tile="0" border="L22" cost="70" open="no"/>
+        <Hex name="M17" tile="0" border="M15,N16" cost="70" terrain="Hills" open="no"/>
+        <Hex name="M19" tile="0" cost="70" terrain="Hills" open="no"/>
+        <Hex name="M21" tile="0" border="L22" cost="70" terrain="Hills" open="no"/>
         <Hex name="N14" tile="-3" orientation="4"/>
         <Hex name="N16" tile="0"/>
-        <Hex name="N18" tile="0" border="N16,O17,O19" cost="70" open="no"/>
+        <Hex name="N18" tile="0" border="N16,O17,O19" cost="70" terrain="Hills" open="no"/>
         <Hex name="N20" tile="-3007" border="O19" city="Sarajevo" open="no"/>
         <Hex name="N22" tile="-7" orientation="3"/>
         <Hex name="O17" tile="-58" orientation="3"/>

@@ -7,7 +7,7 @@ public class GameDef_1835 {
     public static final String PR_ID = "PR";
     public static final String BY_ID = "BY";
     public static final String OBB_ID = "OBB";
-
+public static final String PFR_ID = "PrussianFormationRound";
 
 
 }

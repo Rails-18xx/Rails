@@ -51,4 +51,10 @@ public class Purse extends Wallet<Currency> {
         return currency.format(amount);
     }
     
+    public void setAmount_AI(int newAmount) {
+        // This method bypasses the 'change' logic and directly sets the value.
+        // Used for re-hydrating a saved state.
+        this.amount = newAmount;
+    }
+
 }

@@ -144,7 +144,7 @@ public class StartRound_SOH extends StartRound {
                 pickedPrivatesAsMap.put(privateNumber, item);
             }
             items.remove(k);
-            log.info ("Picked private {} {}", k, item.getId());
+   //         log.info ("Picked private {} {}", k, item.getId());
         }
     }
 

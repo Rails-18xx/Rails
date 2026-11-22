@@ -1,14 +1,11 @@
 package net.sf.rails.ui.swing;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.event.*;
+import java.awt.geom.*;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -18,98 +15,223 @@ import org.slf4j.LoggerFactory;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.Tile;
 import net.sf.rails.game.TileManager;
+import net.sf.rails.game.PhaseManager;
+import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.state.Observable;
 import net.sf.rails.game.state.Observer;
 import net.sf.rails.ui.swing.elements.Field;
+import net.sf.rails.ui.swing.hexmap.HexHighlightMouseListener;
 
-
-/**
- * This Window displays the availability of tiles.
- */
-
-// FIXME: This is a temporary workaround as it does not update the number of tiles
-// replace this with a field again
-public class RemainingTilesWindow extends JFrame implements WindowListener,
-        ActionListener {
+public class RemainingTilesWindow extends JFrame implements WindowListener, ActionListener {
     private static final long serialVersionUID = 1L;
-
     private ORWindow orWindow;
-
     private final AlignedWidthPanel tilePanel;
     private final JScrollPane slider;
-
     private final Map<Tile, Field> tileLabels = new HashMap<>();
     private final Map<Tile, Observer> observerMap = new HashMap<>();
-
     private static final Logger log = LoggerFactory.getLogger(RemainingTilesWindow.class);
+
+    private JPanel controlPanel;
+    private JButton btnRotLeft, btnRotRight, btnAccept;
+    private Tile selectedTile = null;
+    private int selectedRotation = 0;
+
+
+    private double tileScaleFactor = 0.8;
+
+    public void adjustFontScale(double delta) {
+        tileScaleFactor = Math.max(0.4, Math.min(2.0, tileScaleFactor + (delta * 0.5)));
+        for (Map.Entry<Tile, Field> entry : tileLabels.entrySet()) {
+            updateGridTileIcon(entry.getKey(), entry.getValue());
+        }
+        updateSelectedTileIcon();
+        tilePanel.revalidate();
+        tilePanel.repaint();
+    }
+
+    private void updateGridTileIcon(Tile tile, Field label) {
+        String picId = tile.getPictureId();
+        BufferedImage hexImage = ImageLoader.getInstance().getTile(picId, 10);
+        if (hexImage != null) {
+            hexImage = rotateImage(hexImage, 30.0);
+            ImageIcon hexIcon = new ImageIcon(hexImage);
+            hexIcon.setImage(hexIcon.getImage().getScaledInstance(
+                    (int) (hexIcon.getIconWidth() * tileScaleFactor),
+                    (int) (hexIcon.getIconHeight() * tileScaleFactor),
+                    Image.SCALE_SMOOTH));
+            label.setIcon(hexIcon);
+        }
+    }
+
 
     public RemainingTilesWindow(ORWindow orWindow) {
         super();
-
         this.orWindow = orWindow;
         tilePanel = new AlignedWidthPanel();
         slider = new JScrollPane(tilePanel);
         slider.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-        slider.setPreferredSize(new Dimension(200,200));
-        tilePanel.setParentSlider(slider);
+        
+        // Initialize control panel first
+        initControlPanel();
 
-        //use flow layout as it provides for necessary line breaks
+        // Use BorderLayout for the frame
+        setLayout(new BorderLayout());
+        add(slider, BorderLayout.CENTER);
+        add(controlPanel, BorderLayout.EAST);
+
+        tilePanel.setParentSlider(slider);
         tilePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        init(orWindow.getGameUIManager());
-
-        //setup the JFrame and assign the contents (slider containing tilePane)
-        //only for conventional layout as this is a dockable pane for the docking layout
         if (!orWindow.isDockingFrameworkEnabled()) {
             setTitle("Rails: Remaining Tiles");
-            setVisible(false);
-            setContentPane(slider);
-            setSize(800, 600);
+            setSize(900, 600); // Increased width to accommodate controlPanel
             addWindowListener(this);
-
-            this.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-            this.setLocationRelativeTo(orWindow);
-
-            setVisible(true);
+            setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+            setLocationRelativeTo(orWindow);
         }
+        
+        init(orWindow.getGameUIManager());
+        setVisible(true);
+    }
+// --- END FIX ---
+
+private void initControlPanel() {
+        controlPanel = new JPanel(new GridLayout(3, 1, 0, 8));
+        btnRotLeft = new JButton("↺");
+        btnRotRight = new JButton("↻");
+        btnAccept = new JButton("✓");
+
+        Font btnFont = new Font("SansSerif", Font.BOLD, 16);
+        Dimension size = new Dimension(80, 40);
+
+        configureButtonStyle(btnRotLeft, btnFont, size, UIManager.getColor("Button.background"),
+                UIManager.getColor("Button.foreground"));
+        configureButtonStyle(btnRotRight, btnFont, size, UIManager.getColor("Button.background"),
+                UIManager.getColor("Button.foreground"));
+        configureButtonStyle(btnAccept, new Font("SansSerif", Font.BOLD, 18), size, new java.awt.Color(30, 144, 255),
+                java.awt.Color.WHITE);
+
+        btnRotLeft.addActionListener(e -> {
+            selectedRotation = (selectedRotation + 5) % 6;
+            updateSelectedTileIcon();
+        });
+
+        btnRotRight.addActionListener(e -> {
+            selectedRotation = (selectedRotation + 1) % 6;
+            updateSelectedTileIcon();
+        });
+
+        btnAccept.addActionListener(e -> {
+            if (selectedTile != null) {
+                var cm = orWindow.getGameUIManager().getGameManager()
+                        .getCorrectionManager(rails.game.correct.CorrectionType.CORRECT_MAP);
+                if (cm instanceof rails.game.correct.MapCorrectionManager) {
+                    ((rails.game.correct.MapCorrectionManager) cm).completeCorrection(selectedTile.getId(),
+                            selectedRotation);
+                }
+            }
+        });
+        
+        controlPanel.add(btnRotLeft);
+        controlPanel.add(btnRotRight);
+        controlPanel.add(btnAccept);
+        controlPanel.revalidate();
+        controlPanel.repaint();
+    }
+    
+    // --- START FIX ---
+private void updateSelectedTileIcon() {
+    if (selectedTile == null) return;
+    
+    // 1. Get the original image (rotateImage uses 30 degrees per step for 18xx tiles)
+    String picId = selectedTile.getPictureId();
+    BufferedImage hexImage = ImageLoader.getInstance().getTile(picId, 10);
+    
+    // 2. Apply the rotation (selectedRotation * 60 degrees, plus 30 default)
+    // Note: If rotateImage is 30.0, we add (rotation * 60)
+    double angle = 30.0 + (selectedRotation * 60.0);
+    hexImage = rotateImage(hexImage, angle);
+    
+    // 3. Scale and update the label
+    ImageIcon hexIcon = new ImageIcon(hexImage);
+hexIcon.setImage(hexIcon.getImage().getScaledInstance(
+                (int) (hexIcon.getIconWidth() * tileScaleFactor),
+                (int) (hexIcon.getIconHeight() * tileScaleFactor),
+                Image.SCALE_SMOOTH));
+            
+    Field label = tileLabels.get(selectedTile);
+    if (label != null) {
+        label.setIcon(hexIcon);
+        label.repaint();
+    }
+}
+
+    private void configureButtonStyle(JButton btn, Font font, Dimension size, Color bg, Color fg) {
+        btn.setFont(font);
+        btn.setPreferredSize(size);
+        btn.setBackground(bg);
+        btn.setForeground(fg);
+        btn.setOpaque(true);
+        btn.setBorder(BorderFactory.createRaisedBevelBorder());
     }
 
+    
     private void init(GameUIManager gameUIManager) {
         TileManager tmgr = gameUIManager.getRoot().getTileManager();
+        List<Tile> tiles = new ArrayList<>(tmgr.getTiles());
 
-        // Build the grid with tiles in the sequence as
-        // these have been defined in Tiles.xml
-        Set<Tile> tiles = tmgr.getTiles();
-        log.debug("There are {} tiles known in this game", tiles.size());
+        Collections.sort(tiles, (t1, t2) -> compareIds(t1.getId(), t2.getId()));
 
-        for (Tile tile:tiles) {
-            if (tile.isPrepainted() || tile.isHidden()) continue;
+        for (Tile tile : tiles) {
+            if (tile.isPrepainted() || tile.isHidden())
+                continue;
             String picId = tile.getPictureId();
-
             BufferedImage hexImage = ImageLoader.getInstance().getTile(picId, 10);
+            if (hexImage != null)
+                hexImage = rotateImage(hexImage, 30.0);
             ImageIcon hexIcon = new ImageIcon(hexImage);
-            hexIcon.setImage(hexIcon.getImage().getScaledInstance(
-                    (int) (hexIcon.getIconWidth() * 0.8),
-                    (int) (hexIcon.getIconHeight() * 0.8),
+hexIcon.setImage(hexIcon.getImage().getScaledInstance(
+                    (int) (hexIcon.getIconWidth() * tileScaleFactor),
+                    (int) (hexIcon.getIconHeight() * tileScaleFactor),
                     Image.SCALE_SMOOTH));
-
-//            HexLabel hexLabel = new HexLabel(hexIcon, tile);
-//            hexLabel.setVerticalTextPosition(Field.BOTTOM);
-//            hexLabel.setHorizontalTextPosition(Field.CENTER);
-//            hexLabel.setVisible(true);
-//            tilePanel.add(hexLabel);
             Field label = new Field(tile.getCountModel(), hexIcon, Field.CENTER);
             label.setVerticalTextPosition(Field.BOTTOM);
             label.setHorizontalTextPosition(Field.CENTER);
             label.setVisible(true);
+            // Add this MouseListener to the 'label' inside your init() loop:
+            // --- START FIX ---
+            label.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent e) {
+                    // Update state
+                    selectedTile = tile;
+
+                    // Visual feedback: clear previous selection style, highlight new one
+                    for (Field f : tileLabels.values())
+                        f.setBorder(null);
+                    label.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+
+                    // Keep the correction logic if you want immediate double-click,
+                    // or just rely on the 'Accept' button now.
+                    log.info("Selected tile: " + tile.getId());
+                }
+            });
+            // --- END FIX ---
+
+            // --- FIX: Restore Highlight on Hover ---
+            // We attach the special mouse listener that asks the Map to highlight
+            // any hex currently holding this specific tile.
+            HexHighlightMouseListener.addMouseListener(
+                    label,
+                    orWindow.getORUIManager(),
+                    tile,
+                    true // True = Force enable (ignores user preference to ensure UI feedback works)
+            );
+
             tilePanel.add(label);
-
             tileLabels.put(tile, label);
-
             Observer watcher = new Observer() {
                 @Override
                 public void update(String text) {
-                    // TODO could parse out the text, ie [MapHex{uri=/Map/I17}Coordinates{9, 17}]
                     refreshCounts();
                 }
 
@@ -121,19 +243,50 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
             tile.getTilesLaid().addObserver(watcher);
             observerMap.put(tile, watcher);
         }
+
+    }
+
+    private static int compareIds(String id1, String id2) {
+        try {
+            int i1 = Integer.parseInt(id1);
+            int i2 = Integer.parseInt(id2);
+            return Integer.compare(i1, i2);
+        } catch (NumberFormatException e) {
+            return id1.compareTo(id2);
+        }
+    }
+
+    public static BufferedImage rotateImage(BufferedImage source, double angleDegrees) {
+        if (source == null)
+            return null;
+        double rads = Math.toRadians(angleDegrees);
+        double sin = Math.abs(Math.sin(rads));
+        double cos = Math.abs(Math.cos(rads));
+        int w = source.getWidth();
+        int h = source.getHeight();
+        int newWidth = (int) Math.floor(w * cos + h * sin);
+        int newHeight = (int) Math.floor(h * cos + w * sin);
+        BufferedImage rotated = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = rotated.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        AffineTransform at = new AffineTransform();
+        at.translate((newWidth - w) / 2.0, (newHeight - h) / 2.0);
+        at.rotate(rads, w / 2.0, h / 2.0);
+        g2d.setTransform(at);
+        g2d.drawImage(source, 0, 0, null);
+        g2d.dispose();
+        return rotated;
     }
 
     private void refreshCounts() {
-        // refresh our counts
-        log.debug("refreshing tile counts");
-        for ( Map.Entry<Tile, Field> entry : tileLabels.entrySet() ) {
+        for (Map.Entry<Tile, Field> entry : tileLabels.entrySet()) {
             entry.getValue().setText(entry.getKey().getCountModel().toText());
         }
     }
 
     @Override
     public void actionPerformed(ActionEvent actor) {
-
     }
 
     @Override
@@ -142,75 +295,318 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
     }
 
     @Override
-    public void windowClosed(WindowEvent e) {}
+    public void windowClosed(WindowEvent e) {
+    }
 
     @Override
     public void windowClosing(WindowEvent e) {
         orWindow.getGameUIManager().uncheckMenuItemBox(LocalText.getText("MAP"));
+        setVisible(false);
+    }
 
-        for ( Map.Entry<Tile, Observer> entry : observerMap.entrySet() ) {
+    @Override
+    public void windowDeactivated(WindowEvent e) {
+    }
+
+    @Override
+    public void windowDeiconified(WindowEvent e) {
+    }
+
+    @Override
+    public void windowIconified(WindowEvent e) {
+    }
+
+    @Override
+    public void windowOpened(WindowEvent e) {
+    }
+
+    public void activate() {
+        if (!isVisible()) {
+            setVisible(true);
+        }
+        toFront();
+        requestFocus();
+    }
+
+    public void finish() {
+        for (Map.Entry<Tile, Observer> entry : observerMap.entrySet()) {
             entry.getKey().getTilesLaid().removeObserver(entry.getValue());
         }
         dispose();
     }
 
-    @Override
-    public void windowDeactivated(WindowEvent e) {}
-
-    @Override
-    public void windowDeiconified(WindowEvent e) {}
-
-    @Override
-    public void windowIconified(WindowEvent e) {}
-
-    @Override
-    public void windowOpened(WindowEvent e) {}
-
-    public void activate() {
-        setVisible(true);
-        requestFocus();
-    }
-
-    /**
-     * Round-end settings
-     *
-     */
-    public void finish() {}
-
-    /**
-     * @return The scroll pane which holds as child the tile panel
-     */
     public JScrollPane getScrollPane() {
         return slider;
     }
 
-    /**
-     * custom content pane that will align its width with the parent scroll pane
-     * needed to ensure only vertical scroll bar is used
-     */
     private static class AlignedWidthPanel extends JPanel {
         private static final long serialVersionUID = 1L;
         private JScrollPane parentSlider = null;
+
         @Override
         public Dimension getPreferredSize() {
-            //width based on parent slider
-            int width = parentSlider.getSize().width
-                    - parentSlider.getVerticalScrollBar().getWidth()
-                    - 5;
-            if (width <= 0) width = 1;
-
-            //height based on contained components
-            //(no need to take into account width discrepancies since
-            // method is invoked several times)
-            int height = 1; //minimum height
+            int width = parentSlider.getSize().width - parentSlider.getVerticalScrollBar().getWidth() - 5;
+            if (width <= 0)
+                width = 1;
+            int height = 1;
             for (Component c : this.getComponents()) {
                 height = Math.max(height, c.getY() + c.getHeight());
             }
-            return new Dimension (width , height);
+            return new Dimension(width, height);
         }
+
         public void setParentSlider(JScrollPane parentSlider) {
             this.parentSlider = parentSlider;
         }
+    }
+
+    public static class MiniDock extends JPanel {
+        private static final long serialVersionUID = 1L;
+        private final ORUIManager orUIManager;
+        private final List<Tile> activeTiles = new ArrayList<>();
+        private Color phaseColor = Color.LIGHT_GRAY;
+        private final Map<Tile, Observer> tileObservers = new HashMap<>();
+        private boolean listenersAttached = false;
+
+        public MiniDock(ORUIManager uiManager) {
+            this.orUIManager = uiManager;
+            this.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    orUIManager.processAction(ORPanel.REM_TILES_CMD, null, null);
+                }
+            });
+            this.setToolTipText("View Remaining Tiles");
+            this.setOpaque(true);
+            this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        }
+
+        @Override
+        public void addNotify() {
+            super.addNotify();
+            attachObservers();
+        }
+
+        @Override
+        public void removeNotify() {
+            detachObservers();
+            super.removeNotify();
+        }
+
+        private void attachObservers() {
+            if (listenersAttached)
+                return;
+            try {
+                if (orUIManager == null || orUIManager.getGameUIManager() == null)
+                    return;
+                RailsRoot root = orUIManager.getGameUIManager().getRoot();
+                if (root == null || root.getTileManager() == null)
+                    return;
+
+                for (Tile t : root.getTileManager().getTiles()) {
+                    // We must create a NEW Observer instance for every tile.
+                    // Reusing a single instance causes the IllegalArgumentException.
+                    Observer tileObserver = new Observer() {
+                        @Override
+                        public void update(String text) {
+                            SwingUtilities.invokeLater(() -> {
+                                updateData();
+                                repaint();
+                            });
+                        }
+
+                        @Override
+                        public Observable getObservable() {
+                            return null;
+                        }
+                    };
+
+                    t.getTilesLaid().addObserver(tileObserver);
+                    tileObservers.put(t, tileObserver);
+                }
+
+                listenersAttached = true;
+            } catch (Exception e) {
+                log.error("Failed to attach tile observers", e);
+            }
+        }
+
+        private void detachObservers() {
+            try {
+                for (Map.Entry<Tile, Observer> entry : tileObservers.entrySet()) {
+                    entry.getKey().getTilesLaid().removeObserver(entry.getValue());
+                }
+                tileObservers.clear();
+                listenersAttached = false;
+            } catch (Exception e) {
+            }
+        }
+
+        private void updateData() {
+            try {
+                activeTiles.clear();
+
+                if (orUIManager == null || orUIManager.getGameUIManager() == null)
+                    return;
+                RailsRoot root = orUIManager.getGameUIManager().getRoot();
+                if (root == null)
+                    return;
+
+                TileManager tm = root.getTileManager();
+                PhaseManager pm = root.getPhaseManager();
+
+                if (tm == null || pm == null || pm.getCurrentPhase() == null)
+                    return;
+
+                List<String> allowedColors = pm.getCurrentPhase().getTileColours();
+                if (allowedColors == null)
+                    return;
+
+                phaseColor = Color.LIGHT_GRAY;
+                boolean yellow = false, green = false, brown = false, gray = false;
+                for (String s : allowedColors) {
+                    String c = s.toLowerCase();
+                    if (c.contains("yellow"))
+                        yellow = true;
+                    else if (c.contains("green"))
+                        green = true;
+                    else if (c.contains("brown"))
+                        brown = true;
+                    else if (c.contains("gray") || c.contains("gray"))
+                        gray = true;
+                }
+                if (gray)
+                    phaseColor = Color.LIGHT_GRAY;
+                else if (brown)
+                    phaseColor = new Color(139, 69, 19);
+                else if (green)
+                    phaseColor = new Color(0, 180, 0);
+                else if (yellow)
+                    phaseColor = Color.YELLOW;
+
+                for (Tile t : tm.getTiles()) {
+                    if (t.isPrepainted() || t.isHidden())
+                        continue;
+                    if (t.getFreeCount() <= 0)
+                        continue;
+                    if (t.getColour() != null) {
+                        String tileColor = t.getColour().name();
+                        boolean match = false;
+                        for (String allowed : allowedColors) {
+                            if (allowed.equalsIgnoreCase(tileColor)) {
+                                match = true;
+                                break;
+                            }
+                        }
+                        if (match)
+                            activeTiles.add(t);
+                    }
+                }
+
+                Collections.sort(activeTiles, (t1, t2) -> compareIds(t1.getId(), t2.getId()));
+
+            } catch (Exception e) {
+                log.error("MiniDock updateData failed", e);
+            }
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            try {
+                updateData();
+
+                super.paintComponent(g);
+
+                g.setColor(Color.WHITE);
+                g.fillRect(0, 0, getWidth(), getHeight());
+
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+
+                if (activeTiles.isEmpty()) {
+                    g.setColor(Color.BLACK);
+                    g.setFont(new Font("SansSerif", Font.PLAIN, 10));
+                    g.drawString("No Tiles", 10, getHeight() / 2 + 3);
+                } else {
+                    int n = activeTiles.size();
+                    int w = getWidth();
+                    int h = getHeight();
+                    if (w <= 0)
+                        w = 1;
+                    if (h <= 0)
+                        h = 1;
+                    int margin = 2;
+
+                    int bestSize = 10;
+                    for (int s = 50; s >= 10; s--) {
+                        int cellSpacing = s;
+                        int availW = w - (2 * margin);
+                        int availH = h - (2 * margin);
+                        int cols = availW / cellSpacing;
+                        if (cols < 1)
+                            cols = 1;
+                        int rows = (int) Math.ceil((double) n / cols);
+                        if (rows * cellSpacing <= availH) {
+                            bestSize = s;
+                            break;
+                        }
+                    }
+
+                    int hexSize = bestSize;
+                    int cols = (w - (2 * margin)) / hexSize;
+                    if (cols < 1)
+                        cols = 1;
+                    int rows = (int) Math.ceil((double) n / cols);
+                    int gridW = cols * hexSize;
+                    int gridH = rows * hexSize;
+                    int xOffset = margin + (w - 2 * margin - gridW) / 2;
+                    int yOffset = margin + (h - 2 * margin - gridH) / 2;
+
+                    int col = 0;
+                    int row = 0;
+
+                    for (Tile tile : activeTiles) {
+                        String picId = tile.getPictureId();
+                        BufferedImage img = ImageLoader.getInstance().getTile(picId, 10);
+                        if (img != null) {
+                            img = rotateImage(img, 30.0);
+                            int drawX = xOffset + (col * hexSize);
+                            int drawY = yOffset + (row * hexSize);
+                            g2.drawImage(img, drawX, drawY, hexSize, hexSize, null);
+                        }
+                        col++;
+                        if (col >= cols) {
+                            col = 0;
+                            row++;
+                        }
+                    }
+                }
+
+                g2.setColor(phaseColor);
+                g2.setStroke(new BasicStroke(3));
+                g2.drawRect(1, 1, getWidth() - 3, getHeight() - 3);
+
+            } catch (Throwable t) {
+                g.setColor(Color.WHITE);
+                g.fillRect(0, 0, getWidth(), getHeight());
+                g.setColor(Color.RED);
+                g.drawString("ERR", 5, 20);
+            }
+        }
+    }
+
+    public void refreshMiniDock() {
+        // Refresh the tile counts/labels
+        refreshCounts();
+
+        // If the "MiniDock" is a specific sub-panel or the tilePanel itself,
+        // ensure it is repainted to reflect the new phase color/availability.
+        if (tilePanel != null) {
+            tilePanel.revalidate();
+            tilePanel.repaint();
+        }
+        this.repaint();
     }
 
 }

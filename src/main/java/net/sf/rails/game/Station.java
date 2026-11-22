@@ -4,7 +4,6 @@ import net.sf.rails.common.LocalText;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
 
-import net.sf.rails.game.state.IntegerState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +33,7 @@ public class Station extends TrackPoint implements Comparable<Station> {
     private final Stop.Type type;
     private final int number;
     private final int value;
-    private IntegerState baseSlots;
+    private final int baseSlots;
     private final Tile tile;
     private final int position;
     private final String stopName;
@@ -53,7 +52,7 @@ public class Station extends TrackPoint implements Comparable<Station> {
         this.id = id;
         this.type = type;
         this.value = value;
-        this.baseSlots = IntegerState.create (tile, "BTSlots_"+tile.getId()+"_"+number, slots);
+        this.baseSlots = slots;
         this.position = position;
         this.stopName = cityName;
 
@@ -107,10 +106,6 @@ public class Station extends TrackPoint implements Comparable<Station> {
         return station;
     }
 
-    // Add an off-station base slot
-    public void addVirtualBaseSlot() {
-        baseSlots.add(1);
-    }
 
     public String getName() {
         return "Station " + id + " on " + tile.getClass().getSimpleName() + " "
@@ -145,7 +140,7 @@ public class Station extends TrackPoint implements Comparable<Station> {
      * @return Returns the baseSlots.
      */
     public int getBaseSlots() {
-        return baseSlots.value();
+        return baseSlots;
     }
 
     /**

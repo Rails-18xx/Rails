@@ -130,7 +130,7 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     }
 
     @Override
-    public void adjustPriceOnPayout(int amount) {
+    public void payout(int amount) {
         if (canStockPriceMove.value() == true)  {
             getRoot().getStockMarket().payOut(this);
         }

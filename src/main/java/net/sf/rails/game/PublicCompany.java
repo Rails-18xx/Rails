@@ -12,7 +12,6 @@ import net.sf.rails.game.special.SpecialRight;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.Observable;
 import net.sf.rails.game.state.*;
-import net.sf.rails.game.state.Observer;
 import net.sf.rails.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,13 +21,16 @@ import java.awt.*;
 import java.util.List;
 import java.util.*;
 
-
 /**
  * This class provides an implementation of a (perhaps only basic) public
  * company. Public companies encompass all 18xx company-like entities that lay
- * tracks and run trains. <p> Ownership of companies will always be performed by
+ * tracks and run trains.
+ * <p>
+ * Ownership of companies will always be performed by
  * holding certificates. Some minor company types may have only one certificate,
- * but this will still be the form in which ownership is expressed. <p> Company
+ * but this will still be the form in which ownership is expressed.
+ * <p>
+ * Company
  * shares may or may not have a price on the stock market.
  */
 public class PublicCompany extends RailsAbstractItem
@@ -53,33 +55,41 @@ public class PublicCompany extends RailsAbstractItem
     protected static final int EXPLICIT = 3; // Not automatic
 
     // Base token lay cost calculation methods
-    /* Superseded by enum
-    public static final String BASE_COST_SEQUENCE = "sequence";
-    public static final String BASE_COST_DISTANCE = "distance";
-    public static final String BASE_COST_ROUTE_LENGTH = "route_length"; // Assumed: from any laid token.
-    */
+    /*
+     * Superseded by enum
+     * public static final String BASE_COST_SEQUENCE = "sequence";
+     * public static final String BASE_COST_DISTANCE = "distance";
+     * public static final String BASE_COST_ROUTE_LENGTH = "route_length"; //
+     * Assumed: from any laid token.
+     */
     public enum BaseCostMethod {
-        SEQUENCE ("sequence"),     // First, second token etc.
-        HEX_DISTANCE ("distance"), // As the crow flies
+        SEQUENCE("sequence"), // First, second token etc.
+        HEX_DISTANCE("distance"), // As the crow flies
         ROUTE_DISTANCE("route_length");
 
         private String configName;
 
-        BaseCostMethod (String configName) {
+        BaseCostMethod(String configName) {
             this.configName = configName;
         }
 
-        public String configName () {return configName;}
+        public String configName() {
+            return configName;
+        }
 
         public static BaseCostMethod get(String configName) {
             switch (configName) {
-                case "sequence" : return SEQUENCE;
-                case "distance" : return HEX_DISTANCE;
-                case "route_length" : return ROUTE_DISTANCE;
+                case "sequence":
+                    return SEQUENCE;
+                case "distance":
+                    return HEX_DISTANCE;
+                case "route_length":
+                    return ROUTE_DISTANCE;
             }
             return null;
         }
     }
+
     /* Further specifications to ROUTE_DISTANCE */
     /** May distance measurement only start at the *home* base token? */
     public static boolean FROM_HOME_ONLY = false;
@@ -88,7 +98,7 @@ public class PublicCompany extends RailsAbstractItem
     /** Tokenable stops and their cost (where that counts) */
     public Map<Stop, Integer> tokenableStops;
 
-    protected static final String[] tokenLayTimeNames = new String[]{"whenStarted", "whenFloated", "firstOR"};
+    protected static final String[] tokenLayTimeNames = new String[] { "whenStarted", "whenFloated", "firstOR" };
 
     protected int homeBaseTokensLayTime = START_OF_FIRST_OR;
 
@@ -113,19 +123,31 @@ public class PublicCompany extends RailsAbstractItem
      */
     protected String bgHexColour = "000000";
 
+    public Portfolio getPortfolio() {
+        return portfolio.getTrainsModel().getPortfolio();
+    }
+
+    public String getLastRevenueAllocation() {
+        return lastRevenueAllocation.value();
+    }
+
     /**
      * Home hex & city *
      * Two home hexes is supported, but only if:<br>
      * 1. The locations are fixed (i.e. configured by XML), and<br>
      * 2. Any station (city) numbers are equal for the two home stations.
-     * There is no provision yet for two home hexes having different tile station numbers.
+     * There is no provision yet for two home hexes having different tile station
+     * numbers.
      */
     protected String homeHexNames = null;
     protected List<MapHex> homeHexes = null;
-    //protected int homeCityNumber = 1;
-    /** The home city number of multiple-city hexes can change with tile upgrades, so it's a state variable now.
-     * The default number is 1 */
-    protected IntegerState homeCityNumber = IntegerState.create (this,"HomeCityNumber", 1);
+    // protected int homeCityNumber = 1;
+    /**
+     * The home city number of multiple-city hexes can change with tile upgrades, so
+     * it's a state variable now.
+     * The default number is 1
+     */
+    protected IntegerState homeCityNumber = IntegerState.create(this, "HomeCityNumber", 1);
     protected boolean displayHomeHex = true;
 
     /**
@@ -140,7 +162,7 @@ public class PublicCompany extends RailsAbstractItem
      */
     protected int publicNumber = -1; // For internal use
 
-    protected IntegerState numberOfBaseTokens = IntegerState.create(this, "noOfBaseTokens");
+    protected int numberOfBaseTokens = 0;
 
     /**
      * In case of distance-dependent token lay cost,
@@ -152,12 +174,11 @@ public class PublicCompany extends RailsAbstractItem
      * An array of base token laying costs, per successive token
      */
     protected List<Integer> baseTokenLayCost;
-    //protected String baseTokenLayCostMethod = "sequence";
+    // protected String baseTokenLayCostMethod = "sequence";
     protected BaseCostMethod baseTokenLayCostMethod = BaseCostMethod.SEQUENCE;
 
     protected final BaseTokensModel baseTokens = BaseTokensModel.create(this, "baseTokens"); // Create after cloning ?
     protected final PortfolioModel portfolio = PortfolioModel.create(this);
-
 
     /**
      * Initial (par) share price, represented by a stock market location object
@@ -177,7 +198,7 @@ public class PublicCompany extends RailsAbstractItem
     /**
      * PresidentModel
      */
-    protected GenericState<Player> president = new GenericState<>(this, getId()+"_Pres");
+    protected GenericState<Player> president = new GenericState<>(this, getId() + "_Pres");
     protected final PresidentModel presidentModel = PresidentModel.create(this);
 
     /**
@@ -204,7 +225,7 @@ public class PublicCompany extends RailsAbstractItem
 
     public final CountingMoneyModel directIncomeRevenue = CountingMoneyModel.create(this, "directIncome", false);
 
-    public final CountingMoneyModel lastDividend = CountingMoneyModel.create (this, "lastDividend", false);
+    public final CountingMoneyModel lastDividend = CountingMoneyModel.create(this, "lastDividend", false);
 
     /**
      * Most recent Direct Company Treasury income earned.
@@ -237,11 +258,48 @@ public class PublicCompany extends RailsAbstractItem
      * So far, this only occurs in 18Scan.
      * Perhaps receiverships in other games may qualify to use this stats
      */
-    protected BooleanState hibernating = new BooleanState (this, "hibernating");
+    protected BooleanState hibernating = new BooleanState(this, "hibernating");
+
+    /**
+     * Helper: Returns a list of all Trains owned by this company.
+     * Extracts the actual Train objects from the TrainCards stored in the
+     * portfolio.
+     */
+    public List<Train> getTrains() {
+        if (portfolio == null || portfolio.getTrainsModel() == null) {
+            return new ArrayList<>();
+        }
+        List<Train> list = new ArrayList<>();
+        for (Object item : portfolio.getTrainsModel().getPortfolio().items()) {
+            if (item instanceof net.sf.rails.game.TrainCard) {
+                list.add(((net.sf.rails.game.TrainCard) item).getActualTrain());
+            } else if (item instanceof Train) {
+                list.add((Train) item);
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Helper: Returns a list of all Private Companies owned by this company.
+     */
+    public List<PrivateCompany> getPrivates() {
+        if (portfolio == null || portfolio.getPrivatesOwnedModel() == null) {
+            return new ArrayList<>();
+        }
+        List<PrivateCompany> list = new ArrayList<>();
+        for (Object item : portfolio.getPrivatesOwnedModel().getPortfolio().items()) {
+            if (item instanceof PrivateCompany) {
+                list.add((PrivateCompany) item);
+            }
+        }
+        return list;
+    }
 
     /**
      * In-game state.
-     * <p> Will only be set false if the company is closed and cannot ever be reopened.
+     * <p>
+     * Will only be set false if the company is closed and cannot ever be reopened.
      * By default it will be set false if a company is closed.
      */
     // TODO: Check if there was some assumption to be null at some place
@@ -260,7 +318,8 @@ public class PublicCompany extends RailsAbstractItem
     protected GenericState<IntegerState> extraTiles = new GenericState<>(this, "extraTiles");
 
     /* Spendings in the current operating turn */
-    protected final CountingMoneyModel privatesCostThisTurn = CountingMoneyModel.create(this, "privatesCostThisTurn", false);
+    protected final CountingMoneyModel privatesCostThisTurn = CountingMoneyModel.create(this, "privatesCostThisTurn",
+            false);
 
     protected final StringState tilesLaidThisTurn = StringState.create(this, "tilesLaidThisTurn");
 
@@ -268,9 +327,11 @@ public class PublicCompany extends RailsAbstractItem
 
     protected final StringState tokensLaidThisTurn = StringState.create(this, "tokenLaidThisTurn");
 
-    protected final CountingMoneyModel tokensCostThisTurn = CountingMoneyModel.create(this, "tokensCostThisTurn", false);
+    protected final CountingMoneyModel tokensCostThisTurn = CountingMoneyModel.create(this, "tokensCostThisTurn",
+            false);
 
-    protected final CountingMoneyModel trainsCostThisTurn = CountingMoneyModel.create(this, "trainsCostThisTurn", false);
+    protected final CountingMoneyModel trainsCostThisTurn = CountingMoneyModel.create(this, "trainsCostThisTurn",
+            false);
 
     protected boolean canBuyStock = false;
 
@@ -297,7 +358,10 @@ public class PublicCompany extends RailsAbstractItem
 
     protected boolean poolPaysOut = false;
 
-    protected boolean treasuryPaysOut = true; // Used by 18VA: false
+    /*
+     * not used
+     * protected boolean treasuryPaysOut = false;
+     */
 
     protected boolean canHoldOwnShares = false;
 
@@ -315,8 +379,7 @@ public class PublicCompany extends RailsAbstractItem
     /**
      * The certificates of this company (minimum 1)
      */
-    protected final ArrayListState<PublicCertificate> certificates
-            = new ArrayListState<>(this, "ownCertificates");
+    protected final ArrayListState<PublicCertificate> certificates = new ArrayListState<>(this, "ownCertificates");
 
     /**
      * Are the certificates available from the first SR?
@@ -331,23 +394,22 @@ public class PublicCompany extends RailsAbstractItem
     /**
      * What percentage of ownership constitutes "one share"
      */
-    protected IntegerState shareUnit
-            = IntegerState.create(this, "shareUnit", DEFAULT_SHARE_UNIT);
+    protected IntegerState shareUnit = IntegerState.create(this, "shareUnit", DEFAULT_SHARE_UNIT);
 
     /**
      * New (09/2022): an array of unit sizes that may apply. Default: 10.
      * Examples:
-     *   1826 French majors: first 20, then 10.
-     *   1856 CGR: either 5 or 10.
+     * 1826 French majors: first 20, then 10.
+     * 1856 CGR: either 5 or 10.
      * The actual value is indexed by 'growStep' (see below)
      */
-    protected List<Integer> shareUnitSizes
-            = new ArrayList<> (List.of(DEFAULT_SHARE_UNIT));
+    protected List<Integer> shareUnitSizes = new ArrayList<>(List.of(DEFAULT_SHARE_UNIT));
 
-    protected ActiveSharesCountModel activeSharesCountModel
-            = ActiveSharesCountModel.create (this, "activeSharesCountModel");
+    protected ActiveSharesCountModel activeSharesCountModel = ActiveSharesCountModel.create(this,
+            "activeSharesCountModel");
 
-    /** The number of shares to be specified by <Certificate> tags.
+    /**
+     * The number of shares to be specified by <Certificate> tags.
      * E.g., for 1826 5/10-share companies 10 shares must be configured.
      */
     int requiredNumberOfShares;
@@ -393,7 +455,7 @@ public class PublicCompany extends RailsAbstractItem
      * Deprecated, to be replaced by percOfPriceToReachPerJump (next item)
      */
     @Deprecated
-    //protected boolean payoutMustExceedPriceToMove = false;
+    // protected boolean payoutMustExceedPriceToMove = false;
 
     /*
      * Percentages of share price that must be reached by the
@@ -407,18 +469,20 @@ public class PublicCompany extends RailsAbstractItem
      * 18Scan: 100,200; SOH: 101,201 - both one resp. two spaces.
      * An extreme case is 1825: "51,200,300,400".
      */
-    protected List<Integer> percOfPriceToReachPerJump = List.of (1); // Default
+    protected List<Integer> percOfPriceToReachPerJump = List.of(1); // Default
 
     // Remember the tag until finishConfiguration()
     private Tag payoutTag;
 
     /**
-     * Multiple certificates those that represent more than one nominal share unit (except president share)
+     * Multiple certificates those that represent more than one nominal share unit
+     * (except president share)
      */
     protected boolean hasMultipleCertificates = false;
 
     /**
-     * Certain companies (e.g. 1837 minors) effectively have a 100% playerShareLimit.
+     * Certain companies (e.g. 1837 minors) effectively have a 100%
+     * playerShareLimit.
      * -1 means not applicable.
      */
     protected int playerShareLimit = -1;
@@ -440,8 +504,7 @@ public class PublicCompany extends RailsAbstractItem
     /**
      * Train limit per phase (index)
      */
-    protected ArrayListState<Integer> currentTrainLimits
-            = new ArrayListState<>(this, "trainLimits_"+getId());
+    protected ArrayListState<Integer> currentTrainLimits = new ArrayListState<>(this, "trainLimits_" + getId());
 
     /**
      * Train limits may change when a company "grows",
@@ -464,7 +527,7 @@ public class PublicCompany extends RailsAbstractItem
      */
     protected String privateToCloseOnFirstTrainName = null;
 
-    protected PrivateCompany privateToCloseOnFirstTrain = null;
+    protected final GenericState<PrivateCompany> privateToCloseOnFirstTrain = new GenericState<>(this, "privateToCloseOnFirstTrain");
 
     /**
      * Must the company own a train
@@ -487,7 +550,8 @@ public class PublicCompany extends RailsAbstractItem
     protected boolean initialTrainTradeable = true;
 
     /* Loans */
-    /** Each Loan is a fixed amount of money, and is represented
+    /**
+     * Each Loan is a fixed amount of money, and is represented
      * by a loan marker. This type of loan is used in 1826 and 1856.
      *
      * This is different from a 'bank loan', as used in 1835 and 1837.
@@ -501,7 +565,7 @@ public class PublicCompany extends RailsAbstractItem
     protected CountingMoneyModel currentLoanValue = null; // init during finishConfig
 
     /* Bonds */
-    protected int numberOfBonds = 0;
+    protected final IntegerState numberOfBonds = IntegerState.create(this, "numberOfBonds", 0);
     protected int priceOfBonds = 0;
     protected int bondsInterest = 0;
 
@@ -521,7 +585,7 @@ public class PublicCompany extends RailsAbstractItem
     private String relatedPublicCompanyName = null;
     private PublicCompany relatedPublicCompany = null;
 
-    private String foundingStartCompany = null;
+    private final StringState foundingStartCompany = StringState.create(this, "foundingStartCompany", null);
 
     /**
      * Introducing the colormodel for companies
@@ -559,9 +623,10 @@ public class PublicCompany extends RailsAbstractItem
             currentPrice = PriceModel.create(this, "currentPrice", true);
             canSharePriceVary = new BooleanState(this, "canSharePriceVary", true);
         }
+
     }
 
-     /**
+    /**
      * To configure all public companies from the &lt;PublicCompany&gt; XML
      * element
      */
@@ -583,18 +648,19 @@ public class PublicCompany extends RailsAbstractItem
 
         relatedPublicCompanyName = tag.getAttributeAsString("relatedCompany", relatedPublicCompanyName);
 
-        foundingStartCompany = tag.getAttributeAsString("foundingCompany", foundingStartCompany);
+        foundingStartCompany.set(tag.getAttributeAsString("foundingCompany", foundingStartCompany.value()));
 
         startSpace = tag.getAttributeAsString("startspace");
         // Set the default price token drop time.
         // Currently, no exceptions exist, so this value isn't changed anywhere yet.
-        // Any (future) games with exceptions to these defaults will require a separate XML attribute.
+        // Any (future) games with exceptions to these defaults will require a separate
+        // XML attribute.
         // Known games to have exceptions: 1837.
         dropPriceToken = startSpace != null ? WHEN_FLOATED : WHEN_STARTED;
 
         fixedPrice = tag.getAttributeAsInteger("price", 0);
 
-        numberOfBaseTokens.set(tag.getAttributeAsInteger("tokens", 1));
+        numberOfBaseTokens = tag.getAttributeAsInteger("tokens", 1);
 
         certsAreInitiallyAvailable = tag.getAttributeAsBoolean("available", certsAreInitiallyAvailable);
 
@@ -606,9 +672,10 @@ public class PublicCompany extends RailsAbstractItem
         Tag shareUnitTag = tag.getChild("ShareUnit");
         if (shareUnitTag != null) {
             setShareUnit(shareUnitTag.getAttributeAsInteger("percentage", DEFAULT_SHARE_UNIT));
-            //shareUnit.set(shareUnitTag.getAttributeAsInteger("percentage", DEFAULT_SHARE_UNIT));
+            // shareUnit.set(shareUnitTag.getAttributeAsInteger("percentage",
+            // DEFAULT_SHARE_UNIT));
             shareUnitsForSharePrice = shareUnitTag.getAttributeAsInteger("sharePriceUnits", shareUnitsForSharePrice);
-            //activeSharesCountModel.set (100 / shareUnit.value());
+            // activeSharesCountModel.set (100 / shareUnit.value());
         }
 
         Tag homeBaseTag = tag.getChild("Home");
@@ -629,7 +696,8 @@ public class PublicCompany extends RailsAbstractItem
         }
 
         Tag canUseSpecTag = tag.getChild("CanUseSpecialProperties");
-        if (canUseSpecTag != null) canUseSpecialProperties = true;
+        if (canUseSpecTag != null)
+            canUseSpecialProperties = true;
 
         // Extra info text(usually related to extra-share special properties)
         Tag infoTag = tag.getChild("Info");
@@ -643,9 +711,8 @@ public class PublicCompany extends RailsAbstractItem
         parentInfoText += SpecialProperty.configure(this, tag);
 
         poolPaysOut = poolPaysOut || tag.getChild("PoolPaysOut") != null;
+
         ipoPaysOut = ipoPaysOut || tag.getChild("IPOPaysOut") != null;
-        treasuryPaysOut = treasuryPaysOut
-                && tag.getChild("TreasuryDoesNotPayOut") == null;
 
         Tag floatTag = tag.getChild("Float");
         if (floatTag != null) {
@@ -663,22 +730,25 @@ public class PublicCompany extends RailsAbstractItem
             minimumStartPrice = priceTag.getAttributeAsInteger("minimumStartPrice", minimumStartPrice);
         }
 
-        if (tag.getChild("Payout") != null) payoutTag = tag.getChild("Payout");
+        if (tag.getChild("Payout") != null)
+            payoutTag = tag.getChild("Payout");
         // Process in finishConfiguration, where we come only once
         /*
-        if (payoutTag != null) {
-            String split = payoutTag.getAttributeAsString("split", "no");
-            splitAlways = "always".equalsIgnoreCase(split);
-            splitAllowed = "allowed".equalsIgnoreCase(split);
-            // "Exceed" to be interpreted as "equal or exceed"
-            payoutMustExceedPriceToMove = payoutTag.getAttributeAsBoolean("mustExceedPriceToMove", false);
-        }
-
-        Tag priceJumpsTag = tag.getChild("AdjustPriceOnPayout");
-        if (priceJumpsTag != null) {
-            // Process it later
-            adjustPriceOnPayoutTag = priceJumpsTag;
-        }*/
+         * if (payoutTag != null) {
+         * String split = payoutTag.getAttributeAsString("split", "no");
+         * splitAlways = "always".equalsIgnoreCase(split);
+         * splitAllowed = "allowed".equalsIgnoreCase(split);
+         * // "Exceed" to be interpreted as "equal or exceed"
+         * payoutMustExceedPriceToMove =
+         * payoutTag.getAttributeAsBoolean("mustExceedPriceToMove", false);
+         * }
+         * 
+         * Tag priceJumpsTag = tag.getChild("AdjustPriceOnPayout");
+         * if (priceJumpsTag != null) {
+         * // Process it later
+         * adjustPriceOnPayoutTag = priceJumpsTag;
+         * }
+         */
 
         Tag ownSharesTag = tag.getChild("TreasuryCanHoldOwnShares");
         if (ownSharesTag != null) {
@@ -704,7 +774,7 @@ public class PublicCompany extends RailsAbstractItem
         Tag firstTrainTag = tag.getChild("FirstTrainCloses");
         if (firstTrainTag != null) {
             String typeName = firstTrainTag.getAttributeAsString("type", "Private");
-            if ( "Private".equalsIgnoreCase(typeName)) {
+            if ("Private".equalsIgnoreCase(typeName)) {
                 privateToCloseOnFirstTrainName = firstTrainTag.getAttributeAsString("name");
             } else {
                 throw new ConfigurationException("Only Privates can be closed on first train buy");
@@ -713,17 +783,16 @@ public class PublicCompany extends RailsAbstractItem
 
         Tag capitalisationTag = tag.getChild("Capitalisation");
         if (capitalisationTag != null) {
-            String capType =
-                    capitalisationTag.getAttributeAsString("type", "full");
-            capitalisationShares = capitalisationTag.getAttributeAsInteger ("shares", 0);
-            if ( "full".equalsIgnoreCase(capType)) {
+            String capType = capitalisationTag.getAttributeAsString("type", "full");
+            capitalisationShares = capitalisationTag.getAttributeAsInteger("shares", 0);
+            if ("full".equalsIgnoreCase(capType)) {
                 setCapitalisation(CAPITALISE_FULL);
-            } else if ( "part".equalsIgnoreCase(capType)) {
+            } else if ("part".equalsIgnoreCase(capType)) {
                 setCapitalisation(CAPITALISE_PART);
-                capitalisationShares = capitalisationTag.getAttributeAsInteger ("shares", 0);
-            } else if ( "incremental".equalsIgnoreCase(capType)) {
+                capitalisationShares = capitalisationTag.getAttributeAsInteger("shares", 0);
+            } else if ("incremental".equalsIgnoreCase(capType)) {
                 setCapitalisation(CAPITALISE_INCREMENTAL);
-            } else if ( "whenBought".equalsIgnoreCase(capType)) {
+            } else if ("whenBought".equalsIgnoreCase(capType)) {
                 setCapitalisation(CAPITALISE_WHEN_BOUGHT);
             } else if ("fixedCash".equalsIgnoreCase(capType)) {
                 setCapitalisation(CAPITALISE_FIXED_CASH);
@@ -736,7 +805,8 @@ public class PublicCompany extends RailsAbstractItem
             }
         }
 
-        /* The new way to configure certificates is to embed these
+        /*
+         * The new way to configure certificates is to embed these
          * in the new <Shares> tag, where any special rules can be specified,
          * such as what is defined by the old-style <ShareUnit> tag.
          * This feature was introduced for 1826, where 5-share companies
@@ -751,11 +821,11 @@ public class PublicCompany extends RailsAbstractItem
          * must be defined. XML parsing will use the lowest unit size for validation.
          * The first unit size specified will be the initial one.
          */
-        //List<Tag> certTags = tag.getChildren("Certificate");  // Old style
+        // List<Tag> certTags = tag.getChildren("Certificate"); // Old style
 
         Tag sharesTag = tag.getChild("Shares"); // New style
         if (sharesTag != null) { // New style
-            certificateTags = sharesTag.getChildren ("Certificate");
+            certificateTags = sharesTag.getChildren("Certificate");
             // Will be parsed in 'finishConfiguration()' below.
 
             shareUnitSizes = sharesTag.getAttributeAsIntegerList("unit", shareUnitSizes);
@@ -773,7 +843,7 @@ public class PublicCompany extends RailsAbstractItem
             // Cost of laying a token
             Tag layCostTag = baseTokenTag.getChild("LayCost");
             if (layCostTag != null) {
-                 String methodName = layCostTag.getAttributeAsString("method", "sequence");
+                String methodName = layCostTag.getAttributeAsString("method", "sequence");
                 baseTokenLayCostMethod = BaseCostMethod.get(methodName);
                 if (baseTokenLayCostMethod == null) {
                     throw new ConfigurationException("Invalid base token lay cost calculation method: "
@@ -810,8 +880,8 @@ public class PublicCompany extends RailsAbstractItem
         if (tradeSharesTag != null) {
             mayTradeShares = true;
             if (tradeSharesTag.hasAttribute("mustHaveOperated")) {
-                mustHaveOperatedToBuyShares = mustHaveOperatedToSellShares =
-                        tradeSharesTag.getAttributeAsBoolean("mustHaveOperated");
+                mustHaveOperatedToBuyShares = mustHaveOperatedToSellShares = tradeSharesTag
+                        .getAttributeAsBoolean("mustHaveOperated");
             } else {
                 mustHaveOperatedToBuyShares = tradeSharesTag
                         .getAttributeAsBoolean("mustHaveOperatedToBuy", mustHaveOperatedToBuyShares);
@@ -838,7 +908,6 @@ public class PublicCompany extends RailsAbstractItem
         }
     }
 
-
     public void setIndex(int index) {
         publicNumber = index;
     }
@@ -852,31 +921,36 @@ public class PublicCompany extends RailsAbstractItem
 
         // Configure the stock price increase details
         /*
-        if (adjustPriceOnPayoutTag != null) {
-            percOfPriceToReachPerJump = adjustPriceOnPayoutTag.getAttributeAsIntegerList("percPerJump");
-        }
-        if (adjustPriceOnPayoutTag == null || percOfPriceToReachPerJump.size() == 0) {
-            // Default: move one space right on any payout > 0
-            percOfPriceToReachPerJump = new ArrayList<>(1);
-            int defaultPercToReach = payoutMustExceedPriceToMove ? 100 : 1;
-            percOfPriceToReachPerJump.add(defaultPercToReach);
-        }*/
+         * if (adjustPriceOnPayoutTag != null) {
+         * percOfPriceToReachPerJump =
+         * adjustPriceOnPayoutTag.getAttributeAsIntegerList("percPerJump");
+         * }
+         * if (adjustPriceOnPayoutTag == null || percOfPriceToReachPerJump.size() == 0)
+         * {
+         * // Default: move one space right on any payout > 0
+         * percOfPriceToReachPerJump = new ArrayList<>(1);
+         * int defaultPercToReach = payoutMustExceedPriceToMove ? 100 : 1;
+         * percOfPriceToReachPerJump.add(defaultPercToReach);
+         * }
+         */
 
         if (payoutTag != null) {
             String split = payoutTag.getAttributeAsString("split", "no");
             splitAlways = "always".equalsIgnoreCase(split);
             splitAllowed = "allowed".equalsIgnoreCase(split);
 
-            // payoutMustExceedPriceToMove = payoutTag.getAttributeAsBoolean("mustExceedPriceToMove", false);
+            // payoutMustExceedPriceToMove =
+            // payoutTag.getAttributeAsBoolean("mustExceedPriceToMove", false);
             percOfPriceToReachPerJump = payoutTag.getAttributeAsIntegerList("percPerJump", List.of(1));
         }
-/*
-        Tag priceJumpsTag = tag.getChild("AdjustPriceOnPayout");
-        if (priceJumpsTag != null) {
-            // Process it later
-            adjustPriceOnPayoutTag = priceJumpsTag;
-
-        }*/
+        /*
+         * Tag priceJumpsTag = tag.getChild("AdjustPriceOnPayout");
+         * if (priceJumpsTag != null) {
+         * // Process it later
+         * adjustPriceOnPayoutTag = priceJumpsTag;
+         * 
+         * }
+         */
 
         if (maxNumberOfLoans != 0) {
             currentNumberOfLoans = IntegerState.create(this, "currentNumberOfLoans");
@@ -901,7 +975,7 @@ public class PublicCompany extends RailsAbstractItem
         /* Parse the certificates */
         int certIndex = 0;
         if (certificateTags != null) {
-            //int shareTotal = 0;
+            // int shareTotal = 0;
             int numberOfShares = 0;
             boolean gotPresident = false;
             PublicCertificate certificate;
@@ -912,13 +986,11 @@ public class PublicCompany extends RailsAbstractItem
             for (Tag certificateTag : certificateTags) {
                 int shares = certificateTag.getAttributeAsInteger("shares", 1);
 
-                boolean president =
-                        "President".equals(certificateTag.getAttributeAsString(
-                                "type", ""));
+                boolean president = "President".equals(certificateTag.getAttributeAsString(
+                        "type", ""));
                 int number = certificateTag.getAttributeAsInteger("number", 1);
 
-                boolean certIsInitiallyAvailable
-                        = certificateTag.getAttributeAsBoolean("available", true);
+                boolean certIsInitiallyAvailable = certificateTag.getAttributeAsBoolean("available", true);
 
                 float certificateCount = certificateTag.getAttributeAsFloat("certificateCount", 1.0f);
 
@@ -935,17 +1007,17 @@ public class PublicCompany extends RailsAbstractItem
                     certificate = new PublicCertificate(this, "cert_" + certIndex, shares, president,
                             certIsInitiallyAvailable, certificateCount, certIndex++);
                     certificates.add(certificate);
-                    //shareTotal += shares * shareUnit.value();
-                    //numberOfShares += shares;
+                    // shareTotal += shares * shareUnit.value();
+                    // numberOfShares += shares;
                 }
                 numberOfShares += shares * number;
-                if (!certIsInitiallyAvailable){
+                if (!certIsInitiallyAvailable) {
                     reservedShare += number * shares * shareUnit.value();
                 }
             }
-            //if (shareTotal != 100)
-            //    throw new ConfigurationException("Company type " + getId()
-            //            + " total shares is not 100%");
+            // if (shareTotal != 100)
+            // throw new ConfigurationException("Company type " + getId()
+            // + " total shares is not 100%");
             if (numberOfShares != requiredNumberOfShares)
                 throw new ConfigurationException("Company type " + getId()
                         + " total shares is " + numberOfShares + ", not " + requiredNumberOfShares);
@@ -988,9 +1060,8 @@ public class PublicCompany extends RailsAbstractItem
         }
 
         if (Util.hasValue(privateToCloseOnFirstTrainName)) {
-            privateToCloseOnFirstTrain =
-                    getRoot().getCompanyManager().getPrivateCompany(
-                            privateToCloseOnFirstTrainName);
+            privateToCloseOnFirstTrain.set(getRoot().getCompanyManager().getPrivateCompany(
+                    privateToCloseOnFirstTrainName));
         }
 
         if (currentTrainLimits != null && !currentTrainLimits.isEmpty()) {
@@ -1004,7 +1075,8 @@ public class PublicCompany extends RailsAbstractItem
 
         if (portfolio.hasSpecialProperties()) {
             for (SpecialProperty sp : portfolio.getPersistentSpecialProperties()) {
-                // TODO: This is only a workaround for the missing finishConfiguration of special properties (SFY)
+                // TODO: This is only a workaround for the missing finishConfiguration of
+                // special properties (SFY)
                 sp.finishConfiguration(root);
             }
         }
@@ -1047,13 +1119,12 @@ public class PublicCompany extends RailsAbstractItem
         if (turnsWithExtraTileLays == null) {
             turnsWithExtraTileLays = new HashMap<>();
         }
-        IntegerState tileLays = IntegerState.create
-                (this, "" + colour + "_ExtraTileTurns", turns);
+        IntegerState tileLays = IntegerState.create(this, "" + colour + "_ExtraTileTurns", turns);
         turnsWithExtraTileLays.put(colour, tileLays);
     }
 
-    public void setPrivateToCloseOnFirstTrain (PrivateCompany comp) {
-        privateToCloseOnFirstTrain = comp;
+    public void setPrivateToCloseOnFirstTrain(PrivateCompany comp) {
+        privateToCloseOnFirstTrain.set(comp);
     }
 
     /**
@@ -1061,7 +1132,8 @@ public class PublicCompany extends RailsAbstractItem
      */
     public void initTurn() {
 
-        if (!hasLaidHomeBaseTokens()) layHomeBaseTokens();
+        if (!hasLaidHomeBaseTokens())
+            layHomeBaseTokens();
 
         privatesCostThisTurn.set(0);
         tilesLaidThisTurn.set("");
@@ -1110,6 +1182,7 @@ public class PublicCompany extends RailsAbstractItem
     /**
      * Return the company's Home hexes (usually one).
      * EV nov 2020 fixed for issue #307: if none, return empty list.
+     * 
      * @return Returns the homeHex.
      */
     public List<MapHex> getHomeHexes() {
@@ -1119,7 +1192,8 @@ public class PublicCompany extends RailsAbstractItem
     /**
      * Set a non-fixed company home hex.
      * Only covers setting <i>one</i> home hex.
-     * Having <i>two</i> home hexes is currently only supported if the locations are preconfigured.
+     * Having <i>two</i> home hexes is currently only supported if the locations are
+     * preconfigured.
      *
      * @param homeHex The homeHex to set.
      */
@@ -1165,55 +1239,16 @@ public class PublicCompany extends RailsAbstractItem
         hasReachedDestination.set(value);
     }
 
-    /** Convert company from a 5-share to a 10-share company */
-    /* The intention is to make this code usable for other games as well. */
-    public boolean grow () {
-
-        if (!validateGrow()) return false;
-
-        growStep.add(1);
-        setShareUnit(shareUnitSizes.get(growStep.value()));
-
-        BankPortfolio reserved = getRoot().getBank().getUnavailable();
-        BankPortfolio ipo = getRoot().getBank().getIpo();
-        Set<PublicCertificate> last5Shares = reserved.getPortfolioModel().getCertificates(this);
-        for (PublicCertificate cert : last5Shares) {
-            if (hasStarted()) {
-                cert.moveTo(this);
-            } else {
-                // Still in IPO, put the reserved shares there too
-                cert.moveTo(ipo);
-            }
-        }
-
-        ReportBuffer.add(this, LocalText.getText("CompanyHasGrown",
-                this, getActiveShareCount()));
-
-        currentTrainLimits.setTo(trainLimits.get(growStep.value()));
-        ReportBuffer.add(this,
-                LocalText.getText("PhaseDependentTrainLimitsSetTo",
-                        this, currentTrainLimits.view(), getCurrentTrainLimit()));
-
-
-        // For some reason the shareUnit change does not update
-        // the percentages shown in the GameStatus window.
-        // E.g. 60% should become 30%, etc.
-        // There must be a nicer way to accomplish that,
-        // but for now the below code works.
-        Set<Model> modelsToUpdate = new HashSet<>();
-        PortfolioOwner owner;
-        Model model;
-        for (PublicCertificate cert : getCertificates()) {
-            owner = (PortfolioOwner) cert.getOwner();
-            model = owner.getPortfolioModel().getShareModel(this);
-            if (!modelsToUpdate.contains(model)) modelsToUpdate.add(model);
-        }
-        for (Model m : modelsToUpdate) {
-            for (Observer obs : m.getObservers()) {
-                obs.update(m.toText());
-            }
-        }
-        return true;
+    /**
+     * Stub to trigger a company to make more shares available,
+     * in other words: become a higher-number-of-shares company.
+     * 
+     * @return false if conversion is not allowed or fails.
+     *
+     *         Used by overriding in 1826 (perhaps that code could be put here)
+     */
+    public boolean grow() {
+        return validateGrow();
     }
 
     /** Stub, to be extended or overridden by specific games if needed. */
@@ -1255,10 +1290,12 @@ public class PublicCompany extends RailsAbstractItem
     public void start(StockSpace startSpace) {
 
         hasStarted.set(true);
-        if (certificates.size() > 1) buyable.set(true);
+        if (certificates.size() > 1)
+            buyable.set(true);
 
         // In case of a restart: undo closing
-        if (closed.value()) closed.set(false);
+        if (closed.value())
+            closed.set(false);
 
         if (startSpace != null) {
             setParSpace(startSpace);
@@ -1297,6 +1334,14 @@ public class PublicCompany extends RailsAbstractItem
             Currency.wireAll(otherCompany, this);
         }
         portfolio.transferAssetsFrom(otherCompany.getPortfolioModel());
+        for (PrivateCompany priv : new java.util.ArrayList<>(otherCompany.getPrivates())) {
+            priv.moveTo(this.getPortfolioModel());
+
+            java.util.Set<net.sf.rails.game.special.SpecialProperty> sps = priv.getSpecialProperties();
+            if (sps != null && !sps.isEmpty()) {
+                getRoot().getGameManager().allocateSpecialProperties(this, sps);
+            }
+        }
     }
 
     /**
@@ -1325,7 +1370,8 @@ public class PublicCompany extends RailsAbstractItem
 
         hasFloated.set(true);
         // In case of a restart
-        if (hasOperated.value()) hasOperated.set(false);
+        if (hasOperated.value())
+            hasOperated.set(false);
 
         // Remove the "unfloated" indicator in GameStatus
         // FIXME: Is this still required?
@@ -1385,7 +1431,8 @@ public class PublicCompany extends RailsAbstractItem
     }
 
     /**
-     * Reinitialize a company, i.e. close it and make the shares available for a new company start.
+     * Reinitialize a company, i.e. close it and make the shares available for a new
+     * company start.
      * Implemented rules are now as in 18EU.
      * TODO Will see later if this is generic enough.
      */
@@ -1393,8 +1440,10 @@ public class PublicCompany extends RailsAbstractItem
         hasStarted.set(false);
         hasFloated.set(false);
         hasOperated.set(false);
-        if (parPrice != null && fixedPrice <= 0) parPrice.setPrice(null);
-        if (currentPrice != null) currentPrice.setPrice(null);
+        if (parPrice != null && fixedPrice <= 0)
+            parPrice.setPrice(null);
+        if (currentPrice != null)
+            currentPrice.setPrice(null);
     }
 
     public BooleanState getInGameModel() {
@@ -1406,7 +1455,9 @@ public class PublicCompany extends RailsAbstractItem
     }
 
     /**
-     * Set the company par price. <p> <i>Note: this method should <b>not</b> be
+     * Set the company par price.
+     * <p>
+     * <i>Note: this method should <b>not</b> be
      * used to start a company!</i> Use <code><b>start()</b></code> in
      * stead.
      *
@@ -1424,7 +1475,7 @@ public class PublicCompany extends RailsAbstractItem
      * Get the company par (initial) price.
      *
      * @return StockSpace object, which defines the company start position on
-     * the stock chart.
+     *         the stock chart.
      */
     public StockSpace getStartSpace() {
         if (hasParPrice) {
@@ -1477,13 +1528,32 @@ public class PublicCompany extends RailsAbstractItem
         }
     }
 
+    /**
+     * Required for MultiplierChart: Returns the company's initial price.
+     * Checks Par Price first, then Fixed Price (for Minors), then Market Price.
+     */
+    public int getParPrice() {
+        // 1. Check for standard Par Price (Stock Space)
+        if (parPrice != null && parPrice.getPrice() != null) {
+            return parPrice.getPrice().getPrice();
+        }
+
+        // 2. Check for Fixed Price (Minors/Privates masquerading as Publics)
+        if (fixedPrice > 0) {
+            return fixedPrice;
+        }
+
+        return 0; // Invalid/Not started
+    }
+
     public PriceModel getCurrentPriceModel() {
         return currentPrice;
     }
 
     public PriceModel getParPriceModel() {
         // Temporary fix to satisfy GameStatus window. Should be removed there.
-        if (parPrice == null) return currentPrice;
+        if (parPrice == null)
+            return currentPrice;
 
         return parPrice;
     }
@@ -1496,28 +1566,30 @@ public class PublicCompany extends RailsAbstractItem
      * Get the current company share price.
      *
      * @return The StockSpace object that defines the current location on the
-     * stock market.
+     *         stock market.
      */
     public StockSpace getCurrentSpace() {
         return currentPrice != null ? currentPrice.getPrice() : null;
     }
 
-    // TODO: Compare StockMarket processMove methods and check what can replace the code below
-//    public void updatePlayersWorth() {
-//
-//        Map<Player, Boolean> done = new HashMap<Player, Boolean>(8);
-//        Player owner;
-//        for (PublicCertificate cert : certificates.view()) {
-//            if (cert.getPortfolio() instanceof PortfolioModel // FIXME: What kind of condition is this, was cert.getHolder()
-//                    && cert.getHolder().getOwner() instanceof Player) {
-//                owner = (Player)cert.getHolder().getOwner();
-//                if (!done.containsKey(owner)) {
-//                    owner.updateWorth();
-//                    done.put(owner, true);
-//                }
-//            }
-//        }
-//    }
+    // TODO: Compare StockMarket processMove methods and check what can replace the
+    // code below
+    // public void updatePlayersWorth() {
+    //
+    // Map<Player, Boolean> done = new HashMap<Player, Boolean>(8);
+    // Player owner;
+    // for (PublicCertificate cert : certificates.view()) {
+    // if (cert.getPortfolio() instanceof PortfolioModel // FIXME: What kind of
+    // condition is this, was cert.getHolder()
+    // && cert.getHolder().getOwner() instanceof Player) {
+    // owner = (Player)cert.getHolder().getOwner();
+    // if (!done.containsKey(owner)) {
+    // owner.updateWorth();
+    // done.put(owner, true);
+    // }
+    // }
+    // }
+    // }
 
     public PurseMoneyModel getPurseMoneyModel() {
         return treasury;
@@ -1539,7 +1611,7 @@ public class PublicCompany extends RailsAbstractItem
      * Get a list of this company's certificates.
      *
      * @return ArrayList containing the certificates (item 0 is the President's
-     * share).
+     *         share).
      */
     public List<PublicCertificate> getCertificates() {
         return certificates.view();
@@ -1598,19 +1670,18 @@ public class PublicCompany extends RailsAbstractItem
     // order often results in irreproducible and therefore unreloadable saved files.
     public Player getPresident() {
         /*
-        if (hasStarted()) {
-            Owner owner = certificates.get(0).getOwner();
-            if (owner instanceof Player) return (Player) owner;
-        }
-        return null;
-        */
+         * if (hasStarted()) {
+         * Owner owner = certificates.get(0).getOwner();
+         * if (owner instanceof Player) return (Player) owner;
+         * }
+         * return null;
+         */
         return president.value();
     }
 
     public void setPresident(Player newPresident) {
         president.set(newPresident);
     }
-
 
     public PresidentModel getPresidentModel() {
         return presidentModel;
@@ -1629,8 +1700,8 @@ public class PublicCompany extends RailsAbstractItem
         lastRevenue.set(amount);
     }
 
-    public void setLastDividend (int amount) {
-        lastDividend.set (amount);
+    public void setLastDividend(int amount) {
+        lastDividend.set(amount);
     }
 
     /**
@@ -1650,7 +1721,7 @@ public class PublicCompany extends RailsAbstractItem
         return lastDividend.value();
     }
 
-    public Model getLastDividendModel () {
+    public Model getLastDividendModel() {
         return lastDividend;
     }
 
@@ -1677,17 +1748,21 @@ public class PublicCompany extends RailsAbstractItem
      * Determine if the price token must be moved after a dividend payout,
      * and with how many jumps.
      *
+     * TODO: Will be renamed to adjustPriceOnPayout
+     *
      * @param amount The total revenue that has been paid out
      */
-    public void adjustPriceOnPayout(int amount) {
+    public void payout(int amount) {
 
-        if (!hasStockPrice || amount == 0) return;
+        if (!hasStockPrice || amount == 0)
+            return;
 
         int maxJumps = percOfPriceToReachPerJump.size();
         int price = getCurrentSpace().getPrice();
         int jumps = maxJumps;
-        for (int i = maxJumps-1; i>=0; i--, jumps--) {
-            if (amount >= 0.01 * percOfPriceToReachPerJump.get(i) * price) break;
+        for (int i = maxJumps - 1; i >= 0; i--, jumps--) {
+            if (amount >= 0.01 * percOfPriceToReachPerJump.get(i) * price)
+                break;
         }
         if (jumps > 0) {
             getRoot().getStockMarket().payOut(this, jumps);
@@ -1696,39 +1771,24 @@ public class PublicCompany extends RailsAbstractItem
                     this.getId(),
                     Bank.format(this,
                             price),
-                            getCurrentSpace().getId()));
+                    getCurrentSpace().getId()));
         }
-
 
         // Move the token
-        /*hasStockPrice
-                && (!payoutMustExceedPriceToMove
-                || amount >= currentPrice.getPrice().getPrice())) {
-            getRoot().getStockMarket().payOut(this);
-        }
-        */
+        /*
+         * hasStockPrice
+         * && (!payoutMustExceedPriceToMove
+         * || amount >= currentPrice.getPrice().getPrice())) {
+         * getRoot().getStockMarket().payOut(this);
+         * }
+         */
     }
 
-    /** Do IPO or Pool pay out to the company?
-     * Default = false
-     * @param cert The certificate
-     * @return whether it pays out to the company if opwned by the Bank
-     */
     public boolean paysOutToTreasury(PublicCertificate cert) {
 
         Owner owner = cert.getOwner();
         return owner == getRoot().getBank().getIpo() && ipoPaysOut
-            || owner == getRoot().getBank().getPool() && poolPaysOut;
-    }
-
-    /** Do treasury shares pay out to the company?
-     * Default = true
-     * @param cert The certificate
-     * @return whether it pays out to its owning company
-     */
-    public boolean treasurySharesPayOut (PublicCertificate cert) {
-        Owner owner = cert.getOwner();
-        return owner == cert.getCompany() && treasuryPaysOut;
+                || owner == getRoot().getBank().getPool() && poolPaysOut;
     }
 
     /**
@@ -1737,7 +1797,8 @@ public class PublicCompany extends RailsAbstractItem
      * @param amount The revenue amount.
      */
     public void withhold(int amount) {
-        if (hasStockPrice) getRoot().getStockMarket().withhold(this);
+        if (hasStockPrice)
+            getRoot().getStockMarket().withhold(this);
     }
 
     /**
@@ -1780,7 +1841,7 @@ public class PublicCompany extends RailsAbstractItem
         return shareUnit.value();
     }
 
-    public void setShareUnit (int newShareUnit) {
+    public void setShareUnit(int newShareUnit) {
         shareUnit.set(newShareUnit);
         activeSharesCountModel.set(100 / newShareUnit);
     }
@@ -1790,7 +1851,16 @@ public class PublicCompany extends RailsAbstractItem
     }
 
     /**
-     * @return true if company has Multiple certificates, representing more than one nominal share unit (except president share)
+     * Required for MultiplierChart: Returns the background color for chart legends.
+     */
+    public Color getBgColor() {
+        // Return the configured Color object
+        return bgColour;
+    }
+
+    /**
+     * @return true if company has Multiple certificates, representing more than one
+     *         nominal share unit (except president share)
      */
     public boolean hasMultipleCertificates() {
         return hasMultipleCertificates;
@@ -1906,7 +1976,8 @@ public class PublicCompany extends RailsAbstractItem
 
         PortfolioOwner owner = (PortfolioOwner) getPresidentsShare().getOwner(); // Can be Pool
         int presidentShareNumber = owner.getPortfolioModel().getShares(this) + 1;
-        if (!(owner instanceof Player)) presidentShareNumber = getPresidentsShare().getShares();
+        if (!(owner instanceof Player))
+            presidentShareNumber = getPresidentsShare().getShares();
         Player nextPotentialPresident = findNextPotentialPresident(presidentShareNumber);
 
         // no change, return
@@ -1953,9 +2024,11 @@ public class PublicCompany extends RailsAbstractItem
     /**
      * In case of partial capitalisation, return the number of shares
      * that are capitalised at floating time. E.g. 18Scan SJ: 7 of 10 shares
-     * @return The number of shares of which the total value will form the company starting capital
+     * 
+     * @return The number of shares of which the total value will form the company
+     *         starting capital
      */
-    public int getCapitalisationShares () {
+    public int getCapitalisationShares() {
         return capitalisationShares;
     }
 
@@ -1986,9 +2059,11 @@ public class PublicCompany extends RailsAbstractItem
     /**
      * Get the current maximum number of trains got a given limit index.
      *
-     * @param phaseIndex The index of the train limits array as defined for the current phase. Values start at 0.
-     * <p>N.B. the new style limit steps per phase start at 1,
-     * so one must be subtracted before calling this method.
+     * @param phaseIndex The index of the train limits array as defined for the
+     *                   current phase. Values start at 0.
+     *                   <p>
+     *                   N.B. the new style limit steps per phase start at 1,
+     *                   so one must be subtracted before calling this method.
      */
     protected int getTrainLimit(int phaseIndex) {
         return currentTrainLimits.view().get(Math.min(phaseIndex, currentTrainLimits.size() - 1));
@@ -2010,6 +2085,7 @@ public class PublicCompany extends RailsAbstractItem
     /**
      * Stub to enable special handling of companies without train.
      * Example: 18Scan minors.
+     * 
      * @return true if a company can yield income.
      */
     public boolean canGenerateOtherRevenue() {
@@ -2030,7 +2106,7 @@ public class PublicCompany extends RailsAbstractItem
         if (price != 0) {
             if (train.getOwner() instanceof PublicCompany) {
                 PublicCompany previousOwner = (PublicCompany) train.getOwner();
-                //  adjust the money spent on trains field
+                // adjust the money spent on trains field
                 previousOwner.getTrainsSpentThisTurnModel().change(-price);
                 // pay the money to the other company
                 Currency.wire(this, price, previousOwner);
@@ -2045,9 +2121,9 @@ public class PublicCompany extends RailsAbstractItem
         // move the train to here
         portfolio.getTrainsModel().addTrain(train);
         // check if a private has to be closed on first train buy
-        if (privateToCloseOnFirstTrain != null
-                && !privateToCloseOnFirstTrain.isClosed()) {
-            privateToCloseOnFirstTrain.setClosed();
+        if (privateToCloseOnFirstTrain.value() != null
+                && !privateToCloseOnFirstTrain.value().isClosed()) {
+            privateToCloseOnFirstTrain.value().setClosed();
         }
     }
 
@@ -2056,7 +2132,7 @@ public class PublicCompany extends RailsAbstractItem
     }
 
     public void buyPrivate(PrivateCompany privateCompany, Owner from,
-                           int price) {
+            int price) {
 
         if (from != getRoot().getBank().getIpo()) {
             // The initial buy is reported from StartRound. This message should also
@@ -2082,9 +2158,9 @@ public class PublicCompany extends RailsAbstractItem
         getRoot().getGameManager().allocateSpecialProperties(this, sps);
     }
 
-    public boolean ownsPrivate (String id) {
+    public boolean ownsPrivate(String id) {
         return portfolio.getPrivatesOwnedModel().getPortfolio().containsItem(
-                (getRoot().getCompanyManager()).getPrivateCompany (id));
+                (getRoot().getCompanyManager()).getPrivateCompany(id));
     }
 
     public Model getPrivatesSpentThisTurnModel() {
@@ -2096,12 +2172,14 @@ public class PublicCompany extends RailsAbstractItem
         String tileLaid = "#" + tile.toText() + "/" + hex.getId() + "/" + hex.getOrientationName(orientation);
         tilesLaidThisTurn.append(tileLaid, ", ");
 
-        if (cost > 0) tilesCostThisTurn.change(cost);
+        if (cost > 0)
+            tilesCostThisTurn.change(cost);
 
     }
 
     public void layTilenNoMapMode(int cost) {
-        if (cost > 0) tilesCostThisTurn.change(cost);
+        if (cost > 0)
+            tilesCostThisTurn.change(cost);
         tilesLaidThisTurn.append(Bank.format(this, cost), ",");
     }
 
@@ -2117,11 +2195,13 @@ public class PublicCompany extends RailsAbstractItem
 
         String tokenLaid = hex.getId();
         tokensLaidThisTurn.append(tokenLaid, ", ");
-        if (cost > 0) tokensCostThisTurn.change(cost);
+        if (cost > 0)
+            tokensCostThisTurn.change(cost);
     }
 
     public void layBaseTokenInNoMapMode(int cost) {
-        if (cost > 0) tokensCostThisTurn.change(cost);
+        if (cost > 0)
+            tokensCostThisTurn.change(cost);
         tokensLaidThisTurn.append(Bank.format(this, cost), ",");
     }
 
@@ -2143,11 +2223,13 @@ public class PublicCompany extends RailsAbstractItem
     public int getBaseTokenLayCostOnStop(Stop stop) {
 
         if (baseTokenLayCostMethod == BaseCostMethod.SEQUENCE) {
-            if (baseTokenLayCost == null) return 0;
+            if (baseTokenLayCost == null)
+                return 0;
             return baseTokenLayCost.get(getBaseTokenLayCostIndex());
 
         } else if (baseTokenLayCostMethod == BaseCostMethod.HEX_DISTANCE) {
-            if (baseTokenLayCost == null) return 0;
+            if (baseTokenLayCost == null)
+                return 0;
             int costIndex = getBaseTokenLayCostIndex();
             if (stop == null) {
                 return baseTokenLayCost.get(costIndex);
@@ -2157,10 +2239,11 @@ public class PublicCompany extends RailsAbstractItem
                 return getRoot().getMapManager().getHexDistance(homeHexes.get(0), hex)
                         * baseTokenLayCost.get(costIndex);
             }
-         } else if (baseTokenLayCostMethod == BaseCostMethod.ROUTE_DISTANCE
+        } else if (baseTokenLayCostMethod == BaseCostMethod.ROUTE_DISTANCE
                 && stop != null) {
-            // TODO  Stop is null in NoMapMode. No idea what to do with that. (EV)
-            if (tokenableStops == null) setTokenableStops();
+            // TODO Stop is null in NoMapMode. No idea what to do with that. (EV)
+            if (tokenableStops == null)
+                setTokenableStops();
             return baseTokenLayCost.get(0) * tokenableStops.get(stop);
         } else {
             return 0;
@@ -2169,15 +2252,18 @@ public class PublicCompany extends RailsAbstractItem
 
     /**
      * Only useable for SEQUENCE and HEX_DISTANCE methods.
-     * For ROUTE_DISTANCE, use getBaseTokenLayCost(Stop) */
+     * For ROUTE_DISTANCE, use getBaseTokenLayCost(Stop)
+     */
     public int getBaseTokenLayCostOnHex(MapHex hex) {
 
         if (baseTokenLayCostMethod == BaseCostMethod.SEQUENCE) {
-            if (baseTokenLayCost == null) return 0;
+            if (baseTokenLayCost == null)
+                return 0;
             return baseTokenLayCost.get(getBaseTokenLayCostIndex());
 
         } else if (baseTokenLayCostMethod == BaseCostMethod.HEX_DISTANCE) {
-            if (baseTokenLayCost == null) return 0;
+            if (baseTokenLayCost == null)
+                return 0;
             int costIndex = getBaseTokenLayCostIndex();
             // WARNING: no provision yet for multiple home hexes.
             return getRoot().getMapManager().getHexDistance(homeHexes.get(0), hex)
@@ -2187,7 +2273,7 @@ public class PublicCompany extends RailsAbstractItem
         }
     }
 
-    protected int getBaseTokenLayCostIndex () {
+    protected int getBaseTokenLayCostIndex() {
         int index = getNumberOfLaidBaseTokens();
 
         if (index >= baseTokenLayCost.size()) {
@@ -2202,9 +2288,10 @@ public class PublicCompany extends RailsAbstractItem
     public void setTokenableStops() {
         if (tokenableStops == null) {
             // Some false starts...
-            //tokenableStops = new HashMap<>(Routes.getTokenLayRouteDistances(getRoot(), this,
-            //        PublicCompany.INCL_START_HEX, PublicCompany.FROM_HOME_ONLY));
-            //Routes.getTokenLayRouteDistances2(getRoot(), this, false, false);
+            // tokenableStops = new HashMap<>(Routes.getTokenLayRouteDistances(getRoot(),
+            // this,
+            // PublicCompany.INCL_START_HEX, PublicCompany.FROM_HOME_ONLY));
+            // Routes.getTokenLayRouteDistances2(getRoot(), this, false, false);
             tokenableStops = new Routes(this).getTokenLayRouteDistances(
                     PublicCompany.INCL_START_HEX, PublicCompany.FROM_HOME_ONLY);
 
@@ -2236,11 +2323,10 @@ public class PublicCompany extends RailsAbstractItem
             return costs.build();
         } else if (baseTokenLayCostMethod == BaseCostMethod.ROUTE_DISTANCE) {
             log.info("Calling getTokenLayRouteDistances");
-            //Map<Stop, Integer> layableTokens
-            //        = Routes.getTokenLayRouteDistances2(getRoot(), this, false, false);
-            Map<Stop, Integer> layableTokens
-                    = new Routes(this).getTokenLayRouteDistances(
-                        PublicCompany.INCL_START_HEX, PublicCompany.FROM_HOME_ONLY);
+            // Map<Stop, Integer> layableTokens
+            // = Routes.getTokenLayRouteDistances2(getRoot(), this, false, false);
+            Map<Stop, Integer> layableTokens = new Routes(this).getTokenLayRouteDistances(
+                    PublicCompany.INCL_START_HEX, PublicCompany.FROM_HOME_ONLY);
 
             Set<Integer> results = new TreeSet<>();
             results.addAll(layableTokens.values());
@@ -2280,9 +2366,10 @@ public class PublicCompany extends RailsAbstractItem
     }
 
     public boolean removeBonus(String name) {
-        if ( !bonuses.isEmpty()) {
+        if (!bonuses.isEmpty()) {
             for (Bonus bonus : bonuses.view()) {
-                if (bonus.getName().equals(name)) return removeBonus(bonus);
+                if (bonus.getName().equals(name))
+                    return removeBonus(bonus);
             }
         }
         return false;
@@ -2306,21 +2393,22 @@ public class PublicCompany extends RailsAbstractItem
      */
     protected void initBaseTokens() {
         SortedSet<BaseToken> newTokens = new TreeSet<>();
-        for (int i = 0; i < numberOfBaseTokens.value(); i++) {
+        for (int i = 0; i < numberOfBaseTokens; i++) {
             BaseToken token = BaseToken.create(this);
             newTokens.add(token);
         }
         baseTokens.initBaseTokens(newTokens);
     }
 
-
     // Return value is not used
     public boolean layHomeBaseTokens() {
 
-        if (hasLaidHomeBaseTokens()) return true;
+        if (hasLaidHomeBaseTokens())
+            return true;
 
         // TEMPORARY - 1837 S5 buyer must choose home hex
-        if (homeHexes == null) return true;
+        if (homeHexes == null)
+            return true;
 
         for (MapHex homeHex : homeHexes) {
             if (homeCityNumber.value() == 0) {
@@ -2337,7 +2425,8 @@ public class PublicCompany extends RailsAbstractItem
                     Set<Stop> stops = homeHex.getStops();
                     List<Stop> openStops = new ArrayList<>();
                     for (Stop stop : stops) {
-                        if (stop.hasTokenSlotsLeft()) openStops.add(stop);
+                        if (stop.hasTokenSlotsLeft())
+                            openStops.add(stop);
                     }
                     if (openStops.size() == 1) {
                         // Just one spot: lay the home base there.
@@ -2394,7 +2483,8 @@ public class PublicCompany extends RailsAbstractItem
         int tileLays = phase.getTileLaysPerColour(getType().getId(), tileColour);
 
         // standard cases: 0 and 1, return
-        if (tileLays <= 1) return tileLays;
+        if (tileLays <= 1)
+            return tileLays;
 
         // More than one tile lay allowed.
         // Check if there is a limitation on the number of turns that this is valid.
@@ -2424,6 +2514,9 @@ public class PublicCompany extends RailsAbstractItem
     }
 
     public int getCurrentNumberOfLoans() {
+        if (currentNumberOfLoans == null) {
+            return 0;
+        }
         return currentNumberOfLoans.value();
     }
 
@@ -2432,8 +2525,10 @@ public class PublicCompany extends RailsAbstractItem
     }
 
     public void addLoans(int number) {
-        currentNumberOfLoans.add(number);
-        currentLoanValue.change(number * getValuePerLoan());
+        if (currentNumberOfLoans != null && currentLoanValue != null) {
+            currentNumberOfLoans.add(number);
+            currentLoanValue.change(number * getValuePerLoan());
+        }
     }
 
     public int getLoanInterestPct() {
@@ -2498,19 +2593,22 @@ public class PublicCompany extends RailsAbstractItem
 
         // FIXME: In the following the cloning has to be moved to the portfolio
 
-/*        if (certificates != null) {
-            ((PublicCompany) clone).setCertificates(certificates.view());
-        }
-        if (specialProperties != null) {
-            ((PublicCompany) clone).specialProperties = new HolderModel<SpecialProperty>(this, "specialProperties");
-        }
- */
+        /*
+         * if (certificates != null) {
+         * ((PublicCompany) clone).setCertificates(certificates.view());
+         * }
+         * if (specialProperties != null) {
+         * ((PublicCompany) clone).specialProperties = new
+         * HolderModel<SpecialProperty>(this, "specialProperties");
+         * }
+         */
 
         return clone;
     }
 
     /**
-     * Extra codes to be added to the president's indicator in the Game Status window.
+     * Extra codes to be added to the president's indicator in the Game Status
+     * window.
      * Normally nothing (see 1856 CGR for an exception).
      */
     public String getExtraShareMarks() {
@@ -2542,7 +2640,7 @@ public class PublicCompany extends RailsAbstractItem
         return type;
     }
 
-    public boolean isOfType (String typeName) {
+    public boolean isOfType(String typeName) {
         return typeName.equalsIgnoreCase(type.getId());
     }
 
@@ -2551,7 +2649,7 @@ public class PublicCompany extends RailsAbstractItem
         return closed.value();
     }
 
-    public void setBankrupt () {
+    public void setBankrupt() {
         setClosed();
     }
 
@@ -2670,17 +2768,19 @@ public class PublicCompany extends RailsAbstractItem
      * @return the foundingStartCompany
      */
     public String getFoundingStartCompany() {
+        return foundingStartCompany.value();
+    }
 
-        return foundingStartCompany;
+    public BaseTokensModel getBaseTokens() {
+        return baseTokens;
     }
 
     /**
      * @param foundingCompany the foundingStartCompany to set
      */
     public void setStartingMinor(String foundingCompany) {
-        this.foundingStartCompany = foundingCompany;
+        this.foundingStartCompany.set(foundingCompany);
     }
-
 
     public Model getLastDirectIncomeModel() {
         return lastDirectIncome;
@@ -2716,16 +2816,109 @@ public class PublicCompany extends RailsAbstractItem
         return companyColors;
     }
 
+    /**
+     * Helper to detect if this company is physically capable of generating fixed
+     * (coal) income.
+     * Prevents stale direct income variables from persisting when a company trades
+     * away its goods trains.
+     */
+    public boolean canHaveFixedIncome() {
+        if (getType() != null && "Coal".equalsIgnoreCase(getType().getId())) {
+            return true;
+        }
+        for (Train t : getTrains()) {
+            if (t.getType() != null && "goods".equalsIgnoreCase(t.getType().getCategory())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Calculates the exact total amount of route revenue distributed to
+     * shareholders
+     * during the last operating round, based on the revenue allocation choice.
+     * 
+     * @return The distributed dividend pool. Returns 0 if revenue was withheld.
+     */
+    public int getDividendRevenue() {
+        int totalRev = getLastRevenue();
+        int fixedRev = getLastDirectIncome();
+
+        // --- STALE DATA FIX ---
+        // If company has no G-trains or Coal properties, any fixed income is an
+        // orphaned state variable.
+        if (!canHaveFixedIncome()) {
+            fixedRev = 0;
+        }
+
+        if (totalRev == 0 || fixedRev > totalRev) {
+            fixedRev = 0;
+        }
+
+        int routeRev = totalRev - fixedRev;
+        if (routeRev <= 0)
+            return 0;
+
+        Object rawAlloc = getLastRevenueAllocation();
+        if (rawAlloc != null) {
+            String alloc = rawAlloc.toString();
+            if (alloc.contains("Withhold")) {
+                return 0;
+            } else if (alloc.contains("Split")) {
+                return routeRev / 2;
+            }
+        }
+        return routeRev;
+    }
+
+    /**
+     * Calculates the exact total amount of revenue retained by the company
+     * during the last operating round. This includes withheld/split route revenue
+     * PLUS special/fixed direct income (e.g., Coal mines).
+     * 
+     * @return The total money added to the company's treasury during the revenue
+     *         phase.
+     */
+    public int getRetainedRevenue() {
+        int totalRev = getLastRevenue();
+        int fixedRev = getLastDirectIncome();
+
+        // --- STALE DATA FIX ---
+        if (!canHaveFixedIncome()) {
+            fixedRev = 0;
+        }
+
+        if (totalRev == 0 || fixedRev > totalRev) {
+            fixedRev = 0;
+        }
+
+        int routeRev = totalRev - fixedRev;
+        int retained = fixedRev;
+
+        Object rawAlloc = getLastRevenueAllocation();
+        if (rawAlloc != null) {
+            String alloc = rawAlloc.toString();
+            if (alloc.contains("Withhold")) {
+                retained += routeRev;
+            } else if (alloc.contains("Split")) {
+                retained += (routeRev - (routeRev / 2));
+            }
+        }
+        return retained;
+    }
+
     /* Bank loan instance and methods, used in 1835 and 1837 */
 
-    /** A Bank Loan is an arbitrary amount of money that a bankrupt
+    /**
+     * A Bank Loan is an arbitrary amount of money that a bankrupt
      * company must borrow from the Bank to finance a train.
      * It will gradually be paid back by withholding earnings.
      *
      * There is no relationship with the fixed Loan amounts
      * represented by loan markers, as are used in 1826 and 1856.
      */
-    private IntegerState bankLoan = IntegerState.create (
+    private IntegerState bankLoan = IntegerState.create(
             this, "bankLoan_" + getId(), 0);
 
     public int getBankLoan() {
@@ -2736,22 +2929,31 @@ public class PublicCompany extends RailsAbstractItem
         this.bankLoan.set(bankLoan);
     }
 
-    public void repayBankLoan (int repayment) {
-        this.bankLoan.add (-repayment);
+    public void repayBankLoan(int repayment) {
+        this.bankLoan.add(-repayment);
     }
 
-    public boolean hasBankLoan () {
+    public boolean hasBankLoan() {
         return getBankLoan() > 0;
     }
 
     /* Stub to indicate that a company has Bonds */
-    public boolean hasBonds() { return numberOfBonds > 0; }
+    public boolean hasBonds() {
+        return numberOfBonds.value() > 0;
+    }
 
-    public int getNumberOfBonds() {return numberOfBonds; }
+    public int getNumberOfBonds() {
+        return numberOfBonds.value();
+    }
+
+    public void setNumberOfBonds(int bonds) {
+        this.numberOfBonds.set(bonds);
+    }
 
     public int getPriceOfBonds() {
         return priceOfBonds;
     }
+
     public String getFormattedPriceOfBonds() {
         return Bank.format(this, priceOfBonds);
     }
@@ -2759,4 +2961,109 @@ public class PublicCompany extends RailsAbstractItem
     public int getBondsInterest() {
         return bondsInterest;
     }
+
+    // These methods are for 're-hydrating' a saved state and bypass normal logic.
+
+    public void setCash_AI(int cash) {
+        this.treasury.getPurse().setAmount_AI(cash); // FIXED: Use new public setter);
+    }
+
+    public void setHasFloated_AI(boolean floated) {
+        this.hasFloated.set(floated);
+    }
+
+    /**
+     * * Restores dynamic token counts (e.g., Prussia inheriting Minor tokens in
+     * 1835).
+     */
+    public void setTotalTokens_AI(int targetTokens) {
+        int current = getNumberOfBaseTokens();
+        if (targetTokens > current) {
+            java.util.SortedSet<BaseToken> tokens = new java.util.TreeSet<>(baseTokens.getAllBaseTokens());
+            for (int i = current; i < targetTokens; i++) {
+                tokens.add(BaseToken.create(this));
+            }
+            baseTokens.initBaseTokens(tokens);
+        }
+    }
+    /**
+     * AI Accessor: Restores the 'hasOperated' flag to ensure mid-round continuity.
+     */
+    public void setHasOperated_AI(boolean operated) {
+        this.hasOperated.set(operated);
+    }
+
+    /**
+     * AI Accessor: Restores the bank loan amount for 1835/1837.
+     */
+    public void setBankLoan_AI(int amount) {
+        this.bankLoan.set(amount);
+    }
+
+    /**
+     * AI Accessor: Restores the closed state without triggering closing side-effects.
+     */
+    public void setClosed_AI(boolean isClosed) {
+        // Assuming 'closed' is a BooleanState inherited or defined in the class
+        this.closed.set(isClosed); 
+    }
+    /**
+     * AI Accessor: Required for StateVectorBuilder and MultiplierChart.
+     * Aliases to the existing getMarketPrice() to satisfy the Interface.
+     */
+    public int getCurrentPrice() {
+        return getMarketPrice();
+    }
+    /**
+     * AI Accessors: Restore the exact dividend history and allocations to preserve UI continuity.
+     */
+    public void setLastRevenue_AI(int amount) {
+        this.lastRevenue.set(amount);
+    }
+
+    public void setLastDividend_AI(int amount) {
+        this.lastDividend.set(amount);
+    }
+
+    public void setLastRevenueAllocation_AI(String allocation) {
+        if (allocation != null) {
+            this.lastRevenueAllocation.set(allocation);
+        }
+    }
+
+    public void setLastDirectIncome_AI(int amount) {
+        this.lastDirectIncome.set(amount);
+    }
+
+    public void setDirectIncomeRevenue_AI(int amount) {
+        this.directIncomeRevenue.set(amount);
+    }
+
+    /**
+     * Determines if this corporate entity is classified as a primary/major company.
+     * Evaluates unified structural characteristics across all game modules (such as 1835, 
+     * 1837, 1856, and 1870) to drive uniform UI rendering behaviors like home station rings.
+     * 
+     * @return true if the company represents a major public asset system.
+     */
+/**
+     * Determines if this corporate entity is classified as a primary/major company.
+     * Evaluates unified structural characteristics across all game modules (such as 1835, 
+     * 1837, 1856, and 1870) to drive uniform UI rendering behaviors like home station rings.
+     * 
+     * @return true if the company represents a major public asset system.
+     */
+    public boolean isMajorCompany() {
+        if (this.type == null || this.type.getId() == null) {
+            return true; // Default safe fallback for unclassified base public corporations
+        }
+        
+        String typeId = this.type.getId().toLowerCase();
+        
+        // Harmonize all major classification variants across active modules
+        return typeId.equals("public") || 
+               typeId.equals("major")  || 
+               typeId.equals("national");
+    }
+
 }

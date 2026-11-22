@@ -30,7 +30,14 @@ public class GameInfoParser {
         // <CREDITS>
         final List<Element> creditsElement = parser.getElementList(XMLTags.CREDITS_TAG, root.getChildNodes());
 
-        this.credits = parser.getElementText(creditsElement.get(0).getChildNodes());
+// --- START FIX ---
+        // Use standard DOM getTextContent() to correctly read CDATA sections
+        if (!creditsElement.isEmpty()) {
+            this.credits = creditsElement.get(0).getTextContent().trim();
+        } else {
+            this.credits = "";
+        }
+// --- END FIX ---
 
         // <GAME>
         final List<Element> gameElements = parser.getElementList(XMLTags.GAME_TAG, root.getChildNodes());
@@ -55,15 +62,21 @@ public class GameInfoParser {
 
         // <PLAYER> , <OPTION>, <DESCRIPTION>
         for (Element child : childElements) {
-            if (child.getNodeName().equals(XMLTags.DESCR_TAG)) {
-                gameInfo.withDescription(parser.getElementText(child.getChildNodes()));
+            String nodeName = child.getNodeName();
+            
+// --- START FIX ---
+            // Use standard DOM getTextContent() for Description and Note to capture CDATA
+            // Adding a fallback equalsIgnoreCase just in case XMLTags constants differ from XML casing
+            if (nodeName.equals(XMLTags.DESCR_TAG) || nodeName.equalsIgnoreCase("Description")) {
+                gameInfo.withDescription(child.getTextContent().trim());
             }
 
-            if (child.getNodeName().equals(XMLTags.NOTE_TAG)) {
-                gameInfo.withNote(parser.getElementText(child.getChildNodes()));
+            if (nodeName.equals(XMLTags.NOTE_TAG) || nodeName.equalsIgnoreCase("Note")) {
+                gameInfo.withNote(child.getTextContent().trim());
             }
+// --- END FIX ---
 
-            if (child.getNodeName().equals(XMLTags.PLAYERS_TAG)) {
+            if (nodeName.equals(XMLTags.PLAYERS_TAG) || nodeName.equalsIgnoreCase("Players")) {
                 gameInfo.withMinPlayers(parser.getAttributeAsInteger(XMLTags.MIN_ATTR, child));
                 gameInfo.withMaxPlayers(parser.getAttributeAsInteger(XMLTags.MAX_ATTR, child));
             }
