@@ -58,7 +58,7 @@ if (OperatingSystem.current().isWindows()) {
 dependencies {
     implementation 'com.microsoft.onnxruntime:onnxruntime:1.16.0'
     implementation 'org.apache.httpcomponents:httpclient:4.5.14'
-    implementation 'commons-io:commons-io:2.11.0'
+    implementation 'commons-io:commons-io:2.14.0'
     implementation 'com.github.vlsi.mxgraph:jgraphx:4.2.2'
     implementation 'org.jgrapht:jgrapht-core:1.5.1'
     implementation 'org.jgrapht:jgrapht-ext:1.5.1'
