@@ -76,9 +76,8 @@
 	
 	<!-- Note two supported colour specification formats:
 	     RGB decimal with commas and RGB hexadecimal without commas -->
-	<Company name="C&amp;A" type="Public" tokens="2" fgColour="000000" bgColour="60E060"
+	<Company name="C&amp;A" type="Public" tokens="2" fgColour="000000" bgColour="F68629"
 			longname="Camden and Amboy">
-		<FirstTrainCloses type="Private" name="random"/>
 		<Home hex="J6"/>
 	</Company>	     
 	<Company name="B&amp;O" type="Public" tokens="3" fgColour="FFFFFF" bgColour="0B5590"
