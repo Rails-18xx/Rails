@@ -1,0 +1,96 @@
+<?xml version="1.0" ?>
+<CompanyManager>
+	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany">
+		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
+		<Tradeable toPlayer="yes"/>
+	</CompanyType>
+	<CompanyType name="Major" class="net.sf.rails.game.PublicCompany">
+		<CanBuyPrivates/>
+		<PoolPaysOut/>
+		<Float percentage="50"/>
+		<BaseTokens>
+			<HomeBase lay="whenFloated"/>
+			<LayCost method="sequence" cost="0,40,100,100"/>
+		</BaseTokens>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="1" number="8"/>
+		</Shares>
+		<Trains limit="4,4,3,3,2,2,2,2"/>
+		<StockPrice par="yes"/>
+	</CompanyType>
+	<Company name="MS" longname="Michigan Southern (Minor)" type="Private" basePrice="60" revenue="0"/>
+	<Company name="BIG4" longname="Big 4 (Minor)" type="Private" basePrice="40" revenue="0"/>
+	<Company name="C&amp;WI" longname="Chicago and Western Indiana" type="Private" basePrice="60" revenue="10"/>
+	<Company name="MAIL" longname="Mail Contract" type="Private" basePrice="80" revenue="0"/>
+	<Company name="TBC" longname="Tunnel Blasting Company" type="Private" basePrice="60" revenue="20"/>
+	<Company name="MPC" longname="Meat Packing Company" type="Private" basePrice="60" revenue="15"/>
+	<Company name="SC" longname="Steamboat Company" type="Private" basePrice="40" revenue="10"/>
+	<Company name="LSL" longname="Lake Shore Line" type="Private" basePrice="40" revenue="15"/>
+	<Company name="MC" longname="Michigan Central" type="Private" basePrice="40" revenue="15"/>
+	<Company name="O&amp;I" longname="Ohio &amp; Indiana" type="Private" basePrice="40" revenue="15"/>
+	<Company name="LM" longname="Boomtown" type="Private" basePrice="40" revenue="10"/>
+	<Company name="MS" longname="Big 4 (Minor)" type="Major">
+		<Home hex="F20"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="1" number="8"/>
+		</Shares>
+	</Company>
+	<Company name="NYC" longname="New York Central Railroad" type="Major">
+		<Home hex="D20"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="1" number="8"/>
+		</Shares>
+	</Company>
+	<Company name="B&amp;O" longname="Baltimore &amp; Ohio Railroad" type="Major">
+		<Home hex="G19"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="1" number="8"/>
+		</Shares>
+	</Company>
+	<Company name="C&amp;O" longname="Chesapeake &amp; Ohio Railroad" type="Major">
+		<Home hex="I15"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="1" number="8"/>
+		</Shares>
+	</Company>
+	<Company name="ERIE" longname="Erie Railroad" type="Major">
+		<Home hex="E21"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="1" number="8"/>
+		</Shares>
+	</Company>
+	<Company name="GT" longname="Grand Trunk Railway" type="Major">
+		<Home hex="B16"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="1" number="8"/>
+		</Shares>
+	</Company>
+	<Company name="IC" longname="Illinois Central Railroad" type="Major">
+		<Home hex="K3"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="1" number="8"/>
+		</Shares>
+	</Company>
+	<Company name="MS" longname="Michigan Southern" type="Major">
+		<Home hex="C15"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="1" number="8"/>
+		</Shares>
+	</Company>
+	<Company name="BIG4" longname="Big 4" type="Major">
+		<Home hex="G9"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="1" number="8"/>
+		</Shares>
+	</Company>
+</CompanyManager>

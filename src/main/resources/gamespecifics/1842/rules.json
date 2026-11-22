@@ -1,0 +1,122 @@
+{
+  "game": "1842",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "Not stated."
+    },
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": " No."
+    },
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "Sell then buy."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "50%."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "| 13 | 11 | 10 | 9 |  |  |  |  |  Add 1 if you have 2+ shares each in 3+ different     companies"
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "No. All selling precedes all buying."
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "Only in the HAV."
+    },
+    "roundEnd": {
+      "question": "What ends a share dealing round?",
+      "answer": "Unknown. Your input is welcome."
+    },
+    "parPrice": {
+      "question": "How is a share company's initial (par) price determined?",
+      "answer": "Companies have fixed par prices. 1827 Jr, Crisis Unknown."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830, but not in Hamburg or Harburg. (rules 6.2, 1)"
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "rictive (rule 6.2.3). (Note also rule 6.2.2 restricting upgrades to both coastal and inland cities.)"
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "0, 3 * revenue of hex on which they are placed."
+    },
+    "multiStation": {
+      "question": "Can you lay more than one station marker per turn?",
+      "answer": "No; except by acquisition of a private company. 1849v4 No; except by the 'token acquiring' process from phase 6 on if playing the Advanced Game."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "No."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "No."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "Yes, in an auction. The private company ceases to exist, and its assets are transferred."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "Not applicable."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "1",
+          "phase": "Yellow",
+          "effects": "train limit 4, 1 OR"
+        },
+        {
+          "train": "2",
+          "phase": "-",
+          "effects": "-"
+        },
+        {
+          "train": "3",
+          "phase": "Green",
+          "effects": "1 trains rust, train limit 3, green tiles, 2 ORs, privates may be bought by companies,     trains may be bought from other companies"
+        },
+        {
+          "train": "4",
+          "phase": "-",
+          "effects": "2 trains rust"
+        },
+        {
+          "train": "5",
+          "phase": "Brown",
+          "effects": "Brown tiles, train limit 2, 3 ORs, higher values for OBHs"
+        },
+        {
+          "train": "6",
+          "phase": "-",
+          "effects": "3 trains rust"
+        },
+        {
+          "train": "7",
+          "phase": "-",
+          "effects": "4 trains rust"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "The hexes of Hamburg and Harburg may be upgraded only by the HAV. There are special bonuses (see rule 6.2.4) for connecting hexes F18, and O13. Rule 6.2.2 'Restrictions for Coastal Towns' describes restrictions on upgrades of all towns, not just coastal ones. If a player holds at least two shares in each of at least three companies, their certificate limit is increased by one. This increase may be anticipated in buying the second share in a company. There are hexes on the board which are yellow but have no track. These may not be developed until the green phase, and the first tiles laid on them must be yellow. At least one of a set of routes must include the company's starting place. Some tiles bear two values for the stations. The higher values are used if the company has a station marker on the tile."
+    }
+  }
+}

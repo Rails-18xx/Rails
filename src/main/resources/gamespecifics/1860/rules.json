@@ -1,0 +1,128 @@
+{
+  "game": "1860",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "No. All auctions start at zero."
+    },
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": " No."
+    },
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "Sell then buy."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "As soon as you like, but shares in companies with no trains are sold at half the current market price."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "No."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "32 | 21 | 16 |  |  |  |  |  |  | After the sale of the first '8' train, players may hold any number of certificates"
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "No. All selling precedes all buying."
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "No."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830."
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Semi-restrictive. Furthermore, the tile being upgraded must be reachable from one of the laying company's station-markers by one the company's existing trains. Unlike 1825, this additional restriction is not limited to station tiles."
+    },
+    "multiStation": {
+      "question": "Can you lay more than one station marker per turn?",
+      "answer": "No."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "Yes, but you may not revisit the same hex twice."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "No."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "A company in this situation becomes insolvent. An insolvent company leases the smallest train from the new trains or the bank pool."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "No."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "Yes, apart from the Fishbourne Ferry Company, which never closes."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2+1",
+          "phase": "2",
+          "effects": "train limit 4, use yellow off-board value"
+        },
+        {
+          "train": "3+2",
+          "phase": "3",
+          "effects": "Green tiles, companies can redeem shares, 2 ORs, use green off-board value"
+        },
+        {
+          "train": "4+2",
+          "phase": "4",
+          "effects": "2+1 trains rust, train limit 3"
+        },
+        {
+          "train": "5+3",
+          "phase": "5",
+          "effects": "Brown tiles, 3 ORs, use brown off-board value"
+        },
+        {
+          "train": "6+3",
+          "phase": "6",
+          "effects": "3+2 trains rust, train limit 2, Fishbourne Shipping Company available"
+        },
+        {
+          "train": "7+4",
+          "phase": "7",
+          "effects": "4+2 trains rust"
+        },
+        {
+          "train": "8+4",
+          "phase": "8",
+          "effects": "5+3 trains rust, sales do not affect share prices, certificate limit abolished"
+        },
+        {
+          "train": "9+5",
+          "phase": "9",
+          "effects": "Southern Railway forms, no more track or base building after next stock round"
+        },
+        {
+          "train": "",
+          "phase": "Game End",
+          "effects": "British Rail is formed, end-game starts, 4 ORs between which companies are closed"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "Players can sell private companies back into the bank pool for 30 less than their purchase price. Share price rises on payment of dividend as a proportion of the dividend to the share price, rising up to four spaces if the dividend is four or more times the share price. Halts can be ignored or included in routes as the director sees fits. Halts pay the company treasury rather than adding to the dividend. A company may not upgrade track unless the company owns a train. {Mike HUtton has confirmed that this should refer to track tiles rather than track.} If a company price falls to zero, the company becomes bankrupt. All shares are returned to the initial offering without compensation, and are available for sale once more at the start of the following stock round, starting with the director's certificate. The company's bases remain on the board but are turned over to indicate that they restrict other companies' track development but do not prevent other companies running trains through those cities. The bankrupt company's treasury, trains and unused base tokens are kept with the company charter, available for use by the next director if it is refloated."
+    }
+  }
+}

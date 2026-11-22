@@ -32,10 +32,14 @@
 		<Options mustTradeTrainsAtFixedPrice="yes" canClose="no"/>
 	</CompanyType>
 	
-	<Company name="Flos" type="Private" basePrice="20" revenue="5">
+	<Company name="Flos" type="Private" basePrice="20" revenue="5"
+		longname="Flos Tramway"
+		description="Revenue only. Blocks track laying on hex L3 while owned by a player. Closes permanently when the first Type 5 train is purchased. Counts as 1 certificate.">
 		<Blocking hex="L3"/>
 	</Company>
-	<Company name="W&amp;SR" type="Private" basePrice="40" revenue="10">
+	<Company name="W&amp;SR" type="Private" basePrice="40" revenue="10"
+		longname="Waterloo &amp; Saugeen Railway Co."
+		description="Blocks track laying on hex I12 while owned by a player. Owning public company may place a free station token on Kitchener (I12) AND/OR lay green tile #59 there without a legal route, replacing its normal track/token actions. Closes immediately at the end of the operating turn in which either action is exercised, or when the first Type 5 train is purchased.">
 		<Blocking hex="I12"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialSingleTileLay">
@@ -49,7 +53,9 @@
 			<SpecialProperties condition="ifAnyExercised" when="endOfORTurn"/>
 		</ClosingConditions>
 	</Company>
-	<Company name="TCC" type="Private" basePrice="50" revenue="10">
+	<Company name="TCC" type="Private" basePrice="50" revenue="10"
+		longname="The Canada Company"
+		description="Blocks track laying on hex H11 while owned by a player. Owning public company may lay a track tile on hex H11 as an EXTRA tile placement during its operating round. A legal train route is not required. Expercising this action does not close the company. Closes permanently when the first Type 5 train is purchased.">
 		<Blocking hex="H11"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialSingleTileLay">
@@ -57,22 +63,28 @@
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
-	<Company name="Ship" type="Private" basePrice="70" revenue="15">
-		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" 
-				when="orTurn"
-				class="net.sf.rails.game.special.SpecialBonusTokenLay">
-				<SpecialBonusTokenLay class="net.sf.rails.game.BonusToken" 
-						location="C14,D19,E18,F9,F17,H5,H7,H17,J5,J17,K2,M18,O18" connected="yes" extra="yes">
-					<BonusToken name="Port" value="20" removed="Phase:6"/>
-				</SpecialBonusTokenLay>
-			</SpecialProperty>
-		</SpecialProperties>
-		<ClosingConditions>
-			<SpecialProperties condition="ifExercised"/>
-		</ClosingConditions>
+	
+	<Company name="Ship" type="Private" basePrice="70" revenue="15"
+	longname="Great Lakes Shipping Company"
+	description="Owning public company may place the Port token on any city featuring an anchor symbol to grant a permanent +$20 bonus to that city's run value exclusively for the owner. Token placement closes this company immediately. Placed Port token is permanently removed when the first Type 6 train is purchased.">
+	<SpecialProperties>
+		<SpecialProperty condition="ifOwnedByCompany" 
+			when="always"
+			class="net.sf.rails.game.special.SpecialBonusTokenLay">
+			<SpecialBonusTokenLay class="net.sf.rails.game.BonusToken" 
+					location="C14,D19,E18,F9,F17,H5,H7,H17,J5,J17,K2,M18,O18" connected="yes" extra="yes">
+				<BonusToken name="Port" value="20" removed="Phase:6"/>
+			</SpecialBonusTokenLay>
+		</SpecialProperty>
+	</SpecialProperties>
+	<ClosingConditions>
+		<SpecialProperties condition="ifExercised"/>
+	</ClosingConditions>
 	</Company>
-	<Company name="Brdg" type="Private" basePrice="100" revenue="20">
+
+	<Company name="Brdg" type="Private" basePrice="100" revenue="20"
+		longname="Niagara Falls Suspension Bridge Company"
+		description="Grants owning public company a permanent +$10 bonus when running trains to Buffalo (P17, P19). Other operating public companies can buy this permanent right by paying $50 to the owning company's treasury (or to the bank if closed). Cannot be bought from a player. Closes permanently when the first Type 5 train is purchased.">
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="revenueStep" 
 				class="net.sf.rails.game.special.LocatedBonus" transfer="toCompany">
@@ -91,7 +103,9 @@
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
-	<Company name="Tunn" type="Private" basePrice="100" revenue="20">
+	<Company name="Tunn" type="Private" basePrice="100" revenue="20"
+		longname="St. Clair Frontier Tunnel Company"
+		description="Grants owning public company a permanent +$10 Port Huron bonus when running trains to Sarnia (B13). Other operating public companies can buy this permanent right by paying $50 to the owning company's treasury (or to the bank if closed). Cannot be bought from a player. Closes permanently when the first Type 5 train is purchased.">
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="revenueStep" 
 				class="net.sf.rails.game.special.LocatedBonus" transfer="toCompany">
@@ -120,6 +134,7 @@
 			<Destination hex="L13"/> <!-- Burlington -->
         </IfOption>        
 	</Company>
+
 	<Company name="THB" type="Public" tokens="2" fgColour="000000" bgColour="B0B040">
 		<IfOption name="1856THBHomeBlocked" value="yes">
 			<Home hex="L15" city="0" blockedForAllCities = "yes"/>
@@ -134,6 +149,7 @@
 			<Destination hex="H15"/> <!-- Woodstock -->
         </IfOption>        
 	</Company>
+
 	<Company name="BBG" type="Public" tokens="3" fgColour="000000" bgColour="FF8080">
 		<Home hex="J15"/>
         <IfOption name="1856AlternateDestinations" value="no">
@@ -143,6 +159,7 @@
 			<Destination hex="N11"/> <!-- Toronto-->
         </IfOption>        
 	</Company>
+
 	<Company name="LPS" type="Public" tokens="2" fgColour="000000" bgColour="A0A0F0">
 		<Home hex="C14"/>
         <IfOption name="1856AlternateDestinations" value="no">
@@ -152,20 +169,29 @@
 			<Destination hex="F15"/> <!-- London -->
         </IfOption>        
 	</Company>
+	
 	<Company name="WGB" type="Public" tokens="2" fgColour="FFFFFF" bgColour="0000FF">
 		<Home hex="J11"/>
         <IfOption name="1856AlternateDestinations" value="no">
-			<Destination hex="F9"/>
+			<Destination hex="H5"/> <!-- Standard: Owen Sound/Lake Huron -->
         </IfOption>        
 		<IfOption name="1856AlternateDestinations" value="yes">
-			<Destination hex="H5"/> <!-- Lake Huron -->
+			<Destination hex="H5"/> <!-- Alternate: Lake Huron (Static base, but verify map requirements) -->
         </IfOption>        
 	</Company>
+
+
 	<Company name="WR"	type="Public" tokens="3" fgColour="FFFFFF" bgColour="808030">
 		<Home hex="O16"/>
-		<Destination hex="L15"/>
-		 <!-- Alternate: Hamilton, this is identical to the standard -->
+        <IfOption name="1856AlternateDestinations" value="no">
+			<Destination hex="L15"/> <!-- Standard -->
+        </IfOption>        
+		<IfOption name="1856AlternateDestinations" value="yes">
+			<Destination hex="O16"/> <!-- Alternate: Hamilton -->
+        </IfOption>        
 	</Company>
+
+
 	<Company name="CV"	type="Public" tokens="3" fgColour="FFFFFF" bgColour="800080">
 		<Home hex="N11" city="1"/>
         <IfOption name="1856AlternateDestinations" value="no">
@@ -193,17 +219,21 @@
 			<Destination hex="F15"/>  <!-- This is London, Detroit has to be added as the second end of the destination route -->
 		</IfOption>        
 	</Company>
+	
 	<Company name="CGR" type="State" available="no" tokens="10" fgColour="FFFFFF" bgColour="000000">
 	</Company>
+
 	<Company name="TGB" type="Public" tokens="2" fgColour="FFFFFF" bgColour="FF8000">
 		<Home hex="K8"/>
         <IfOption name="1856AlternateDestinations" value="no">
-			<Destination hex="H5"/>
+			<Destination hex="F9"/> <!-- Standard: Kincardine/Southampton -->
         </IfOption>        
 		<IfOption name="1856AlternateDestinations" value="yes">
-			<Destination hex="N1"/> <!-- This is West Canada Offboard, the second hex (O2) has to be added  -->
+			<Destination hex="N1"/> <!-- Alternate: Canadian West Offboard (Requires O2 link in map) -->
         </IfOption>        
 	</Company>
+
+
 	<Company name="GW"	type="Public" tokens="4" fgColour="000000" bgColour="b090b0">
 		<Home hex="F15"/>
         <IfOption name="1856AlternateDestinations" value="no">

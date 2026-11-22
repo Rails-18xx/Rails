@@ -1,5 +1,48 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/
-/rails/ui/swing/StatusWindow.java,v 1.46 2010/06/15 20:16:54 evos Exp $*/
+
+/**
+ * ============================================================================
+ * ARCHITECTURAL SUMMARY: STATUSWINDOW
+ * ============================================================================
+ * 
+ * CORE RESPONSIBILITY:
+ * This class serves as the primary financial dashboard and master window for 
+ * the Rails application. It encapsulates the core game state matrix (Players & 
+ * Companies vs. Assets), primary window menu bars, game timing, and critical 
+ * transaction buttons (Pass, Done, Undo, Redo, AI).
+ *
+ * PIPELINE & DASHBOARD SYNC TRRIGGERS:
+ * Every time a game action alters the engine state, gameUIManager broadcasts an
+ * update request that routes directly into updateStatus(boolean myTurn). 
+ * 
+ * To ensure the visual matrix never falls out of sync with the underlying models:
+ * 1. A hard layout reset is forced via gameStatus.recreate() to clear old cell trees, 
+ *    wipe dynamic rendering desyncs (like stale company rows or ghost markers), and 
+ *    completely re-fetch player seat ordering.
+ * 2. Active highlights and button click mappings are re-applied via gameStatus.initTurn().
+ *
+ * CROSS-WINDOW INTERACTION MAP & HELP HOOKS:
+ * 1. GameStatus Matrix (Dashboard): Nested inside this frame's main scroll pane. 
+ *    Displays corporate asset lines, cash flows, and certificates.
+ * 2. ORWindow & ORPanel (Map Interface): Tracks geographical track laying and token placement. 
+ *    The StatusWindow explicitly triggers and syncs with the map during Operating Rounds.
+ * 3. Text Help Window (HelpTextWindow): An independent text cheat-sheet for rules and 
+ *    variant strategy guidance.
+ * 4. The Help Button Action Hub (HelpWindowCmd): When the global Help button is pressed 
+ *    on the dashboard, it acts as a coordinated master hook that simultaneously opens or 
+ *    refreshes three targets:
+ *      a) It brings up/refreshes the persistent, text-based helpTextWindow.
+ *      b) It invokes gameStatus.activateHelpOverlay() to project spatial spotlights 
+ *         and tooltips across financial spreadsheet rows/columns.
+ *      c) It routes into gameUIManager.getORUIManager().getORPanel().activateHelpOverlay() 
+ *         to overlay spatial rules and action guides directly onto active map locations.
+ *
+ * EXTENSION & POLYMORPHISM HOOK:
+ * Variants (like 1835 or 1817) subclass this architecture or utilize reflection hooks 
+ * inside updateStatus() to paint complex step highlights (e.g., Auction blocks, formation 
+ * phases, or short-sale short-circuits) without introducing rigid bloat to the core frame.
+ * ============================================================================
+ */
+
 package net.sf.rails.ui.swing;
 
 import java.awt.*;
@@ -121,6 +164,8 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
 
     protected ActionButton passButton;
     protected ActionButton autopassButton;
+    protected ActionButton helpButton;
+    protected boolean visualPauseActive = false; // Tracks explicit user-initiated pause states
     protected GameUIManager gameUIManager;
     protected RoundFacade currentRound;
     protected PossibleActions possibleActions;
@@ -160,8 +205,6 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
 
     protected ActionButton undoButton;
     protected ActionButton redoButton;
-
-    // DESIGN LANGUAGE CONSTANTS
 
     // DESIGN LANGUAGE CONSTANTS
     // Primary Borders (Strong Indication)
@@ -294,13 +337,14 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         // JMenuItem menuItem = new JMenuItem(LocalText.getText("AutoSaveLoad"));
         // menuItem.setActionCommand(AUTOSAVELOAD_CMD);
         // menuItem.setMnemonic(KeyEvent.VK_A);
-        // menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.ALT_MASK));
+        // menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,
+        // ActionEvent.ALT_MASK));
         // menuItem.addActionListener(this);
         // menuItem.setEnabled(true);
         // fileMenu.add(menuItem);
 
         // Moved Config to File Menu
-        JMenuItem  ConvmenuItem = new JMenuItem(LocalText.getText("CONFIG"));
+        JMenuItem ConvmenuItem = new JMenuItem(LocalText.getText("CONFIG"));
         ConvmenuItem.setName(CONFIG_CMD);
         ConvmenuItem.setActionCommand(CONFIG_CMD);
         ConvmenuItem.setMnemonic(KeyEvent.VK_C);
@@ -339,11 +383,12 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         menuItem.setActionCommand(REPORT_CMD);
         menuItem.addActionListener(this);
         optMenu.add(menuItem);
-        
+
         optMenu.addSeparator();
 
         // Toggle for the new modular visualization
-        JCheckBoxMenuItem toggleStatusItem = new JCheckBoxMenuItem("Experimental Status View (18xx.games)", useAltStatus);
+        JCheckBoxMenuItem toggleStatusItem = new JCheckBoxMenuItem("Experimental Status View (18xx.games)",
+                useAltStatus);
         toggleStatusItem.addActionListener(e -> {
             useAltStatus = toggleStatusItem.isSelected();
             swapGameStatus();
@@ -370,7 +415,6 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         optMenu.add(toggleWorthItem);
 
         optMenu.addSeparator();
-
 
         // Font Settings
         menuItem = new JMenuItem(LocalText.getText("IncreaseFont", "Increase Text Size"));
@@ -575,15 +619,16 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
 
             developerMenu.addSeparator();
             JMenuItem nukeSettingsItem = new JMenuItem("Nuke User Settings (Hard Reset)");
-            nukeSettingsItem.setToolTipText("Deletes all local profiles and window settings to simulate a fresh install. REQUIRES RESTART.");
+            nukeSettingsItem.setToolTipText(
+                    "Deletes all local profiles and window settings to simulate a fresh install. REQUIRES RESTART.");
             nukeSettingsItem.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     int response = JOptionPane.showConfirmDialog(
                             StatusWindow.this,
                             "WARNING: This will permanently delete your local profiles, recent files history, and window settings.\n\n"
-                            + "This simulates a completely fresh installation for testing purposes.\n"
-                            + "The game will immediately exit after deletion. Are you sure?",
+                                    + "This simulates a completely fresh installation for testing purposes.\n"
+                                    + "The game will immediately exit after deletion. Are you sure?",
                             "Confirm Hard Reset",
                             JOptionPane.YES_NO_OPTION,
                             JOptionPane.WARNING_MESSAGE);
@@ -594,11 +639,13 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
                             if (configDir != null && configDir.exists()) {
                                 // 1. Delete rails.recent
                                 File recent = new File(configDir, "rails.recent");
-                                if (recent.exists()) recent.delete();
+                                if (recent.exists())
+                                    recent.delete();
 
                                 // 2. Delete Properties.xml (User Profile)
                                 File props = new File(configDir, "Properties.xml");
-                                if (props.exists()) props.delete();
+                                if (props.exists())
+                                    props.delete();
 
                                 // 3. Delete windowSettings folder
                                 File windowSettingsDir = new File(configDir, "windowSettings");
@@ -612,7 +659,7 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
                                 JOptionPane.showMessageDialog(StatusWindow.this,
                                         "User settings wiped. The application will now close.",
                                         "Reset Complete", JOptionPane.INFORMATION_MESSAGE);
-                                
+
                                 System.exit(0);
                             }
                         } catch (Exception ex) {
@@ -738,61 +785,25 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         correctionMenu.removeAll();
         correctionMenu.setEnabled(true);
 
-        // 1. Get currently active correction modes from the engine
-        List<CorrectionModeAction> activeModes = possibleActions.getType(CorrectionModeAction.class);
-
-        // 2. Iterate over ALL defined CorrectionTypes to build the menu dynamically
+        // Iterate over ALL defined CorrectionTypes to build the menu dynamically as
+        // one-shot actions
         for (CorrectionType type : CorrectionType.values()) {
 
-            boolean isActive = false;
-            // Check if this specific type is currently active in the engine
-            if (activeModes != null) {
-                for (CorrectionModeAction a : activeModes) {
-                    if (a.getCorrectionType() == type && a.isActive()) {
-                        isActive = true;
-                        break;
-                    }
-                }
-            }
-
-            // Create a new action to toggle this mode (click flips the boolean)
-            CorrectionModeAction toggleAction = new CorrectionModeAction(
+            // Create a one-shot action instead of a persistent toggle mode
+            CorrectionModeAction oneShotAction = new CorrectionModeAction(
                     gameUIManager.getRoot(),
                     type,
-                    isActive);
+                    true); // Explicitly flag as true/active for immediate execution phase
 
-            ActionCheckBoxMenuItem item = new ActionCheckBoxMenuItem(LocalText.getText(type.name()));
+            // Use ActionMenuItem instead of ActionCheckBoxMenuItem to remove ticks
+            // completely
+            ActionMenuItem item = new ActionMenuItem(LocalText.getText(type.name()));
             item.addActionListener(this);
-            item.addPossibleAction(toggleAction);
-            item.setSelected(isActive);
+            item.setPossibleAction(oneShotAction);
             item.setEnabled(true);
 
             correctionMenu.add(item);
         }
-        // // Re-add the Debug Item (Must be done here because removeAll() clears it)
-        // correctionMenu.addSeparator();
-        // JMenuItem forceSkipItem = new JMenuItem("Force Skip Stuck Turn (Debug)");
-        // forceSkipItem.setToolTipText("Use this ONLY if the game hangs on a closed company (Zombie Turn).");
-        // forceSkipItem.addActionListener(new ActionListener() {
-        //     @Override
-        //     public void actionPerformed(ActionEvent e) {
-        //         int response = JOptionPane.showConfirmDialog(
-        //                 StatusWindow.this,
-        //                 "This is a debug tool to bypass a stuck turn (e.g., a closed company acting).\n"
-        //                         + "It forcibly advances the internal company index.\n\n"
-        //                         + "Are you sure you want to force the engine to skip the current actor?",
-        //                 "Force Skip Confirmation",
-        //                 JOptionPane.YES_NO_OPTION,
-        //                 JOptionPane.WARNING_MESSAGE);
-
-        //         if (response == JOptionPane.YES_OPTION) {
-        //             if (gameUIManager != null && gameUIManager.getGameManager() != null) {
-        //                 gameUIManager.getGameManager().forceSkipStuckCompany();
-        //             }
-        //         }
-        //     }
-        // });
-        // correctionMenu.add(forceSkipItem);
 
         if ("1870".equals(gameUIManager.getGameManager().getGameName())) {
             JMenuItem forceDestItem = new JMenuItem("Force Connection Run (1870)");
@@ -834,15 +845,12 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
             disableCheckBoxMenuItem(MARKET_CMD);
         }
 
-        // Initialize BOTH Cash and Train actions
-        // Note: These methods are defined in GameStatus.java, we just call them here.
-        boolean c = gameStatus.initCashCorrectionActions();
-        boolean t = gameStatus.initTrainCorrectionActions();
-        // Include Stock Correction Mode in the override check
+        // Initialize Cash and Train actions as one-shot menu options.
+        // Stripped out all persistent mode override tracking.
+        gameStatus.initCashCorrectionActions();
+        gameStatus.initTrainCorrectionActions();
 
-        // Return true if EITHER mode is active.
-        // This tells the UI manager to keep the Status Window visible.
-        return c || t;
+        return false;
     }
 
     public void disableButtons() {
@@ -894,11 +902,10 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
 
         // ++ ADD PAUSE BUTTON HANDLING ++
         if (command.equals(TOGGLE_PAUSE_CMD)) {
-            if (gameUIManager.isTimerPaused()) {
-                gameUIManager.resumeTimer();
-            } else {
-                gameUIManager.pauseTimer();
-            }
+
+            // Delegate all pause logic to the central GameManager to avoid desyncs
+            gameUIManager.getGameManager().togglePauseMode();
+
         } else if (command.equals(BUY_CMD)) {
             process(executedAction);
         } else if (command.equals(SELL_CMD)) {
@@ -1022,6 +1029,10 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
             showMoveMonitor();
         } else if (command.equals("SHOW_ACTION_RUNNER")) {
             showActionRunner();
+        } else if (command.equals("HelpWindowCmd")) {
+
+            System.out.println("[HELP LOG] HelpWindowCmd button pressed.");
+            gameUIManager.getGameManager().toggleHelpMode();
 
         } else if (command.equals(REM_TILES_CMD) || command.equals(ORPanel.REM_TILES_CMD)) {
 
@@ -1317,6 +1328,12 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         passButton.setActionCommand(DONE_CMD);
         passButton.addActionListener(this);
 
+        // HELP
+        helpButton = new ActionButton(null);
+        helpButton.setText("Help");
+        helpButton.setActionCommand("HelpWindowCmd");
+        helpButton.addActionListener(this);
+
         // We do NOT add this to the buttonPanel (keeping your 5-button layout),
         // but we must initialize it so updateStatus() doesn't crash.
         autopassButton = new ActionButton(RailsIcon.DONE);
@@ -1331,6 +1348,7 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         buttonPanel.add(redoButton);
         buttonPanel.add(aiButton);
         buttonPanel.add(passButton);
+        buttonPanel.add(helpButton);
 
         // 4. Style & Size
         styleStatusButton(pauseButton, SYS_BLUE);
@@ -1338,16 +1356,17 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         styleStatusButton(redoButton, SYS_BLUE);
         styleStatusButton(aiButton, SYS_BLUE);
         styleStatusButton(passButton, SYS_BLUE);
+        styleStatusButton(helpButton, SYS_BLUE);
 
         // Force Taller Buttons (45px height)
-// Force Taller Buttons (45px height)
+        // Force Taller Buttons (45px height)
         Dimension btnDim = new Dimension(90, 45);
         pauseButton.setPreferredSize(btnDim);
         undoButton.setPreferredSize(btnDim);
         redoButton.setPreferredSize(btnDim);
         aiButton.setPreferredSize(btnDim);
         passButton.setPreferredSize(new Dimension(113, 45)); // 1.41x wider
-
+        helpButton.setPreferredSize(btnDim);
         setSize(600, 300);
 
         buttonPanel.setBorder(null);
@@ -1442,25 +1461,24 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
                 guiMgr.getWindowSettings().set(frame);
 
                 if (gameStatus != null) {
-                    
 
-                    int availableWidth = frame.getWidth() - 40; 
+                    int availableWidth = frame.getWidth() - 40;
                     int contentWidth = gameStatus.getPreferredSize().width;
 
                     if (contentWidth > 0 && availableWidth > 0) {
                         // Calculate exact multiplier needed to fit content inside the window width
                         float ratio = (float) availableWidth / (float) contentWidth;
                         float targetFontSize = currentBaseFontSize * ratio;
-                        
+
                         // Clamp bounds to prevent entirely unreadable text or massive overflows
                         targetFontSize = Math.max(6f, Math.min(36f, targetFontSize));
 
-                        // Update only if difference > 0.5f to eliminate feedback loops during smooth drag
+                        // Update only if difference > 0.5f to eliminate feedback loops during smooth
+                        // drag
                         if (Math.abs(targetFontSize - currentBaseFontSize) > 0.5f) {
                             updateFonts(targetFontSize);
                         }
                     }
-
 
                 }
             }
@@ -1528,9 +1546,6 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         return dynamicButtonPanel;
     }
 
-
-
-// ... (lines of unchanged context code) ...
     private void enforceDynamicMinimumSize() {
         if (gameStatus != null && gameStatusPane != null) {
             // 1. Force the ScrollPane to behave as a simple container without scrollbars
@@ -1545,15 +1560,9 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         // This will automatically shrink or grow the window when the zoom changes.
         // this.pack();
     }
-// ... (rest of the method) ...
+    // ... (rest of the method) ...
 
-
-
-
-
-
-
-private void updateComponentTreeFont(Component comp, Font font) {
+    private void updateComponentTreeFont(Component comp, Font font) {
         Font currentFont = comp.getFont();
         if (currentFont != null) {
             comp.setFont(font.deriveFont(currentFont.getStyle(), (float) font.getSize()));
@@ -1574,27 +1583,27 @@ private void updateComponentTreeFont(Component comp, Font font) {
         String timeText = "00:00:00";
         Color color = Color.BLACK;
 
-        Player p = gameUIManager.getCurrentPlayer();
-        if (p != null) {
-            int val = gameUIManager.getDisplayedTime(p);
-            int absVal = Math.abs(val);
-            timeText = String.format("%s: %s%02d:%02d",
-                    p.getName(),
-                    (val < 0 ? "-" : ""),
-                    absVal / 60,
-                    absVal % 60);
-            if (val < 0)
-                color = SYS_RED;
+        if (gameUIManager.getGameManager().isGamePaused() || gameUIManager.isTimerPaused()) {
+            timeText = "PAUSE";
+            color = Color.YELLOW;
         } else {
-            net.sf.rails.game.GameManager gm = gameUIManager.getGameManager();
-            gm.incrementTotalGameTime();
-            timeText = gm.getFormattedGameTime();
-        }
-
-        if (gameUIManager.isTimerPaused()) {
-            getGlassPane().setVisible(true);
-        } else {
-            getGlassPane().setVisible(false);
+            Player p = gameUIManager.getCurrentPlayer();
+            if (p != null) {
+                int val = gameUIManager.getDisplayedTime(p);
+                int absVal = Math.abs(val);
+                timeText = String.format("%s: %s%02d:%02d",
+                        p.getName(),
+                        (val < 0 ? "-" : ""),
+                        absVal / 60,
+                        absVal % 60);
+                if (val < 0) {
+                    color = SYS_RED;
+                }
+            } else {
+                net.sf.rails.game.GameManager gm = gameUIManager.getGameManager();
+                gm.incrementTotalGameTime();
+                timeText = gm.getFormattedGameTime();
+            }
         }
 
         if (gameTimeLabel != null) {
@@ -1614,6 +1623,25 @@ private void updateComponentTreeFont(Component comp, Font font) {
                     pauseButton.setText("Pause");
                     pauseButton.setBackground(UIManager.getColor("Button.background"));
                     pauseButton.setForeground(Color.BLACK);
+                }
+            }
+        }
+
+        // Coordinated dynamic text modification for the Help toggle button
+        if (helpButton != null) {
+            boolean isHelpActive = (gameUIManager.getGameManager()
+                    .getEngineMode() == net.sf.rails.game.GameManager.EngineMode.HELP);
+            if (isHelpActive) {
+                if (!"Play".equals(helpButton.getText())) {
+                    helpButton.setText("Play");
+                    helpButton.setBackground(Color.YELLOW);
+                    helpButton.setForeground(Color.BLACK);
+                }
+            } else {
+                if (!"Help".equals(helpButton.getText())) {
+                    helpButton.setText("Help");
+                    helpButton.setBackground(UIManager.getColor("Button.background"));
+                    helpButton.setForeground(Color.BLACK);
                 }
             }
         }
@@ -2435,7 +2463,6 @@ private void updateComponentTreeFont(Component comp, Font font) {
                 }
             }
 
-            // ... (lines of unchanged context code) ...
             // 2. REVENUE PHASE ("Pay out" / "Split" / "Withhold")
             List<SetDividend> revenueActions = possibleActions.getType(SetDividend.class);
             if (revenueActions != null && !revenueActions.isEmpty()) {
@@ -2549,12 +2576,13 @@ private void updateComponentTreeFont(Component comp, Font font) {
                     }
                 }
             }
-if (currentRound instanceof EndOfGameRound)
+            if (currentRound instanceof EndOfGameRound)
                 endOfGame();
 
             if (dynamicButtonPanel != null) {
                 // Ensure dynamic actions scale to the user's current zoom level
-                updateComponentTreeFont(dynamicButtonPanel, new Font(net.sf.rails.common.Config.get("font.ui.name"), Font.PLAIN, (int) currentBaseFontSize));
+                updateComponentTreeFont(dynamicButtonPanel, new Font(net.sf.rails.common.Config.get("font.ui.name"),
+                        Font.PLAIN, (int) currentBaseFontSize));
             }
 
             gameUIManager.packAndApplySizing(this);
@@ -2563,7 +2591,7 @@ if (currentRound instanceof EndOfGameRound)
         } catch (Exception e) {
             log.error("CRITICAL ERROR in StatusWindow.updateStatus", e);
         }
-        
+
     }
 
     /**
@@ -2783,10 +2811,7 @@ if (currentRound instanceof EndOfGameRound)
             ra.initRevenueCalculator(true);
             int revenueValue = ra.calculateRevenue();
 
-            try {
-                ra.drawOptimalRunAsPath(gameUIManager.getORUIManager().getMap());
-            } catch (Exception e) {
-            }
+            ra.drawOptimalRunAsPath(gameUIManager.getORUIManager().getMap());
 
             JOptionPane.showMessageDialog(this,
                     LocalText.getText("NetworkInfoDialogMessage", company.getId(),
@@ -2846,7 +2871,6 @@ if (currentRound instanceof EndOfGameRound)
 
             card.setToolTipText("<html><b>Click to " + actionName + "</b><br>" + company.getId() + "</html>");
             card.repaint();
-        } else {
         }
     }
 
@@ -2965,7 +2989,6 @@ if (currentRound instanceof EndOfGameRound)
             card.addActionListener(this);
             card.setToolTipText("<html><b>Click to " + actionName + "</b><br>" + company.getId() + "</html>");
             card.repaint();
-        } else {
         }
     }
 
@@ -3263,16 +3286,26 @@ if (currentRound instanceof EndOfGameRound)
 
     /**
      * A translucent overlay to display a massive "GAME PAUSED" text across the
-     * entire window.
+     * entire window, while clipping out the Pause button to keep it cleanly in
+     * front.
      */
-    private class PauseOverlay extends JComponent {
+    public class PauseOverlay extends JComponent {
         private static final long serialVersionUID = 1L;
 
         @Override
         public boolean contains(int x, int y) {
             // CRITICAL: Let all mouse clicks pass through so the user can still click
             // "Resume"
-            return false;
+            if (pauseButton != null && pauseButton.isShowing()
+                    && SwingUtilities.windowForComponent(this) == SwingUtilities.windowForComponent(pauseButton)) {
+                Point pBounds = SwingUtilities.convertPoint(pauseButton.getParent(), pauseButton.getLocation(), this);
+                Rectangle buttonArea = new Rectangle(pBounds.x, pBounds.y, pauseButton.getWidth(),
+                        pauseButton.getHeight());
+                if (buttonArea.contains(x, y)) {
+                    return false; // Pass through to the button
+                }
+            }
+            return true; // Block everything else
         }
 
         @Override
@@ -3280,11 +3313,29 @@ if (currentRound instanceof EndOfGameRound)
             super.paintComponent(g);
             Graphics2D g2d = (Graphics2D) g.create();
 
-            // 1. Semi-transparent dark background to dim the game
+            // 1. Compute the visual cutout for the pause button (ensure we are in the
+            // correct window)
+            if (pauseButton != null && pauseButton.isShowing()
+                    && SwingUtilities.windowForComponent(this) == SwingUtilities.windowForComponent(pauseButton)) {
+                Point pBounds = SwingUtilities.convertPoint(pauseButton.getParent(), pauseButton.getLocation(), this);
+                Rectangle totalArea = new Rectangle(0, 0, getWidth(), getHeight());
+                Rectangle buttonArea = new Rectangle(pBounds.x, pBounds.y, pauseButton.getWidth(),
+                        pauseButton.getHeight());
+
+                // Subtract button area from total window area to punch a clean hole
+                java.awt.geom.Area overlayArea = new java.awt.geom.Area(totalArea);
+                overlayArea.subtract(new java.awt.geom.Area(buttonArea));
+                g2d.setClip(overlayArea);
+            }
+
+            // 2. Semi-transparent dark background (respecting our button clip cutout)
             g2d.setColor(new Color(0, 0, 0, 150));
             g2d.fillRect(0, 0, getWidth(), getHeight());
 
-            // 2. Setup Font
+            // Reset clip so text rendering isn't unintentionally clipped out
+            g2d.setClip(null);
+
+            // 3. Setup Font
             String text = "GAME PAUSED";
             g2d.setFont(new Font("SansSerif", Font.BOLD, 60));
             FontMetrics fm = g2d.getFontMetrics();
@@ -3292,17 +3343,18 @@ if (currentRound instanceof EndOfGameRound)
             int x = (getWidth() - fm.stringWidth(text)) / 2;
             int y = ((getHeight() - fm.getHeight()) / 2) + fm.getAscent();
 
-            // 3. Draw Shadow
+            // 4. Draw Shadow
             g2d.setColor(Color.BLACK);
             g2d.drawString(text, x + 4, y + 4);
 
-            // 4. Draw Text
+            // 5. Draw Text
             g2d.setColor(SYS_RED);
             g2d.drawString(text, x, y);
 
             g2d.dispose();
         }
     }
+    // --- END FIX ---
 
     // We are modifying updateFontsFromConfig to treat the zoom value strictly as a
     // percentage integer (50-200)
@@ -3318,8 +3370,6 @@ if (currentRound instanceof EndOfGameRound)
                 fontName = "SansSerif";
             }
 
-
-
         } catch (Exception e) {
             log.error("Failed to dynamically propagate configuration fonts", e);
         }
@@ -3332,19 +3382,19 @@ if (currentRound instanceof EndOfGameRound)
     public void refreshConfigState() {
         // 1. Pull the authoritative configuration value
         this.showPlayerWorth = Util.parseBoolean(net.sf.rails.common.Config.get("statusWindow.showPlayerWorth"));
-        
+
         // 2. Visually update the menu tick box
         if (this.showPlayerWorth) {
             enableCheckBoxMenuItem("ShowPlayerWorth");
         } else {
             disableCheckBoxMenuItem("ShowPlayerWorth");
         }
-        
+
         // 3. Rebuild the dashboard to show/hide the worth data
         if (gameStatus != null) {
             gameStatus.recreate();
         }
-        
+
         // 4. Update fonts (handles size scaling changes)
         updateFontsFromConfig();
     }
@@ -3395,7 +3445,8 @@ if (currentRound instanceof EndOfGameRound)
         if (buttonPanel != null) {
             updateComponentTreeFont(buttonPanel, baseFont);
 
-            Font btnFont = baseFont.deriveFont(Font.BOLD, baseSize); // Match the base scale instead of forcing tiny font
+            Font btnFont = baseFont.deriveFont(Font.BOLD, baseSize); // Match the base scale instead of forcing tiny
+                                                                     // font
             if (pauseButton != null)
                 pauseButton.setFont(btnFont);
             if (undoButton != null)
@@ -3404,7 +3455,10 @@ if (currentRound instanceof EndOfGameRound)
                 redoButton.setFont(btnFont);
             if (aiButton != null)
                 aiButton.setFont(btnFont);
+            if (helpButton != null)
+                helpButton.setFont(btnFont);
         }
         enforceDynamicMinimumSize();
     }
+
 }

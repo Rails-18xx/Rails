@@ -281,11 +281,11 @@ public class OperatingRound_1837 extends OperatingRound {
                 }
             }
 
-            if (amount == 0 && operatingCompany.value().getNumberOfTrains() == 0) {
-                DisplayBuffer.add(this, LocalText.getText("RevenueWithNoTrains",
-                        operatingCompany.value().getId(),
-                        Bank.format(this, 0)));
-            }
+            // if (amount == 0 && operatingCompany.value().getNumberOfTrains() == 0) {
+            //     DisplayBuffer.add(this, LocalText.getText("RevenueWithNoTrains",
+            //             operatingCompany.value().getId(),
+            //             Bank.format(this, 0)));
+            // }
 
             break;
         }
@@ -534,7 +534,6 @@ public class OperatingRound_1837 extends OperatingRound {
                     directIncomeToUse, // Fixed/Mine Revenue (goes to Treasury)
                     true, allowedRevenueActions, defaultAllocation));
 
-        } else {
         }
     }
 

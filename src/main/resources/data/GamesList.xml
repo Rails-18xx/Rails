@@ -12,6 +12,13 @@
         <i>All rights reserved by the respective owners of the original games.</i><br>
         <i>No challenge to the original author's or publisher's rights, licensing, or status is intended.</i>
     </html>]]></Credits>
+    
+      <Game name="1846">
+        <Description><![CDATA[<html>
+            ripped from 18xx - trial version
+        </html>]]></Description>
+        <Players min="2" max="5"/>
+    </Game>
 
     <Game name="1817">
         <Description><![CDATA[<html>
@@ -276,6 +283,13 @@
             A very fast, introductory game aimed at teaching the core concepts of 18xx. Played on a map of the Netherlands, it strips down many of the complex financial rules, offering a pure track-laying and simple stock ownership experience that can be completed in a fraction of the time of a standard title.<br><br>
             <b>Limitations:</b> None<br>
             <b>Variants:</b> Initial Round Scenarios selectable (Auction, Deal, Select).
+        </html>]]></Description>
+        <Players min="2" max="5"/>
+    </Game>
+
+        <Game name="1860">
+        <Description><![CDATA[<html>
+            ripped from 18xx
         </html>]]></Description>
         <Players min="2" max="5"/>
     </Game>

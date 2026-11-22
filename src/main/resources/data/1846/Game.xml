@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<ComponentManager>
+	<Component name="GameManager" class="net.sf.rails.game.GameManager">
+		<Game name="1846"/>
+		<GameParameters>
+			<PlayerShareLimit percentage="60"/>
+			<BankPoolLimit percentage="100"/>
+			<OperatingRound>
+				<EmergencyTrainBuying mustBuyCheapestTrain="yes" mayBuyFromCompany="yes"/>
+			</OperatingRound>
+		</GameParameters>
+		<EndOfGame>
+			<Bankruptcy/>
+			<BankBreaks limit="0" finish="setOfORs"/>
+		</EndOfGame>
+	</Component>
+	<Component name="PlayerManager" class="net.sf.rails.game.PlayerManager">
+		<Players number="5" cash="400" certLimit="19"/>
+		<Players number="4" cash="400" certLimit="16"/>
+	</Component>
+	<Component name="Bank" class="net.sf.rails.game.financial.Bank">
+		<Bank amount="10000"/>
+	</Component>
+	<Component name="TileManager" file="TileSet.xml" class="net.sf.rails.game.TileManager"/>
+	<Component name="Map" file="Map.xml" class="net.sf.rails.game.MapManager"/>
+	<Component name="CompanyManager" file="CompanyManager.xml" class="net.sf.rails.game.CompanyManager"/>
+	<Component name="StockMarket" file="StockMarket.xml" class="net.sf.rails.game.financial.StockMarket"/>
+	<Component name="TrainManager" class="net.sf.rails.game.TrainManager">
+		<Defaults>
+			<Reach base="stops" countTowns="yes"/>
+			<Score towns="yes"/>
+		</Defaults>
+		<TrainType name="I" majorStops="I" cost="80" quantity="round_num)"/>
+	</Component>
+	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
+		<Phase name="I">
+			<Tiles colour="yellow"/>
+			<OperatingRounds number="2"/>
+		</Phase>
+		<Phase name="II">
+			<Tiles colour="yellow,green"/>
+			<OperatingRounds number="2"/>
+		</Phase>
+		<Phase name="III">
+			<Tiles colour="yellow,green,brown"/>
+			<OperatingRounds number="2"/>
+		</Phase>
+		<Phase name="IV">
+			<Tiles colour="yellow,green,brown,gray"/>
+			<OperatingRounds number="2"/>
+		</Phase>
+	</Component>
+	<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager"/>
+</ComponentManager>

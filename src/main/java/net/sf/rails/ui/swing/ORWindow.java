@@ -312,7 +312,6 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         return getClass().getSimpleName() + "_" + gameUIManager.getRoot().getGameName();
     }
 
-    // --- START FIX ---
     private void setupGlobalHotkeys() {
         JComponent rootPane = this.getRootPane();
 
@@ -354,23 +353,7 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
             }
         });
 
-        // // SPACE KEY: toggle through visuals
-        // String SHOW_NUMBERS_KEY = "showNumbersAction";
-        // inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), SHOW_NUMBERS_KEY);
-        // actionMap.put(SHOW_NUMBERS_KEY, new AbstractAction() {
-        // public void actionPerformed(ActionEvent e) {
-        // if (orPanel != null) {
-        // orPanel.toggleTileBuildNumbers();
-        // orUIManager.toggleCompanyHighlights();
-        // orUIManager.toggleMapMarkings();
-        // // Force a full map repaint to ensure the costs appear/disappear instantly
-        // if (orUIManager.getMap() != null) {
-        // orUIManager.getMap().repaintAll(new
-        // Rectangle(orUIManager.getMap().getSize()));
-        // }
-        // }
-        // }
-        // });
+    
 
         // --- 2. MAP & UPGRADE ACTIONS ---
 
@@ -489,13 +472,32 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         });
 
     }
-
     @Override
     public void setVisible(boolean b) {
         // If trying to show window, block it if Start Round is locking focus
         if (b && gameUIManager.isStartRoundActive()) {
             return;
         }
+
+        // Delegate visibility synchronization strictly to the central layout dictator
+        if (b && gameUIManager != null && gameUIManager.getGameManager() != null) {
+            gameUIManager.applyEngineMode(gameUIManager.getGameManager().getEngineMode());
+        }
+        
+        // Log trace to catch hidden layout passes triggering the window frame state changes
+        StringBuilder callStack = new StringBuilder();
+        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+        for (int i = 1; i < Math.min(stack.length, 6); i++) {
+            callStack.append("\n  -> ").append(stack[i].toString());
+        }
+        // log.info("[GLASS PANE TRACE] ORWindow.setVisible(" + b + ") invoked. Component Visibility Pipeline:" + callStack);
+
+        // Ensure a tracked, verbose glass pane is always assigned to this frame
+        if (getRootPane().getGlassPane() != null) {
+            boolean isPaneVisible = getRootPane().getGlassPane().isVisible();
+            // log.info("[GLASS PANE TRACE] Current ORWindow glass pane visibility state before frame pass: " + isPaneVisible);
+        }
+
         super.setVisible(b);
     }
 

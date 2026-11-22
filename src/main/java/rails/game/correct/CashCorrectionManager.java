@@ -47,7 +47,6 @@ public class CashCorrectionManager extends CorrectionManager {
 
 
 
-// ... (lines of unchanged context code) ...
     @Override
     public boolean executeCorrection(CorrectionAction action) {
         // 1. Logging Trace

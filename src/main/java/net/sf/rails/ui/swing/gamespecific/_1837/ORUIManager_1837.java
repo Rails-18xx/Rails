@@ -94,7 +94,7 @@ public class ORUIManager_1837 extends ORUIManager {
         // 2. FAILSAFE: Manually check for S5 Home Hex action.
         // This runs even if super.updateStatus() decides to skip the hook.
         if (myTurn) {
-            try {
+            
                 // Access the current round safely
                 RoundFacade round = gameUIManager.getGameManager().getCurrentRound();
                 if (round instanceof OperatingRound) {
@@ -115,8 +115,7 @@ public class ORUIManager_1837 extends ORUIManager {
                         }
                     }
                 }
-            } catch (Exception e) {
-            }
+            
         }
     }
 
@@ -218,8 +217,7 @@ private void handleStartHex() {
             }
 
             gameUIManager.processAction(action);
-        } else {
-        }
+        } 
     }
 
 }

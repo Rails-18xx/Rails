@@ -103,7 +103,7 @@ public class OperatingRound_1835 extends OperatingRound {
         if (!success)
             return false;
 
-        // --- START FIX: PFR TRIGGER LOGIC ---
+        //  PFR TRIGGER LOGIC ---
         if (!trainsBoughtThisTurn.isEmpty() && trainsBoughtThisTurn.size() > pfrHandledTrainCount.value()) {
             TrainCardType bought = trainsBoughtThisTurn.get(trainsBoughtThisTurn.size() - 1);
             String id = bought.getId();
@@ -153,7 +153,6 @@ public class OperatingRound_1835 extends OperatingRound {
                 }
             }
         }
-        // --- END FIX ---
 
         return true;
     }
@@ -393,14 +392,14 @@ public class OperatingRound_1835 extends OperatingRound {
         ReportBuffer.add(this, " ");
         ReportBuffer.add(this, LocalText.getText("EndOfOperatingRound", thisOrNumber));
 
-        int orWorthIncrease;
-        for (Player player : getRoot().getPlayerManager().getPlayers()) {
-            player.setLastORWorthIncrease();
-            orWorthIncrease = player.getLastORWorthIncrease().value();
-            ReportBuffer.add(this, LocalText.getText("ORWorthIncrease",
-                    player.getId(), thisOrNumber,
-                    Bank.format(this, orWorthIncrease)));
-        }
+        // int orWorthIncrease;
+        // for (Player player : getRoot().getPlayerManager().getPlayers()) {
+        //     player.setLastORWorthIncrease();
+        //     orWorthIncrease = player.getLastORWorthIncrease().value();
+        //     ReportBuffer.add(this, LocalText.getText("ORWorthIncrease",
+        //             player.getId(), thisOrNumber,
+        //             Bank.format(this, orWorthIncrease)));
+        // }
 
         if (pfrTriggeredThisOR.value()) {
             ((GameManager_1835) gameManager).setPfrDeclined();
@@ -630,6 +629,12 @@ public class OperatingRound_1835 extends OperatingRound {
 
     @Override
     public <T extends SpecialProperty> List<T> getSpecialProperties(Class<T> clazz) {
+        // Rule Enforcement: Special properties from private companies (like OBB, PF, NF) 
+        // can only be used by Aktiengesellschaften (Majors). Minors (M1-M6) are barred from using them.
+        PublicCompany current = operatingCompany.value();
+        if (current != null && current.getId().matches("M[1-6]")) {
+            return new ArrayList<>(); // Minors have no access to voluntary special properties
+        }
         List<T> properties = super.getSpecialProperties(clazz);
         if (properties != null && !properties.isEmpty()) {
             properties.removeIf(sp -> {
@@ -1153,7 +1158,6 @@ public class OperatingRound_1835 extends OperatingRound {
         return true;
     }
 
-    // ... (lines of unchanged context code) ...
     private void surgicalPrussiaFix() {
         PublicCompany m1 = companyManager.getPublicCompany("M1");
         PublicCompany m2 = companyManager.getPublicCompany("M2");
@@ -1293,21 +1297,20 @@ public class OperatingRound_1835 extends OperatingRound {
 GameDef.OrStep step = getStep();
         PublicCompany company = operatingCompany.value();
 
-        // Restore the OLD brute-force bypass for the INITIAL step
+      // Removed the hardcoded INITIAL bypass entirely. 
+        // We must rely on the superclass (OperatingRound) to handle the INITIAL -> LAY_TRACK -> LAY_TOKEN flow.
+        // We only intervene here if Baden is specifically operating AND needs its token placement.
         if (step == GameDef.OrStep.INITIAL) {
-            initTurn();
             if (ctx.isBadenOperating && !company.hasOperated()) {
                 if (ctx.hasL6Tile && !ctx.baHasL6Token) {
+                    initTurn();
                     setStep(GameDef.OrStep.LAY_TOKEN);
-                    boolean res = setPossibleActions();
+                    boolean res = super.setPossibleActions();
                     pruneGhostActions();
                     return res;
                 }
             }
-            nextStep();
-            boolean res = setPossibleActions();
-            pruneGhostActions();
-            return res;
+            // Let the base engine handle normal initialisation and step progression
         }
 
         // Restore the OLD brute-force bypass for the LAY_TRACK step

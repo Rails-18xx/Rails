@@ -1,5 +1,24 @@
 package net.sf.rails.game;
 
+/**
+ * Implements a basic Operating Round.
+ * 
+ * DESIGN PHILOSOPHY: The "Stupid Terminal" & Explicit Player Agency
+ * 1. Operational Phases (Phase 1: Track, Phase 2: Token, Phase 3: Revenue, Phase 4: Train)
+ * must ALWAYS be explicitly confirmed or skipped by the player, even if the action list
+ * is completely empty (due to lack of funds, zero token inventory, or phase limits). 
+ * The engine must never autonomously skip these phases, ensuring the player maintains 
+ * complete situational awareness of why a phase cannot be executed.
+ * * 2. Phase 5 (The FINAL Step) is an administrative anchor, not an operational board phase. 
+ * It is only rendered if active game-specific voluntary special properties (e.g., private company 
+ * powers, cattle/gulf tokens) are available. If no special properties exist, Phase 5 must 
+ * automatically close the turn cleanly without prompting an empty "End Turn" click.
+ * 
+ * A new instance must be created for
+ * each new Operating Round. At the end of a round, the current instance should
+ * be discarded.
+ */
+
 import com.google.common.collect.Iterables;
 
 import net.sf.rails.algorithms.RevenueAdapter;
@@ -26,13 +45,6 @@ import rails.game.correct.OperatingCost;
 
 import java.util.*;
 
-/**
- * Implements a basic Operating Round.
- * <p>
- * A new instance must be created for
- * each new Operating Round. At the end of a round, the current instance should
- * be discarded.
- */
 /*
  * Because if its sheer size, this class has been divided into a number of
  * "chapters".
@@ -102,7 +114,7 @@ public class OperatingRound extends Round implements Observer {
     protected final ArrayListState<TrainCardType> trainsBoughtThisTurn = new ArrayListState<>(this,
             "trainsBoughtThisTurn");
 
-    protected HashMapState<PublicCompany, Integer> loansThisRound;
+    protected final HashMapState<PublicCompany, Integer> loansThisRound = HashMapState.create(this, "loansThisRound");
     protected String thisOrNumber;
     /** Tracks if a normal (non-extra) token has been laid this company's turn. */
     protected final BooleanState normalTokenLaidThisTurn = new BooleanState(this, "normalTokenLaidThisTurn", false);
@@ -148,10 +160,6 @@ public class OperatingRound extends Round implements Observer {
         this.guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
         this.guiHints.setVisibilityHint(GuiDef.Panel.STATUS, true);
         this.guiHints.setActivePanel(GuiDef.Panel.MAP);
-
-        // --- Initialize the emergency train maps here ---
-        this.newEmergencyTrains = new TreeMap<>(); // *** ADD THIS LINE ***
-        this.usedEmergencyTrains = new TreeMap<>(); // *** ADD THIS LINE ***
 
         // Clear registry of items that could otherwise generate income twice per OR
         // Used by 1837
@@ -289,15 +297,15 @@ public class OperatingRound extends Round implements Observer {
         ReportBuffer.add(this,
                 LocalText.getText("EndOfOperatingRound", thisOrNumber));
 
-        // Update the worth increase per player
-        int orWorthIncrease;
-        for (Player player : getRoot().getPlayerManager().getPlayers()) {
-            player.setLastORWorthIncrease();
-            orWorthIncrease = player.getLastORWorthIncrease().value();
-            ReportBuffer.add(this, LocalText.getText("ORWorthIncrease",
-                    player.getId(), thisOrNumber,
-                    Bank.format(this, orWorthIncrease)));
-        }
+        // // Update the worth increase per player
+        // int orWorthIncrease;
+        // for (Player player : getRoot().getPlayerManager().getPlayers()) {
+        //     player.setLastORWorthIncrease();
+        //     orWorthIncrease = player.getLastORWorthIncrease().value();
+        //     ReportBuffer.add(this, LocalText.getText("ORWorthIncrease",
+        //             player.getId(), thisOrNumber,
+        //             Bank.format(this, orWorthIncrease)));
+        // }
 
         // OR done. Inform GameManager.
         finishRound();
@@ -781,44 +789,12 @@ public class OperatingRound extends Round implements Observer {
             }
 
             if (newStep == GameDef.OrStep.LAY_TOKEN) {
-                /*
-                 * List<SpecialProperty> bonuses = gameManager.getCommonSpecialProperties();
-                 * boolean bonusTokensForSale =
-                 * //bonuses.size() > 0
-                 * // FIXME The above condition is probably wrong, it likely should be:
-                 * !getSpecialProperties(SpecialBonusTokenLay.class).isEmpty()
-                 * // but that needs to be sorted out precisely.
-                 * // The intended effect is that the TOKEN_LAY step is skipped
-                 * // if there are no base or bonus tokens to be laid.
-                 * //
-                 * // Note: removed temporary exception for 1856 14apr2021
-                 * ;
-                 * if (company.getNumberOfFreeBaseTokens() == 0
-                 * && !bonusTokensForSale) {
-                 */
-
                 company.clearTokenableStops();
-                if (!canLayAnyTokens(true)) {
-                    continue;
-                }
-            }
-
-            if (newStep == GameDef.OrStep.CALC_REVENUE) {
-
-                // if (company.hasTrains()) {
-                if (companyHasRunningTrains(true)) {
-                    // All OK, we can't check here if it has a route
-
-                } else if (company.canGenerateOtherRevenue()) {
-                    // In 18Scan a trainless minor company still pays out.
-                    executeTrainlessRevenue(newStep);
-                    continue;
-                } else {
-                    executeSetRevenueAndDividend(new SetDividend(getRoot(), 0,
-                            false, new int[] { SetDividend.NO_TRAIN }));
-                    // TODO: This probably does not handle share selling correctly
-                    continue;
-                }
+                // Removed the premature break.
+                // Omitting standard token-count checks here prevents the base engine's
+                // auto-skip,
+                // but the flow must continue downward to properly evaluate
+                // gameSpecificNextStep().
             }
 
             if (newStep == GameDef.OrStep.PAYOUT) {
@@ -886,17 +862,18 @@ public class OperatingRound extends Round implements Observer {
             break;
         }
 
-        if (newStep == GameDef.OrStep.FINAL) {
-            finishTurn();
-        } else {
-            setStep(newStep);
-        }
+
+
+        // DESIGN LANGUAGE ENFORCEMENT: The engine must not autonomously call
+        // finishTurn()
+        // just because it *thinks* there are no SpecialProperties left. We simply park
+        // in the step and let setPossibleActions() generate the valid subclass
+        // options (like TakeLoans) alongside the explicit 'End Turn' button.
+        setStep(newStep);
 
     }
 
     /**
-     * Stub, may be overridden if there are non-running trains.
-     * Used in 1837
      * 
      * @param display Not used here; see 1837 version
      * @return True if the company has trains that are allowed to run
@@ -963,25 +940,29 @@ public class OperatingRound extends Round implements Observer {
 
     public boolean done(NullAction action) {
 
-        // BRANCH 1: The "Discard Trap" (Modified)
+        // BRANCH 1: The "Discard Trap"
         if (checkForExcessTrains()) {
             setStep(GameDef.OrStep.DISCARD_TRAINS);
-            return true; // <--- We only touched this line inside the IF block
+            return true;
         }
 
-        // BRANCH 2: The Normal "Done" (Unchanged)
-        // If checkForExcessTrains() returns false, the code above is skipped entirely.
-
-        nextStep(); // Advance to Share Trading or Finish
-
+        // BRANCH 2: Explicitly intercept the FINAL step End Turn click
         if (getStep() == GameDef.OrStep.FINAL) {
             finishTurn();
+            return true;
         }
 
-        return true; // <--- The normal "Done" ALREADY returns true!
-    }
+        // BRANCH 3: Advance to the next scheduled step (e.g., TRADE_SHARES,
+        // REPAY_LOANS, or FINAL)
+        nextStep();
 
-    // In OperatingRound.java
+        // Let setPossibleActions() generate all valid options for the new step,
+        // including game-specific subclass actions (TakeLoans) and the explicit
+        // 'End Turn' button. We wait for the user to make the choice.
+        setPossibleActions();
+
+        return true;
+    }
 
     public boolean discardTrain(DiscardTrain action) {
 
@@ -1105,7 +1086,6 @@ public class OperatingRound extends Round implements Observer {
         return false; // Default: do nothing, proceed to standard logic
     }
 
-    // ... (lines of unchanged context code) ...
 
     public boolean checkForExcessTrains() {
         excessTrainCompanies = new HashMap<>();
@@ -1179,7 +1159,6 @@ public class OperatingRound extends Round implements Observer {
      * =======================================
      */
 
-// ... (lines of unchanged context code) ...
     public boolean buyPrivate(BuyPrivate action) {
 
         String errMsg = null;
@@ -1192,8 +1171,6 @@ public class OperatingRound extends Round implements Observer {
         Player player = null;
         int upperPrice;
         int lowerPrice;
-
-
 
         // Dummy loop to enable a quick jump out.
         while (true) {
@@ -1223,9 +1200,9 @@ public class OperatingRound extends Round implements Observer {
                 break;
             }
             player = (Player) owner;
-            
-boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTradingToSameOwner");
-            
+
+            boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTradingToSameOwner");
+
             if (restrictPrivateTrade && player != operatingCompany.value().getPresident()) {
                 errMsg = "Private Trading restricted to same-owner only.";
                 break;
@@ -1271,14 +1248,13 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
                                 operatingCompany.value().getCash()),
                         Bank.format(this, price));
                 // --- START FIX ---
-                log.warn("BUY_PRIVATE_TRACE: Failed - Company has insufficient cash [{}].", operatingCompany.value().getCash());
+                log.warn("BUY_PRIVATE_TRACE: Failed - Company has insufficient cash [{}].",
+                        operatingCompany.value().getCash());
                 // --- END FIX ---
                 break;
             }
             break;
         }
-        
-
 
         if (errMsg != null) {
             if (owner != null) {
@@ -1302,8 +1278,7 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
         return true;
 
     }
-// ... (rest of the method) ...
-
+    // ... (rest of the method) ...
 
     protected boolean isPrivateSellingAllowed() {
         return Phase.getCurrent(this).isPrivateSellingAllowed();
@@ -1475,12 +1450,8 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
         }
 
         if (company.getMaxLoansPerRound() > 0) {
-            int oldLoansThisRound = 0;
-            if (loansThisRound == null) {
-                loansThisRound = HashMapState.create(this, "loansThisRound");
-            } else if (loansThisRound.containsKey(company)) {
-                oldLoansThisRound = loansThisRound.get(company);
-            }
+            int oldLoansThisRound = loansThisRound.containsKey(company) ? loansThisRound.get(company) : 0;
+
             loansThisRound.put(company, oldLoansThisRound + number);
         }
     }
@@ -2291,10 +2262,10 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
                 // FIXME: currentSpecialTokenLays can't actually contain a LayBonusToken
                 // currentSpecialTokenLays.remove(action);
             }
-            // Copied from layBaseToken. Does this help??
-            if (!canLayAnyTokens(false)) {
-                nextStep();
-            }
+            // // Copied from layBaseToken. Does this help??
+            // if (!canLayAnyTokens(false)) {
+            // nextStep();
+            // }
 
         }
 
@@ -2363,9 +2334,9 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
 
         sbt.setExercised();
 
-        if (getStep() == GameDef.OrStep.LAY_TOKEN && !canLayAnyTokens(false)) {
-            nextStep();
-        }
+        // if (getStep() == GameDef.OrStep.LAY_TOKEN && !canLayAnyTokens(false)) {
+        // nextStep();
+        // }
 
         return true;
     }
@@ -2540,12 +2511,12 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
                 action.setRevenueAllocation(SetDividend.WITHHOLD);
             }
 
-            if (amount == 0
-                    && operatingCompany.value().getNumberOfTrains() == 0) {
-                DisplayBuffer.add(this, LocalText.getText(
-                        "RevenueWithNoTrains",
-                        operatingCompany.value().getId(), Bank.format(this, 0)));
-            }
+            // if (amount == 0
+            // && operatingCompany.value().getNumberOfTrains() == 0) {
+            // DisplayBuffer.add(this, LocalText.getText(
+            // "RevenueWithNoTrains",
+            // operatingCompany.value().getId(), Bank.format(this, 0)));
+            // }
 
             break;
         }
@@ -3011,7 +2982,6 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
     // We are modifying OperatingRound.java to enforce automatic revenue
     // calculation.
 
-    // ... (lines of unchanged context code) ...
     /**
      * Prepares the SetDividend action for the current company.
      * This now includes a forced revenue recalculation to ensure accuracy,
@@ -3622,246 +3592,6 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
         return false;
     }
 
-    protected SortedMap<Integer, Train> newEmergencyTrains;
-    protected SortedMap<Integer, Train> usedEmergencyTrains;
-
-    /**
-     * Helper to add a BuyTrain action if affordable and within limits.
-     * Handles adding to emergency lists if not affordable but might be needed.
-     */
-    // In OperatingRound.java
-
-    private void addBuyTrainOptionIfPossible(Train train, PortfolioModel from,
-            int companyCash, SpecialTrainBuy reducePrice,
-            boolean useReducedPrice, // Make sure this boolean is here
-            boolean canBuyTrainNow, boolean mustBuyTrain) {
-        int cost = train.getCost();
-        // Use the passed reducePrice if applicable
-        if (useReducedPrice && reducePrice != null) { // *** Check useReducedPrice flag ***
-            cost = reducePrice.getPrice(cost);
-        }
-
-        if (cost <= companyCash) { // Can the company afford it?
-            if (canBuyTrainNow) { // Is there room for it (non-exchange)?
-                BuyTrain action = new BuyTrain(train, train.getType(), from.getParent(), cost);
-                action.setForcedBuyIfHasRoute(mustBuyTrain); // Mark if mandatory
-                if (useReducedPrice && reducePrice != null) { // *** Check useReducedPrice flag ***
-                    action.setSpecialProperty(reducePrice);
-                }
-
-                // [REFACTOR] Set button label
-                String label = createTrainButtonLabel(train, from.getParent(), cost,
-                        (useReducedPrice ? reducePrice : null), false);
-                action.setButtonLabel(label);
-
-                possibleActions.add(action);
-            }
-            // else: Affordable, but at train limit. Ignore unless it's an exchange.
-        } else if (mustBuyTrain) {
-            // Cannot afford, but MUST buy. Add to potential emergency lists.
-            // Store the *potentially reduced* cost in the emergency list key
-            if (from == ipo) {
-                newEmergencyTrains.put(cost, train); // Store with potentially reduced cost
-            } else {
-                usedEmergencyTrains.put(cost, train); // Store with potentially reduced cost
-            }
-        }
-        // else: Cannot afford and not mandatory. Ignore.
-    }
-
-    /**
-     * Helper method to process the lists of potentially unaffordable trains
-     * (newEmergencyTrains, usedEmergencyTrains) when a train purchase is mandatory.
-     * It determines which emergency options (requiring president cash) should be
-     * added to the possibleActions list.
-     *
-     * @param companyCash     Current cash of the operating company.
-     * @param reducePrice     The SpecialTrainBuy property, if applicable (can be
-     *                        null).
-     * @param useReducedPrice True if the reduced price should be considered.
-     * @param useNormalPrice  True if the normal price should be considered.
-     * @param mustBuyTrain    True if buying a train is mandatory (should always be
-     *                        true when this method is called).
-     */
-    @Deprecated
-    private void addEmergencyOptionsToPossibleActions(int companyCash, SpecialTrainBuy reducePrice,
-            boolean useReducedPrice, boolean useNormalPrice,
-            boolean mustBuyTrain) {
-
-        // Combine trains from both emergency lists (new and used)
-        List<Train> emergencyCandidates = new ArrayList<>();
-        if (newEmergencyTrains != null && !newEmergencyTrains.isEmpty()) {
-            emergencyCandidates.addAll(newEmergencyTrains.values());
-        }
-        if (usedEmergencyTrains != null && !usedEmergencyTrains.isEmpty()) {
-            emergencyCandidates.addAll(usedEmergencyTrains.values());
-        }
-
-        if (emergencyCandidates.isEmpty()) {
-            // candidates found for company {}.",
-            // operatingCompany.value().getId());
-            return; // No options to add
-        }
-
-        // Check if the rules require buying only the cheapest option
-        if (GameDef.getParmAsBoolean(this, GameDef.Parm.EMERGENCY_MUST_BUY_CHEAPEST_TRAIN)) {
-            // Sort candidates by cost. Note: This simple sort doesn't account for
-            // reducedPrice yet.
-            // A more complex sort might be needed if reducedPrice applies differently to
-            // different trains.
-            emergencyCandidates.sort(Comparator.comparingInt(Train::getCost));
-
-            // Get the cheapest train overall
-            Train cheapestTrain = emergencyCandidates.get(0);
-
-            // Add the emergency action(s) for the cheapest train
-            if (useReducedPrice) {
-                // Add option using reduced price, passing 'true' for useReducedPrice flag
-                addEmergencyAction(cheapestTrain, companyCash, reducePrice, true, mustBuyTrain);
-            }
-            if (useNormalPrice) {
-                // Add option using normal price, passing 'false' for useReducedPrice flag
-                addEmergencyAction(cheapestTrain, companyCash, null, false, mustBuyTrain);
-            }
-        } else {
-            // Rules allow buying any available train, even in emergency
-            for (Train train : emergencyCandidates) {
-                // Add the emergency action(s) for each potential train
-                if (useReducedPrice) {
-                    // Add option using reduced price, passing 'true' for useReducedPrice flag
-                    addEmergencyAction(train, companyCash, reducePrice, true, mustBuyTrain);
-                }
-                if (useNormalPrice) {
-                    // Add option using normal price, passing 'false' for useReducedPrice flag
-                    addEmergencyAction(train, companyCash, null, false, mustBuyTrain);
-                }
-            }
-        }
-    } // End of addEmergencyOptionsToPossibleActions
-
-    /**
-     * Helper to create and add a single emergency BuyTrain action to
-     * possibleActions.
-     * This action indicates that the president must contribute cash.
-     *
-     * @param train           The train being considered for purchase.
-     * @param companyCash     Current cash of the operating company.
-     * @param reducePrice     The SpecialTrainBuy property, if applicable (can be
-     *                        null).
-     * @param useReducedPrice True if the reduced price should be applied for this
-     *                        specific call.
-     * @param mustBuyTrain    True if buying a train is mandatory for the company
-     *                        this turn.
-     */
-
-    // [REPLACE]
-    /**
-     * Helper to create and add emergency BuyTrain actions to possibleActions.
-     * This now creates up to three discrete options per train:
-     * 1. Buy for 1
-     * 2. Buy for Company Cash
-     * 3. Buy for Company Cash + President Cash
-     */
-    private void addEmergencyAction(Train train, int companyCash, SpecialTrainBuy reducePrice,
-            boolean useReducedPrice, boolean mustBuyTrain) {
-
-        int cost = train.getCost();
-        if (useReducedPrice && reducePrice != null) {
-            cost = reducePrice.getPrice(cost);
-        }
-
-        Player president = operatingCompany.value().getPresident();
-        int presidentCash = (president != null) ? president.getCashValue() : 0;
-        int totalCash = companyCash + presidentCash;
-
-        // Determine the train's current owner (IPO or Pool)
-        Owner owner = (train.getOwner() instanceof BankPortfolio) ? ipo.getParent() : train.getOwner();
-
-        // Check if bankruptcy is inevitable for the *cheapest* possible option (cost=1)
-        if (willBankruptcyOccur(president, Math.max(0, 1 - companyCash))) {
-            return; // Don't offer any actions if even 1 is impossible
-        }
-
-        // --- Action 1: Buy for 1 (Min Price) ---
-        if (totalCash >= 1) {
-            BuyTrain btMin = new BuyTrain(train, owner, 1);
-            btMin.setFixedCostMode(BuyTrain.Mode.FIXED); // It's a fixed price click
-            int cashToRaiseMin = Math.max(0, 1 - companyCash);
-            btMin.setPresidentMustAddCash(cashToRaiseMin);
-            btMin.setForcedBuyIfHasRoute(mustBuyTrain);
-            if (useReducedPrice && reducePrice != null)
-                btMin.setSpecialProperty(reducePrice);
-            btMin.setButtonLabel(createTrainButtonLabel(train, owner, 1, (useReducedPrice ? reducePrice : null), true));
-            possibleActions.add(btMin);
-        }
-
-        // --- Action 2: Buy for Max Company Cash ---
-        // Only add if coCash > 1 (to avoid duplicating '1')
-        if (companyCash > 1) {
-            // Check for bankruptcy *at this specific price*
-            if (!willBankruptcyOccur(president, Math.max(0, companyCash - companyCash))) {
-                BuyTrain btCo = new BuyTrain(train, owner, companyCash);
-                btCo.setFixedCostMode(BuyTrain.Mode.FIXED);
-                btCo.setPresidentMustAddCash(0); // Company pays all
-                btCo.setForcedBuyIfHasRoute(mustBuyTrain);
-                if (useReducedPrice && reducePrice != null)
-                    btCo.setSpecialProperty(reducePrice);
-                btCo.setButtonLabel(createTrainButtonLabel(train, owner, companyCash,
-                        (useReducedPrice ? reducePrice : null), true));
-                possibleActions.add(btCo);
-            }
-        }
-
-        // --- Action 3: Buy for Max Total Cash (Company + President) ---
-        // Only add if totalCash > companyCash (to avoid duplicating) and totalCash > 1
-        if (totalCash > companyCash && totalCash > 1) {
-            // Check for bankruptcy *at this specific price*
-            if (!willBankruptcyOccur(president, Math.max(0, totalCash - companyCash))) {
-                BuyTrain btMax = new BuyTrain(train, owner, totalCash);
-                btMax.setFixedCostMode(BuyTrain.Mode.FIXED);
-                btMax.setPresidentMustAddCash(presidentCash); // President adds all their cash
-                btMax.setForcedBuyIfHasRoute(mustBuyTrain);
-                if (useReducedPrice && reducePrice != null)
-                    btMax.setSpecialProperty(reducePrice);
-                btMax.setButtonLabel(
-                        createTrainButtonLabel(train, owner, totalCash, (useReducedPrice ? reducePrice : null), true));
-                possibleActions.add(btMax);
-            }
-        }
-    }
-
-    /**
-     * Helper to create and add a single emergency BuyTrain action to
-     * possibleActions.
-     */
-    private void addEmergencyAction(Train train, int companyCash, SpecialTrainBuy reducePrice, boolean mustBuyTrain) {
-        int cost = train.getCost();
-        if (reducePrice != null)
-            cost = reducePrice.getPrice(cost);
-        int cashToRaise = cost - companyCash; // Amount president needs to cover
-
-        // TODO: Add checks for loan requirements (1826) or treasury share sales (SOH)
-        // here
-        // If those can cover part of cashToRaise, reduce it before setting president
-        // contribution
-
-        // Check if bankruptcy is inevitable before adding the option
-        if (willBankruptcyOccur(operatingCompany.value().getPresident(), cashToRaise)) {
-
-            return; // Don't offer an impossible action
-        }
-
-        BuyTrain bt = new BuyTrain(train, train.getOwner(), cost); // Owner is IPO or Pool here
-        bt.setPresidentMustAddCash(cashToRaise); // Indicate amount needed from president
-        bt.setForcedBuyIfHasRoute(mustBuyTrain); // Mark as mandatory
-        // bt.setForcedBuyIfNoRoute(mustBuyTrainWithoutRoute); // If needed
-        if (reducePrice != null)
-            bt.setSpecialProperty(reducePrice);
-
-        possibleActions.add(bt);
-
-    }
-
     protected void addOtherExchangesAtTrainLimit(PublicCompany company, Train train) {
     }
 
@@ -3911,85 +3641,6 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
         return value;
     }
 
-    protected void addBuyTrainOption(Train train, PortfolioModel from,
-            int companyCash, SpecialTrainBuy reducePrice,
-            boolean canBuyTrainNow, boolean mustBuyTrain,
-            boolean mustBuyTrainWithoutRoute) {
-
-        int cost = train.getCost();
-        if (reducePrice != null)
-            cost = reducePrice.getPrice(cost);
-        if (cost <= companyCash) {
-            if (canBuyTrainNow) {
-                BuyTrain action = new BuyTrain(train, train.getType(), from.getParent(), cost);
-                action.setForcedBuyIfNoRoute(mustBuyTrainWithoutRoute);
-                action.setForcedBuyIfHasRoute(mustBuyTrain);
-                if (reducePrice != null)
-                    action.setSpecialProperty(reducePrice);
-                possibleActions.add(action);
-            }
-        } else if (mustBuyTrain) {
-
-            emergency.set(true);
-            if (from == ipo) {
-                newEmergencyTrains.put(cost, train);
-            } else {
-                usedEmergencyTrains.put(cost, train);
-            }
-        }
-    }
-
-    protected void addEmergencyBuyTrainOption(Train train, Owner from,
-            int companyCash, SpecialTrainBuy reducePrice,
-            boolean mustBuyTrain,
-            boolean mustBuyTrainWithoutRoute) {
-        int cost = train.getCost();
-        if (reducePrice != null)
-            cost = reducePrice.getPrice(cost);
-        BuyTrain bt = new BuyTrain(train, from, cost);
-        PublicCompany company = operatingCompany.value();
-
-        int cashToRaise = cost - companyCash;
-
-        // In 1826, companies must first take loans before the president can help
-        if (GameDef.getParmAsBoolean(this, GameDef.Parm.EMERGENCY_MUST_TAKE_LOANS)) {
-            int loansToTake = canTakeLoans(company, cashToRaise);
-            if (loansToTake > 0) {
-                bt.setLoansToTake(loansToTake);
-                cashToRaise = Math.max(0, cashToRaise - loansToTake * company.getValuePerLoan());
-                bt.setExtraMessage(LocalText.getText("MustTakeLoan",
-                        company.getId(),
-                        loansToTake));
-            }
-        }
-
-        // President contribution
-        int presidentCash = cashToRaise;
-        if (cashToRaise > 0) {
-            // Check if company has shares to sell (as in SOH).
-            // If so, reduce or nullify the president contribution
-            int sharesValue = treasurySharesValue(company, cashToRaise);
-            if (sharesValue > 0) {
-                presidentCash -= sharesValue;
-                if (presidentCash < 0)
-                    presidentCash = 0;
-                bt.setExtraMessage(LocalText.getText("MustSellShares",
-                        company.getId(),
-                        sharesValue / company.getMarketPrice(),
-                        company.getShareUnit(),
-                        Bank.format(this, sharesValue)));
-            }
-
-        }
-        // In the BuyTrain action object, presidentCash being > 0
-        // has the side effect of being the emergency indicator.
-        bt.setPresidentMustAddCash(presidentCash);
-        bt.setForcedBuyIfHasRoute(mustBuyTrain);
-        bt.setForcedBuyIfNoRoute(mustBuyTrainWithoutRoute);
-        // TEMPORARY
-        possibleActions.add(bt);
-    }
-
     /**
      * Returns whether or not the company is allowed to buy a train, considering
      * its train limit.
@@ -4000,6 +3651,11 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
         return operatingCompany.value().getNumberOfTrains() < operatingCompany.value().getCurrentTrainLimit();
     }
 
+    /*
+     * =======================================
+     * 8. VARIOUS UTILITIES
+     * =======================================
+     */
     public void checkForeignSales() {
         // Get the set of available trains *once* at the beginning.
         Set<Train> availableNewTrains = trainManager.getAvailableNewTrains();
@@ -4022,6 +3678,9 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
             scrapHeap.addTrainCard(train.getCard());
             ReportBuffer.add(this,
                     LocalText.getText("RemoveTrain", train.toText()));
+            // An exported train counts as leaving the IPO, so exporting the first
+            // train of a type triggers its phase change (18Chesapeake rule 11.9)
+            train.getCardType().addToBoughtFromIPO();
             // MBr: 03012021 Trains were not made available after export prior
             trainManager.checkTrainAvailability(train, bank.getIpo());
             // MBr: 02012021 - 18Chesapeake Remove a non permanent train before every
@@ -4037,9 +3696,10 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
                 if (train.getCardType().hasInfiniteQuantity())
                     return;
                 scrapHeap.addTrainCard(train.getCard());
-                trainManager.checkTrainAvailability(train, bank.getIpo());
                 ReportBuffer.add(this,
                         LocalText.getText("RemoveTrain", train.toText()));
+                train.getCardType().addToBoughtFromIPO();
+                trainManager.checkTrainAvailability(train, bank.getIpo());
             } else { // MBr: 03012021 export a train if one has been sold....
                 if (GameDef.getParmAsBoolean(this, GameDef.Parm.REMOVE_TRAIN_BEFORE_SR)
                         && trainManager.isAnyTrainBought()) {
@@ -4051,17 +3711,13 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
                     scrapHeap.addTrainCard(train.getCard());
                     ReportBuffer.add(this,
                             LocalText.getText("RemoveTrain", train.toText()));
+                    train.getCardType().addToBoughtFromIPO();
                     // MBr: 03012021 Trains were not made available after export prior
                     trainManager.checkTrainAvailability(train, bank.getIpo());
                 }
             }
         }
     }
-    /*
-     * =======================================
-     * 8. VARIOUS UTILITIES
-     * =======================================
-     */
 
     protected <T extends SpecialProperty> List<T> getSpecialProperties(
             Class<T> clazz) {
@@ -4182,7 +3838,6 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
     // File: OperatingRound.java
     // Add these two new methods anywhere inside the class
 
-    // ... (lines of unchanged context code) ...
     // [REPLACE the entire 'layTile' method in OperatingRound.java with this]
 
     public boolean layTile(LayTile action) {
@@ -4280,11 +3935,9 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
             // Register the new tile to decrement its count
             tile.add(hex);
 
-            try {
+
                 int newPresetRevenue = calculateCurrentPotentialRevenue(operatingCompany.value());
 
-            } catch (Exception e) {
-            }
 
             if (costText == null) {
                 ReportBuffer.add(this, LocalText.getText("LaysTileAt",
@@ -4308,8 +3961,7 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
                 registerNormalTileLay(tile);
                 normalTileLaidThisTurn.set(true);
             }
-        } else {
-        }
+        } 
 
         // - for PfB / Extra Lays / Second Tile ---
         // Check if the lay was an "extra" lay (like PfB)
@@ -4329,6 +3981,7 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
         // This was the last normal/extra lay. Advance the step.
 
         nextStep();
+        setPossibleActions(); // Regenerate actions immediately for the next step (LAY_TOKEN)
         return true;
     }
 
@@ -4371,56 +4024,42 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
 
     @Override
     public boolean setPossibleActions() {
-
         possibleActions.clear();
         selectedAction = null;
         boolean forced = false;
+
+        // 1. STRICT PHASE LOCALIZATION: We reset the global state immediately.
+        // All 'Done' button logic will be evaluated locally per phase pass.
         doneAllowed.set(false);
+        boolean phaseAllowsDone = false;
 
         // Safety Guard: If the operating company was reset (e.g. during reload).
         if (operatingCompany.value() == null) {
             if (operatingCompanies != null && !operatingCompanies.isEmpty()) {
-                // 1. PRIME THE STATE: Explicitly set to the first company.
-                // This ensures operatingCompany.value() is NOT null, protecting against
-                // subclass logic or initTurn() crashes if setNextOperatingCompany fails.
                 setOperatingCompany(operatingCompanies.get(0));
-
-                // 2. FIND ACTUAL NEXT: Call the logic to find the correct starting company
-                // (e.g. skipping closed/hibernated companies).
                 setNextOperatingCompany(true);
-
-                // 3. RESET STEP: Force step to INITIAL to ensure initTurn() is called.
                 setStep(GameDef.OrStep.INITIAL);
             } else {
-                // Should not happen in a valid OR, but prevents a crash if empty
                 return false;
             }
         }
 
-        // Get the current step *once*
         GameDef.OrStep step = getStep();
         PublicCompany company = operatingCompany.value();
 
         if (step == GameDef.OrStep.INITIAL) {
-            initTurn(); // This logs the turn start
-
-            nextStep(); // Advance from INITIAL to LAY_TRACK (or whatever comes next)
-            step = getStep(); // Get the new step
-
+            initTurn();
+            nextStep();
+            step = getStep();
         }
 
         // --- Normal Step Processing ---
         if (step == GameDef.OrStep.LAY_TRACK) {
-
             possibleActions.addAll(getNormalTileLays(true));
             possibleActions.addAll(getSpecialTileLays(true));
-
-            doneAllowed.set(true); // Enable "Skip All" (DONE)
-
-            possibleActions.add(new NullAction(getRoot(), NullAction.Mode.SKIP));
+            phaseAllowsDone = true;
 
         } else if (step == GameDef.OrStep.LAY_TOKEN) {
-
             setNormalTokenLays();
             setSpecialTokenLays();
 
@@ -4429,30 +4068,33 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
             if (!currentNormalTokenLays.isEmpty() || !currentSpecialTokenLays.isEmpty() || bonusLaysAvailable) {
                 possibleActions.addAll(currentNormalTokenLays);
                 possibleActions.addAll(currentSpecialTokenLays);
-                if (!forced) {
-                    doneAllowed.set(true); // Enable "Skip All" (DONE)
-                    possibleActions.add(new NullAction(getRoot(), NullAction.Mode.SKIP));
-                }
+                if (!forced)
+                    phaseAllowsDone = true;
             } else {
-
-                nextStep();
-                return setPossibleActions(); // Re-run for the next step
+                if (!forced)
+                    phaseAllowsDone = true;
             }
 
         } else if (step == GameDef.OrStep.CALC_REVENUE) {
-
-            // Disable "Done" (Skip) for Revenue.
-            // Players must explicitly choose Payout, Withhold, or Split (generated by
-            // prepareRevenue...).
-            // Pressing "Done" (or 'D') previously skipped revenue entirely, resulting in 0
-            // dividend.
-            doneAllowed.set(false);
+            phaseAllowsDone = false;
             prepareRevenueAndDividendAction();
+
+            if (possibleActions.isEmpty()) {
+                SetDividend zeroRevenueAction = new SetDividend(getRoot(), 0, false,
+                        new int[] { SetDividend.WITHHOLD });
+                zeroRevenueAction.setActualRevenue(0);
+                possibleActions.add(zeroRevenueAction);
+            }
+
             if (noMapMode)
                 prepareNoMapActions();
 
         } else if (step == GameDef.OrStep.BUY_TRAIN) {
-            setBuyableTrains(); // This populates possibleActions
+            setBuyableTrains();
+
+            // setBuyableTrains() may mutate the global doneAllowed, so we sync our local
+            // flag to its decision.
+            phaseAllowsDone = doneAllowed.value();
 
             boolean hasBuyActions = false;
             for (PossibleAction pa : possibleActions.getList()) {
@@ -4461,60 +4103,49 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
                     break;
                 }
             }
-            // This is the DONE/SKIP logic block for BUY_TRAIN
+
             if (hasBuyActions) {
-                // 'SKIP' (Done Buying) button.
-                // JSON State Recovery / Logic Fix: Ensure SKIP is not offered if purchase is
-                // mandatory.
                 boolean mustBuy = !operatingCompany.value().hasTrains() &&
-                        operatingCompany.value().mustOwnATrain();
+                        mustBuyTrainNow(operatingCompany.value());
                 if (!mustBuy) {
-                    possibleActions.add(new NullAction(getRoot(), NullAction.Mode.SKIP));
+                    phaseAllowsDone = true;
                 }
             } else {
-                // 'doneAllowed = true'.
-                doneAllowed.set(true);
+                // Wipe the local done flag if there are zero legitimate buy actions available
+                phaseAllowsDone = false;
             }
 
             if (noMapMode && (operatingCompany.value().getLastRevenue() == 0))
                 prepareNoMapActions();
 
-            // This step already correctly sets doneAllowed inside setBuyableTrains()
-
         } else if (step == GameDef.OrStep.DISCARD_TRAINS) {
             forced = true;
-            // On Undo, the transient 'excessTrainCompanies' map is cleared.
-            // We must regenerate it to verify if discards are actually needed.
             if (excessTrainCompanies == null || excessTrainCompanies.isEmpty()) {
                 checkForExcessTrains();
             }
 
-            setTrainsToDiscard(); // This populates possibleActions
+            setTrainsToDiscard();
 
-            // This detects the race condition/data desync where setTrainsToDiscard
-            // fails to generate actions but the step is still DISCARD_TRAINS.
             if (possibleActions.getType(DiscardTrain.class).isEmpty()) {
-                // This is a bug state, but we must not hang.
                 playerManager.setCurrentPlayer(operatingCompany.value().getPresident());
                 stepObject.set(GameDef.OrStep.BUY_TRAIN);
-                return setPossibleActions(); // Re-run for the new step
+                return setPossibleActions();
             }
 
         } else if (step == GameDef.OrStep.TRADE_SHARES) {
             gameManager.getCurrentRound().setPossibleActions();
+        } else if (step == GameDef.OrStep.FINAL) {
+            phaseAllowsDone = false;
         }
 
-        // --- Common Actions ---
-        if (!forced) {
+        int actionCountBeforeCommon = possibleActions.getList().size();
 
+        if (!forced) {
             setBonusTokenLays();
             setDestinationActions();
             setGameSpecificPossibleActions();
 
-            // Can private companies be bought?
             if (isPrivateSellingAllowed()) {
-
-                // Create a list of players with the current one in front
                 int currentPlayerIndex = operatingCompany.value().getPresident().getIndex();
                 Player player;
                 int minPrice, maxPrice;
@@ -4523,78 +4154,35 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
 
                 for (int i = currentPlayerIndex; i < currentPlayerIndex + numberOfPlayers; i++) {
                     player = players.get(i % numberOfPlayers);
-
-                    // Allow game-specific logic to restrict selling (e.g. must be President)
                     if (!maySellPrivate(player))
                         continue;
 
-boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTradingToSameOwner");
-
+                    boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTradingToSameOwner");
                     if (restrictPrivateTrade && player != operatingCompany.value().getPresident()) {
                         continue;
                     }
 
                     for (PrivateCompany privComp : player.getPortfolioModel().getPrivateCompanies()) {
-
-                        // Check to see if the private can be sold to a company
-                        if (!privComp.tradeableToCompany()) {
+                        if (!privComp.tradeableToCompany())
                             continue;
-                        }
 
-                        // Determine price limits
                         minPrice = getPrivateMinimumPrice(privComp);
-                        maxPrice = getPrivateMaximumPrice(privComp);
+                        if (operatingCompany.value().getCash() < minPrice)
+                            continue;
 
-                        // Generate the action (The UI will attach this to the Private Card)
-                        BuyPrivate buyPrivate = new BuyPrivate(privComp, minPrice, maxPrice);
-                        possibleActions.add(buyPrivate);
+                        maxPrice = getPrivateMaximumPrice(privComp);
+                        possibleActions.add(new BuyPrivate(privComp, minPrice, maxPrice));
                     }
                 }
             }
 
-            // // Can private companies be bought?
-            // if (isPrivateSellingAllowed()) {
-
-            // // Create a list of players with the current one in front
-            // int currentPlayerIndex = operatingCompany.value().getPresident().getIndex();
-            // Player player;
-            // int minPrice, maxPrice;
-            // List<Player> players = playerManager.getPlayers();
-            // int numberOfPlayers = playerManager.getNumberOfPlayers();
-            // for (int i = currentPlayerIndex; i < currentPlayerIndex + numberOfPlayers;
-            // i++) {
-            // player = players.get(i % numberOfPlayers);
-            // if (!maySellPrivate(player))
-            // continue;
-            // for (PrivateCompany privComp :
-            // player.getPortfolioModel().getPrivateCompanies()) {
-
-            // // check to see if the private can be sold to a company
-            // if (!privComp.tradeableToCompany()) {
-            // continue;
-            // }
-
-            // minPrice = getPrivateMinimumPrice(privComp);
-
-            // maxPrice = getPrivateMaximumPrice(privComp);
-
-            // BuyPrivate buyPrivate = new BuyPrivate(privComp, minPrice, maxPrice);
-            // possibleActions.add(buyPrivate);
-            // }
-            // }
-            // }
-
             if (operatingCompany.value().canUseSpecialProperties()) {
-
-                // Are there any "common" special properties,
-                // i.e. properties that are available to everyone?
                 List<SpecialProperty> commonSP = gameManager.getCommonSpecialProperties();
                 if (commonSP != null) {
                     SellBonusToken sbt;
                     loop: for (SpecialProperty sp : commonSP) {
                         if (sp instanceof SellBonusToken && sp.isUsableDuringOR(getStep())) {
                             sbt = (SellBonusToken) sp;
-                            // Can't buy if already owned
                             if (operatingCompany.value().getBonuses() != null) {
                                 for (Bonus bonus : operatingCompany.value().getBonuses()) {
                                     if (bonus.getName().equals(sp.getId()))
@@ -4606,51 +4194,33 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
                     }
                 }
 
-                // Are there other step-independent special properties owned by
-                // the company?
                 List<SpecialProperty> orsps = operatingCompany.value().getPortfolioModel().getAllSpecialProperties();
-
-                // TODO: Do we still need this directly from the operating
-                // company?
-                // List<SpecialProperty> compsps =
-                // operatingCompany.get().getSpecialProperties();
-                // if (compsps != null) orsps.addAll(compsps);
-
                 if (orsps != null) {
                     for (SpecialProperty sp : orsps) {
-                        if (!sp.isExercised() && sp.isUsableIfOwnedByCompany()
-                                && sp.isUsableDuringOR(step)) {
+                        if (!sp.isExercised() && sp.isUsableIfOwnedByCompany() && sp.isUsableDuringOR(step)) {
                             if (sp instanceof SpecialBaseTokenLay) {
                                 if (getStep() != GameDef.OrStep.LAY_TOKEN) {
-                                    possibleActions.add(new LayBaseToken(getRoot(),
-                                            (SpecialBaseTokenLay) sp));
-
+                                    possibleActions.add(new LayBaseToken(getRoot(), (SpecialBaseTokenLay) sp));
                                 }
-                            } else if (!(sp instanceof SpecialTileLay)
-                                    && !(sp instanceof SpecialBonusTokenLay)) {
+                            } else if (!(sp instanceof SpecialTileLay) && !(sp instanceof SpecialBonusTokenLay)) {
                                 possibleActions.add(new UseSpecialProperty(sp));
                             }
                         }
                     }
                 }
-                // Are there other step-independent special properties owned by
-                // the president?
+
                 orsps = playerManager.getCurrentPlayer().getPortfolioModel().getAllSpecialProperties();
                 if (orsps != null) {
                     for (SpecialProperty sp : orsps) {
-                        if (!sp.isExercised() && sp.isUsableIfOwnedByPlayer()
-                                && sp.isUsableDuringOR(step)) {
+                        if (!sp.isExercised() && sp.isUsableIfOwnedByPlayer() && sp.isUsableDuringOR(step)) {
                             if (sp instanceof SpecialBaseTokenLay) {
                                 if (getStep() != GameDef.OrStep.LAY_TOKEN) {
-                                    possibleActions.add(new LayBaseToken(getRoot(),
-                                            (SpecialBaseTokenLay) sp));
+                                    possibleActions.add(new LayBaseToken(getRoot(), (SpecialBaseTokenLay) sp));
                                 }
                             } else if (sp instanceof SpecialBonusTokenLay) {
                                 if (getStep() != GameDef.OrStep.LAY_TOKEN) {
-                                    possibleActions.add(new LayBonusToken(getRoot(),
-                                            (SpecialBonusTokenLay) sp,
+                                    possibleActions.add(new LayBonusToken(getRoot(), (SpecialBonusTokenLay) sp,
                                             ((SpecialBonusTokenLay) sp).getToken()));
-
                                 }
                             } else if (!(sp instanceof SpecialTileLay)) {
                                 possibleActions.add(new UseSpecialProperty(sp));
@@ -4659,13 +4229,55 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
                     }
                 }
             }
-        } else {
-
         }
 
-        if (doneAllowed.value()) {
+        int actionCountAfterCommon = possibleActions.getList().size();
 
-            possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
+        // If voluntary special actions were appended, we provide a Done button to skip
+        // them.
+        if (actionCountAfterCommon > actionCountBeforeCommon && !forced) {
+            phaseAllowsDone = true;
+        }
+
+        // CRITICAL REALIGNMENT SWEEP:
+        // Operational board phases (Phases 1-4) must ALWAYS be confirmed or skipped by the player
+        // to maintain structural visibility and prevent disorienting, erratic game jumping.
+        if (possibleActions.isEmpty()) {
+            if (step == GameDef.OrStep.FINAL) {
+                // Determine if this is the absolute last company in the current operating round sequence
+                int currentIndex = operatingCompanies.indexOf(operatingCompany.value());
+                boolean hasNextCompany = (currentIndex >= 0 && currentIndex < operatingCompanies.size() - 1);
+
+                if (hasNextCompany) {
+                    // It is safe to auto-advance to the next company within the same round context.
+                    finishTurn();
+                    return setPossibleActions();
+                } else {
+                    // It is the last company; force manual confirmation to gracefully halt before round transition.
+                    phaseAllowsDone = true;
+                }
+            } else if (step == GameDef.OrStep.LAY_TRACK || step == GameDef.OrStep.LAY_TOKEN || 
+                       step == GameDef.OrStep.CALC_REVENUE || step == GameDef.OrStep.BUY_TRAIN) {
+                // Operational phases MUST force a manual user confirmation step even when empty.
+                phaseAllowsDone = true;
+            }
+        }
+
+        // Push our rigorously calculated localized flag to the persistent variable
+        // right before UI consumption.
+        doneAllowed.set(phaseAllowsDone);
+
+        if (doneAllowed.value()) {
+            boolean hasDone = false;
+            for (PossibleAction pa : possibleActions.getList()) {
+                if (pa instanceof NullAction && ((NullAction) pa).getMode() == NullAction.Mode.DONE) {
+                    hasDone = true;
+                    break;
+                }
+            }
+            if (!hasDone) {
+                possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
+            }
         }
 
         for (PossibleAction pa : possibleActions.getList()) {
@@ -4677,7 +4289,6 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
             }
         }
 
-        // possibleActions.getList().size());
         return true;
     }
 
@@ -4840,11 +4451,11 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
             }
             setSpecialTokenLays();
 
-            // Can more tokens be laid? Otherwise, next step
-            if (!canLayAnyTokens(false)) {
+            // // Can more tokens be laid? Otherwise, next step
+            // if (!canLayAnyTokens(false)) {
 
-                nextStep();
-            }
+            // nextStep();
+            // }
 
         }
 
@@ -4870,8 +4481,9 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
         boolean hasTrains = company.getPortfolioModel().getNumberOfTrains() > 0;
         boolean canBuyTrainNow = canBuyTrainNow();
 
-        // Forced Buy Condition: No trains AND company rules require ownership.
-        boolean mustBuyTrain = !hasTrains && company.mustOwnATrain();
+        // Forced Buy Condition: No trains, company rules require ownership,
+        // and the company has a route (unless the game forces a buy without one).
+        boolean mustBuyTrain = !hasTrains && mustBuyTrainNow(company);
 
         // Check Phase Restrictions (e.g. "One train per turn")
         boolean canBuyMoreTrains = Phase.getCurrent(this).canBuyMoreTrainsPerTurn();
@@ -4885,9 +4497,23 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
             return;
         }
 
+        boolean mayBuyMoreOfEachType = Phase.getCurrent(this).canBuyMoreTrainsPerTypePerTurn();
+
+        // Emergency buy: the president may only add cash if the company cannot
+        // afford any train from the bank or the pool. If so, the rules usually
+        // require the cheapest one, and trains from other companies are capped
+        // at face value.
+        int cheapestPrice = mustBuyTrain
+                ? getCheapestBankTrainPrice(company, mayBuyMoreOfEachType, canBuyTrainNow)
+                : 0;
+        boolean emergency = mustBuyTrain && cheapestPrice > companyCash;
+        boolean cheapestOnly = emergency
+                && GameDef.getParmAsBoolean(this, GameDef.Parm.EMERGENCY_MUST_BUY_CHEAPEST_TRAIN);
+        boolean emergencyFromCompany = emergency
+                && GameDef.getParmAsBoolean(this, GameDef.Parm.EMERGENCY_MAY_BUY_FROM_COMPANY);
+
         // --- 2. Check New Trains (IPO/Bank) ---
         if (canBuyTrainNow || mustBuyTrain) {
-            boolean mayBuyMoreOfEachType = Phase.getCurrent(this).canBuyMoreTrainsPerTypePerTurn();
             Set<Train> availableNewTrains = trainManager.getAvailableNewTrains();
 
             for (Train train : availableNewTrains) {
@@ -4901,9 +4527,12 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
                 int price = train.getCost();
 
                 // --- FILTER: STRICT AFFORDABILITY (IPO) ---
-                // If this is NOT a forced emergency buy, the company MUST be able to pay.
+                // Unless this is an emergency buy, the company MUST be able to pay.
                 // We filter this out HERE so the AI never sees an unaffordable option.
-                if (!mustBuyTrain && price > companyCash) {
+                if (!emergency && price > companyCash) {
+                    continue;
+                }
+                if (cheapestOnly && price > cheapestPrice) {
                     continue;
                 }
 
@@ -4927,7 +4556,10 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
                 int price = train.getCost();
 
                 // --- FILTER: STRICT AFFORDABILITY (POOL) ---
-                if (!mustBuyTrain && price > companyCash) {
+                if (!emergency && price > companyCash) {
+                    continue;
+                }
+                if (cheapestOnly && price > cheapestPrice) {
                     continue;
                 }
 
@@ -4974,10 +4606,11 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
                         int price = train.getCost();
 
                         // --- FILTER: STRICT AFFORDABILITY (FIXED TRADE) ---
-                        if (!mustBuyTrain && price > companyCash)
+                        if (!emergencyFromCompany && price > companyCash)
                             continue;
 
                         action = new BuyTrain(train, train.getType(), otherCompany, price, price, PriceMode.VARIABLE);
+                        action.setForcedBuyIfHasRoute(mustBuyTrain);
                         action.setButtonLabel(createTrainButtonLabel(train, otherCompany, price, null, false));
 
                     } else {
@@ -4990,12 +4623,13 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
                         // If company has 0 cash, maxPrice is 0.
                         // Since minPrice is 1, the range is invalid [1..0].
                         // We MUST filter this out unless it's a forced buy.
-                        if (!mustBuyTrain && maxPrice < minPrice) {
+                        if (!emergencyFromCompany && maxPrice < minPrice) {
                             continue;
                         }
 
-                        if (mustBuyTrain) {
-                            maxPrice = Integer.MAX_VALUE; // President can add cash
+                        if (emergencyFromCompany) {
+                            // President can add cash, but only up to face value
+                            maxPrice = Math.max(companyCash, train.getCost());
                         }
 
                         // Sanity Check for forced buy if cash is 0
@@ -5027,6 +4661,64 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
         } else {
             // Forced turn: Only allow Done if there are absolutely NO trains to buy
             doneAllowed.set(!buyOptionAvailable);
+        }
+    }
+
+    /**
+     * Returns the price of the cheapest train the company may buy from the bank
+     * (IPO) or the pool, or Integer.MAX_VALUE if there is none.
+     */
+    private int getCheapestBankTrainPrice(PublicCompany company, boolean mayBuyMoreOfEachType,
+            boolean includePool) {
+        int cheapest = Integer.MAX_VALUE;
+        for (Train train : trainManager.getAvailableNewTrains()) {
+            if (!company.mayBuyTrainType(train))
+                continue;
+            if (!mayBuyMoreOfEachType && trainsBoughtThisTurn.contains(train.getCardType()))
+                continue;
+            cheapest = Math.min(cheapest, train.getCost());
+        }
+        if (includePool) {
+            for (Train train : pool.getUniqueTrains()) {
+                if (company.mayBuyTrainType(train))
+                    cheapest = Math.min(cheapest, train.getCost());
+            }
+        }
+        return cheapest;
+    }
+
+    /**
+     * Must a company without trains buy one this turn? Only if it must own a
+     * train and has a route, unless the game forces a buy even without a route
+     * (EmergencyTrainBuying mustBuyTrainEvenIfNoRoute).
+     */
+    protected boolean mustBuyTrainNow(PublicCompany company) {
+        if (!company.mustOwnATrain())
+            return false;
+        if (GameDef.getParmAsBoolean(this, GameDef.Parm.MUST_BUY_TRAIN_EVEN_IF_NO_ROUTE))
+            return true;
+        return companyHasRoute(company);
+    }
+
+    /**
+     * Does the company have a route connecting at least two revenue locations?
+     * Checked by letting a virtual 2-train run from the company's stations.
+     * If the route cannot be determined, the company is assumed to have one.
+     */
+    protected boolean companyHasRoute(PublicCompany company) {
+        if (noMapMode)
+            return true;
+        try {
+            RevenueAdapter ra = RevenueAdapter.createRevenueAdapter(getRoot(), company,
+                    Phase.getCurrent(this), false);
+            ra.populateFromRails();
+            ra.getTrains().clear();
+            ra.addTrainByString("2");
+            ra.initRevenueCalculator(true);
+            return ra.calculateRevenue() > 0;
+        } catch (Exception e) {
+            log.warn("Could not determine route for {}, assuming it has one", company.getId(), e);
+            return true;
         }
     }
 

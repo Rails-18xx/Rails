@@ -347,11 +347,11 @@
 
 <!-- OFF SITE -->
 
-    <Tile colour="gray" id="-39" name="-39">
-        <Track from="side1" to="side0"/>
-        <Track from="side1" to="side2"/>
-        <Track from="side0" to="side2"/>
-    </Tile>
+	<Tile colour="fixed" id="-39" name="-39">
+		<Track from="side3" gauge="normal" to="side1"/>
+		<Track from="side1" gauge="normal" to="side2"/>
+		<Track from="side2" gauge="normal" to="side3"/>
+	</Tile>
 
  
  

@@ -217,7 +217,6 @@ private static GameStateData.PhaseData populatePhaseData(PhaseManager pm) {
     }
 
 
-    // ... (lines of unchanged context code) ...
     public static void serialize(GameManager gm, String filename) throws IOException {
         log.debug("Serializing state for action {} to {}", gm.getCurrentActionCount(), filename);
 

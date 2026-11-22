@@ -298,8 +298,7 @@ public class ExpertStrategyService {
     }
 
 
-    // ... (lines of unchanged context code) ...
-    // --- Placeholders ---
+
 
     public double scoreBuyCertificate(BuyCertificate action, GameContext context) {
         PublicCompany company = action.getCompany();

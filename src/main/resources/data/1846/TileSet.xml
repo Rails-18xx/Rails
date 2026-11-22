@@ -1,0 +1,253 @@
+<?xml version="1.0" ?>
+<TileManager tiles="Tiles.xml">
+	<Tile id="-90318701"/>
+	<Tile id="-90218702"/>
+	<Tile id="-90218701"/>
+	<Tile id="-901_18352"/>
+	<Tile id="-9031870"/>
+	<Tile id="-901_1835"/>
+	<Tile id="-89511"/>
+	<Tile id="-89115"/>
+	<Tile id="-89031"/>
+	<Tile id="-89030"/>
+	<Tile id="-89015"/>
+	<Tile id="-89012"/>
+	<Tile id="-89010"/>
+	<Tile id="-80020"/>
+	<Tile id="-80004"/>
+	<Tile id="-80003"/>
+	<Tile id="-80002"/>
+	<Tile id="-80001"/>
+	<Tile id="-56001"/>
+	<Tile id="-37402"/>
+	<Tile id="-37206"/>
+	<Tile id="-37158"/>
+	<Tile id="-37156"/>
+	<Tile id="-37123"/>
+	<Tile id="-37109"/>
+	<Tile id="-37103"/>
+	<Tile id="-37012"/>
+	<Tile id="-37011"/>
+	<Tile id="-37010"/>
+	<Tile id="-37009"/>
+	<Tile id="-37008"/>
+	<Tile id="-37007"/>
+	<Tile id="-37003"/>
+	<Tile id="-37002"/>
+	<Tile id="-37001"/>
+	<Tile id="-30007"/>
+	<Tile id="-30005"/>
+	<Tile id="-30004"/>
+	<Tile id="-30003"/>
+	<Tile id="-30001"/>
+	<Tile id="-26007"/>
+	<Tile id="-26006"/>
+	<Tile id="-26005"/>
+	<Tile id="-26004"/>
+	<Tile id="-26003"/>
+	<Tile id="-26002"/>
+	<Tile id="-26001"/>
+	<Tile id="-25018"/>
+	<Tile id="-25017"/>
+	<Tile id="-25016"/>
+	<Tile id="-25015"/>
+	<Tile id="-25014"/>
+	<Tile id="-25013"/>
+	<Tile id="-25012"/>
+	<Tile id="-25011"/>
+	<Tile id="-25010"/>
+	<Tile id="-25009"/>
+	<Tile id="-25008"/>
+	<Tile id="-25007"/>
+	<Tile id="-25006"/>
+	<Tile id="-25005"/>
+	<Tile id="-25004"/>
+	<Tile id="-25003"/>
+	<Tile id="-25002"/>
+	<Tile id="-25001"/>
+	<Tile id="-10888"/>
+	<Tile id="-10004"/>
+	<Tile id="-10001"/>
+	<Tile id="-7713"/>
+	<Tile id="-7712"/>
+	<Tile id="-7711"/>
+	<Tile id="-7710"/>
+	<Tile id="-5016"/>
+	<Tile id="-5015"/>
+	<Tile id="-4009"/>
+	<Tile id="-4008"/>
+	<Tile id="-4007"/>
+	<Tile id="-4005"/>
+	<Tile id="-4004"/>
+	<Tile id="-4002"/>
+	<Tile id="-4001"/>
+	<Tile id="-4000"/>
+	<Tile id="-3059"/>
+	<Tile id="-3012"/>
+	<Tile id="-3008"/>
+	<Tile id="-3007"/>
+	<Tile id="-3006"/>
+	<Tile id="-3005"/>
+	<Tile id="-2059"/>
+	<Tile id="-2014"/>
+	<Tile id="-1944"/>
+	<Tile id="-1943"/>
+	<Tile id="-1933"/>
+	<Tile id="-1925"/>
+	<Tile id="-1923"/>
+	<Tile id="-1922"/>
+	<Tile id="-1921"/>
+	<Tile id="-1911"/>
+	<Tile id="-1903"/>
+	<Tile id="-1759"/>
+	<Tile id="-1144"/>
+	<Tile id="-1143"/>
+	<Tile id="-1101"/>
+	<Tile id="-1059"/>
+	<Tile id="-913"/>
+	<Tile id="-912"/>
+	<Tile id="-911"/>
+	<Tile id="-908"/>
+	<Tile id="-907"/>
+	<Tile id="-906"/>
+	<Tile id="-905"/>
+	<Tile id="-903"/>
+	<Tile id="-902"/>
+	<Tile id="-901"/>
+	<Tile id="-810"/>
+	<Tile id="-809"/>
+	<Tile id="-808"/>
+	<Tile id="-807"/>
+	<Tile id="-806"/>
+	<Tile id="-805"/>
+	<Tile id="-804"/>
+	<Tile id="-803"/>
+	<Tile id="-802"/>
+	<Tile id="-801"/>
+	<Tile id="-800"/>
+	<Tile id="-143"/>
+	<Tile id="-114"/>
+	<Tile id="-113"/>
+	<Tile id="-112"/>
+	<Tile id="-111"/>
+	<Tile id="-105"/>
+	<Tile id="-104"/>
+	<Tile id="-103"/>
+	<Tile id="-102"/>
+	<Tile id="-101"/>
+	<Tile id="-58"/>
+	<Tile id="-42"/>
+	<Tile id="-41"/>
+	<Tile id="-39"/>
+	<Tile id="-30"/>
+	<Tile id="-23"/>
+	<Tile id="-22"/>
+	<Tile id="-21"/>
+	<Tile id="-20"/>
+	<Tile id="-11"/>
+	<Tile id="-10"/>
+	<Tile id="-8"/>
+	<Tile id="-7"/>
+	<Tile id="-5"/>
+	<Tile id="-3"/>
+	<Tile id="-2"/>
+	<Tile id="-1"/>
+	<Tile id="0"/>
+	<Tile id="5" quantity="3">
+		<Upgrade id="14,15,619"/>
+	</Tile>
+	<Tile id="6" quantity="4">
+		<Upgrade id="14,15,619"/>
+	</Tile>
+	<Tile id="14" quantity="4">
+		<Upgrade id="611"/>
+	</Tile>
+	<Tile id="15" quantity="5">
+		<Upgrade id="611"/>
+	</Tile>
+	<Tile id="16" quantity="2">
+		<Upgrade id="43,70"/>
+	</Tile>
+	<Tile id="17" quantity="1">
+		<Upgrade id="43,47"/>
+	</Tile>
+	<Tile id="18" quantity="1">
+		<Upgrade id="43"/>
+	</Tile>
+	<Tile id="19" quantity="2">
+		<Upgrade id="45,46"/>
+	</Tile>
+	<Tile id="20" quantity="2">
+		<Upgrade id="44,47"/>
+	</Tile>
+	<Tile id="21" quantity="1">
+		<Upgrade id="46"/>
+	</Tile>
+	<Tile id="22" quantity="1">
+		<Upgrade id="45"/>
+	</Tile>
+	<Tile id="23" quantity="4">
+		<Upgrade id="41,43,45,47"/>
+	</Tile>
+	<Tile id="24" quantity="4">
+		<Upgrade id="42,43,46,47"/>
+	</Tile>
+	<Tile id="25" quantity="2">
+		<Upgrade id="40,45,46"/>
+	</Tile>
+	<Tile id="26" quantity="1">
+		<Upgrade id="42,44,45"/>
+	</Tile>
+	<Tile id="27" quantity="1">
+		<Upgrade id="41,44,46"/>
+	</Tile>
+	<Tile id="28" quantity="1">
+		<Upgrade id="39,43,45,46,70"/>
+	</Tile>
+	<Tile id="29" quantity="1">
+		<Upgrade id="39,43,45,70"/>
+	</Tile>
+	<Tile id="30" quantity="1">
+		<Upgrade id="41,42,70"/>
+	</Tile>
+	<Tile id="31" quantity="1">
+		<Upgrade id="41,42,70"/>
+	</Tile>
+	<Tile id="39" quantity="1"/>
+	<Tile id="40" quantity="1"/>
+	<Tile id="41" quantity="2"/>
+	<Tile id="42" quantity="2"/>
+	<Tile id="43" quantity="2"/>
+	<Tile id="44" quantity="1"/>
+	<Tile id="45" quantity="2"/>
+	<Tile id="46" quantity="2"/>
+	<Tile id="47" quantity="2"/>
+	<Tile id="51" quantity="2"/>
+	<Tile id="57" quantity="4">
+		<Upgrade id="14,15,619"/>
+	</Tile>
+	<Tile id="70" quantity="1"/>
+	<Tile id="611" quantity="4"/>
+	<Tile id="619" quantity="3">
+		<Upgrade id="611"/>
+	</Tile>
+	<Tile id="290" quantity="1"/>
+	<Tile id="291" quantity="1">
+		<Upgrade id="294,295,296"/>
+	</Tile>
+	<Tile id="292" quantity="1">
+		<Upgrade id="294,295,296"/>
+	</Tile>
+	<Tile id="293" quantity="1">
+		<Upgrade id="294,296"/>
+	</Tile>
+	<Tile id="294" quantity="2"/>
+	<Tile id="295" quantity="2">
+		<Upgrade id="297"/>
+	</Tile>
+	<Tile id="296" quantity="1"/>
+	<Tile id="297" quantity="2"/>
+	<Tile id="298" quantity="1"/>
+	<Tile id="299" quantity="1"/>
+	<Tile id="300" quantity="1"/>
+</TileManager>

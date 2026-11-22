@@ -40,8 +40,16 @@ public final class PublicCompany_1856 extends PublicCompany {
        return moneyInEscrow.value();
     }
 
-    @Override
+    public void setMoneyInEscrow(int amount) {
+        this.moneyInEscrow.set(amount);
+    }
+
+@Override
     public int getMaxNumberOfLoans() {
+        // Check the current phase index. Phase 5 and 6 completely disable loan limits.
+       if (getRoot().getGameManager().getCurrentPhase().getIndex() >= 5) {
+            return 0;
+        }
         return sharesOwnedByPlayers();
     }
     

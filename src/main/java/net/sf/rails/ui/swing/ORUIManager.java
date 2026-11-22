@@ -27,24 +27,26 @@ import net.sf.rails.ui.swing.hexmap.HexUpgrade;
 import net.sf.rails.ui.swing.hexmap.TileHexUpgrade;
 import net.sf.rails.ui.swing.hexmap.TokenHexUpgrade;
 import net.sf.rails.util.Util;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import rails.game.action.*;
 import rails.game.correct.ClosePrivate;
 import rails.game.correct.OperatingCost;
-
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-
 import net.sf.rails.game.ai.TokenLayOption;
 import net.sf.rails.game.ai.TileLayOption;
 import net.sf.rails.game.ai.AIPlayer;
-
 import static net.sf.rails.ui.swing.GameUIManager.EXCHANGE_TOKENS_DIALOG;
+
+import net.sf.rails.algorithms.NetworkGraph; // FIXED: Added missing import
+import net.sf.rails.algorithms.NetworkVertex; // FIXED: Added missing import
+import net.sf.rails.common.Config;
+import net.sf.rails.common.GameOption;
+
+
 
 public class ORUIManager implements DialogOwner {
 
@@ -83,17 +85,21 @@ public class ORUIManager implements DialogOwner {
         INACTIVE, SELECT_HEX, SELECT_UPGRADE, SET_REVENUE, SELECT_PAYOUT
     }
 
-    private boolean showHomeIdentifiers = true;
-    private boolean showRevenueRoutes = true;
-    private boolean showFancyCityValues = true; // Default to off
-
+    private boolean showHomeIdentifiers = Config.getBoolean("layer.showHomeIdentifiers", true);
+    private boolean showRevenueRoutes = Config.getBoolean("layer.showRevenueRoutes", true);
+    private boolean showFancyCityValues = Config.getBoolean("layer.showFancyCityValues", false);
+    private boolean showFloatingTiles = Config.getBoolean("layer.showFloatingTiles", true);
+    private boolean showFriendlyHexes = Config.getBoolean("layer.showFriendlyHexes", true);
+    private boolean showDestinationMarkers = Config.getBoolean("layer.showDestinationMarkers", true);
+    private boolean showRevenueSpinner = Config.getBoolean("layer.showRevenueSpinner", true);
+    private boolean showHexNames = Config.getBoolean("layer.showHexNames", true);
+    private boolean showTerrainCosts = Config.getBoolean("layer.showTerrainCosts", true);
     
 
     public boolean isShowFancyCityValues() {
         return showFancyCityValues;
     }
 
-    private boolean showFloatingTiles = true;
 
     public boolean isShowFloatingTiles() {
         return showFloatingTiles;
@@ -118,6 +124,7 @@ public class ORUIManager implements DialogOwner {
 
     public void toggleHomeIdentifiers() {
         this.showHomeIdentifiers = !this.showHomeIdentifiers;
+        Config.set("layer.showHomeIdentifiers", String.valueOf(this.showHomeIdentifiers));
         if (map != null)
             map.repaintAll(new Rectangle(map.getSize()));
     }
@@ -133,9 +140,6 @@ public class ORUIManager implements DialogOwner {
             orPanel.redrawRoutes();
     }
 
-    private boolean showFriendlyHexes = true;
-
-    private boolean showDestinationMarkers = true;
 
     public boolean isShowDestinationMarkers() {
         return showDestinationMarkers;
@@ -151,10 +155,6 @@ public class ORUIManager implements DialogOwner {
             map.repaintAll(new Rectangle(map.getSize()));
         }
     }
-
-    // We are modifying ORUIManager.java to remove the deprecated hideAllOverlays
-    // method and inject Revenue Spinner layout state plumbing.
-    private boolean showRevenueSpinner = true;
 
     public boolean isShowRevenueSpinner() {
         return showRevenueSpinner;
@@ -301,6 +301,7 @@ public void toggleRevenueSpinner() {
 
     public void updateStatus(PossibleAction actionToComplete, boolean myTurn) {
 
+        
         // // Inject the highlight update here
         // updateCompanyHighlights();
 
@@ -357,11 +358,18 @@ public void toggleRevenueSpinner() {
             }
         }
 
-        if (possibleActions == null) {
-            if (orPanel != null)
-                orPanel.disableButtons();
-            return;
-        }
+        // 1. STABILITY GUARD: Event-Driven Verification
+// Do not process UI updates or tear down panels if the engine has not resolved a stable action list.
+if (possibleActions == null || possibleActions.isEmpty()) {
+log.info("STABILITY GUARD: PossibleActions list is empty. Halting update to prevent UI wipe.");
+if (orPanel != null) {
+orPanel.disableButtons();
+}
+return;
+}
+
+
+       
 
         // --- SPECIAL MODE DETECTION ---
         boolean hasSpecialActions = false;
@@ -519,8 +527,6 @@ public void toggleRevenueSpinner() {
                 boolean canLay = !possibleActions.getType(LayTile.class).isEmpty();
                 boolean canSpecial = !possibleActions.getType(UseSpecialProperty.class).isEmpty();
                 if (!canLay && !canSpecial && !hasSpecialOR) {
-                    // Only return if we actually processed the SKIP.
-                    // If no SKIP exists (e.g., only DONE exists), fall through to update UI.
                     if (processNullAction(possibleActions, NullAction.Mode.SKIP))
                         return;
                 }
@@ -531,14 +537,25 @@ public void toggleRevenueSpinner() {
                 }
             } else if (orStep == GameDef.OrStep.BUY_TRAIN) {
                 if (possibleActions.getType(BuyTrain.class).isEmpty() && !hasSpecialOR) {
-                    // This was the specific bug: It tried to SKIP, failed (because only DONE
-                    // existed),
-                    // but returned anyway. Now it will fall through.
                     if (processNullAction(possibleActions, NullAction.Mode.SKIP))
                         return;
                 }
+            } else {
+                // Catch-all for unhandled phases to prevent silent stalls
+                for (PossibleAction pa : possibleActions.getList()) {
+                    if (pa instanceof NullAction && ((NullAction) pa).getMode() == NullAction.Mode.SKIP) {
+                        log.error("=");
+                        log.error("CRITICAL UI WARNING: Engine is in phase [" + orStep + "] with a SKIP action,");
+                        log.error("but no auto-skip logic is defined for this phase in ORUIManager!");
+                        log.error("If the UI stalls here, add this phase to the auto-skip check block.");
+                        log.error("=");
+                        break;
+                    }
+                }
             }
-        }
+            }
+            
+        
 
         // Delegate UI Setup
         if (orStep == GameDef.OrStep.LAY_TRACK) {
@@ -606,6 +623,9 @@ public void toggleRevenueSpinner() {
             orPanel.updateDynamicActions(possibleActions.getList());
         } else {
             orPanel.initTrainBuying(new ArrayList<>());
+            PossibleActions freshActions = getPossibleActions();
+            orPanel.updateDynamicActions(freshActions != null ? freshActions.getList() : possibleActions.getList());
+
         }
 
         orPanel.enableUndo(undoAction);
@@ -627,9 +647,6 @@ public void toggleRevenueSpinner() {
         return false; // Action not found
     }
 
-    private boolean showMapMarkings = true;
-    private boolean showHexNames = true;
-    private boolean showTerrainCosts = true;
 
     public boolean isShowTerrainCosts() {
         return showTerrainCosts;
@@ -678,31 +695,7 @@ public void toggleRevenueSpinner() {
     //     log.info("DEBUG: All 6 map overlays hidden via Master Reset.");
     // }
 
-    public boolean isShowMapMarkings() {
-        return showMapMarkings;
-    }
 
-    public void toggleMapMarkings() {
-        // --- START FIX ---
-        this.showMapMarkings = !this.showMapMarkings;
-
-        this.showHexNames = this.showMapMarkings;
-        this.showFriendlyHexes = this.showMapMarkings;
-        this.showDestinationMarkers = this.showMapMarkings;
-        this.showHomeIdentifiers = this.showMapMarkings;
-        this.showRevenueRoutes = this.showMapMarkings;
-
-        updateCompanyHighlights();
-
-        if (orPanel != null) {
-            orPanel.redrawRoutes();
-        }
-
-        if (map != null) {
-            map.repaintAll(new Rectangle(map.getSize()));
-        }
-        // --- END FIX ---
-    }
 
     public void processAction(String command, List<PossibleAction> actions, Component source) {
 
@@ -984,13 +977,31 @@ public void toggleRevenueSpinner() {
         return true;
     }
 
-    public void confirmUpgrade() {
-        HexUpgrade upgrade = hexUpgrades.getActiveUpgrade();
-        if (upgrade instanceof TileHexUpgrade)
-            layTile((TileHexUpgrade) upgrade);
-        if (upgrade instanceof TokenHexUpgrade)
-            layToken((TokenHexUpgrade) upgrade);
+ 
+
+public void confirmUpgrade() {
+        if (map == null) return;
+        
+        // Find the selected hex and its current visual upgrade
+        GUIHex selectedHex = map.getSelectedHex();
+        if (selectedHex == null || selectedHex.getUpgrade() == null) return;
+        
+        HexUpgrade currentUpgrade = selectedHex.getUpgrade();
+        
+        if (currentUpgrade instanceof TileHexUpgrade) {
+            TileHexUpgrade thu = (TileHexUpgrade) currentUpgrade;
+            layTile(thu);
+        } else if (currentUpgrade instanceof TokenHexUpgrade) {
+            TokenHexUpgrade thup = (TokenHexUpgrade) currentUpgrade;
+            layToken(thup);
+        }
+        
+        if (floatingUpgradesDialog != null) {
+            floatingUpgradesDialog.setVisible(false);
+        }
     }
+
+
 
     public void skipUpgrade() {
         if (getPossibleActions().containsCorrections()) {
@@ -1189,14 +1200,40 @@ public void toggleRevenueSpinner() {
         }
     }
 
-    protected void takeLoans(TakeLoans action) {
+protected void takeLoans(TakeLoans action) {
         if (action.getMaxNumber() == 1) {
-            if (JOptionPane.showConfirmDialog(orWindow,
-                    LocalText.getText("TakeLoanPrompt", action.getCompanyName(),
-                            gameUIManager.format(action.getPrice())),
-                    LocalText.getText("PleaseConfirm"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-                action.setNumberTaken(1);
-                orWindow.process(action);
+            // Automatically process single loan allocations without a confirmation window
+            action.setNumberTaken(1);
+            orWindow.process(action);
+        } else if (action.getMaxNumber() > 1) {
+            // Dynamically build dropdown choices if a company can take multiple loans
+            String[] options = new String[action.getMaxNumber() + 1];
+            options[0] = LocalText.getText("None");
+            
+            for (int i = 1; i <= action.getMaxNumber(); i++) {
+                options[i] = i + " x " + gameUIManager.format(action.getPrice()) 
+                        + " (" + gameUIManager.format(i * action.getPrice()) + ")";
+            }
+            
+            String chosen = (String) JOptionPane.showInputDialog(
+                    orWindow,
+                    LocalText.getText("SelectLoansToTake", action.getCompanyName()),
+                    LocalText.getText("Select"),
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    options,
+                    options[1]
+            );
+            
+            if (chosen != null && !chosen.equals(options[0])) {
+                // Find the index matching the number taken
+                for (int i = 1; i <= action.getMaxNumber(); i++) {
+                    if (chosen.equals(options[i])) {
+                        action.setNumberTaken(i);
+                        orWindow.process(action);
+                        break;
+                    }
+                }
             }
         }
     }
@@ -1404,6 +1441,11 @@ public void toggleRevenueSpinner() {
         populateTokenLayOptionsFromHexUpgrades();
 
         if (tiles.isEmpty() && !tokens.isEmpty()) {
+            // If there are spatial layout hexes available to click on the map, 
+        // force SELECT_HEX state so the map highlights active token fields.
+        if (hexUpgrades.getHexes() != null && !hexUpgrades.getHexes().isEmpty()) {
+            setLocalStep(LocalSteps.SELECT_HEX);
+        } else {
             boolean buttonOnly = true;
             for (LayToken t : tokens) {
                 if (t instanceof LayBaseToken && ((LayBaseToken) t).getType() != LayBaseToken.HOME_CITY) {
@@ -1412,6 +1454,8 @@ public void toggleRevenueSpinner() {
                 }
             }
             setLocalStep(buttonOnly ? LocalSteps.INACTIVE : LocalSteps.SELECT_HEX);
+        }
+        
         } else if (tiles.isEmpty() && tokens.isEmpty()) {
             setLocalStep(LocalSteps.INACTIVE);
         } else {
@@ -1527,7 +1571,6 @@ public void toggleRevenueSpinner() {
         return gameUIManager.getGameManager().getPossibleActions();
     }
 
-    // ... (lines of unchanged context code) ...
     /*
      * Updates all GUIHex objects to point to the live MapHex objects from the
      * current Game Manager.

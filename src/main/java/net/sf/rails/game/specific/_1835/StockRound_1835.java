@@ -12,6 +12,7 @@ import com.google.common.collect.Sets;
 
 import net.sf.rails.game.financial.*;
 import net.sf.rails.game.model.CertificatesModel;
+import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.MoneyOwner;
 import net.sf.rails.game.state.Owner;
 import rails.game.action.AdjustSharePrice;
@@ -190,30 +191,32 @@ public class StockRound_1835 extends StockRound {
         return super.done(action, playerName, hasAutopassed);
     }
 
-    /*
-     * (non-Javadoc)
-     * * @see
-     * net.sf.rails.game.StockRound#mayPlayerSellShareOfCompany(net.sf.rails.game.
-     * PublicCompany)
-     */
-    @Override
-    public boolean mayPlayerSellShareOfCompany(PublicCompany company) {
+   
+    // 3. Update the method to use the new state object and avoid variable name conflicts
+@Override
+public boolean mayPlayerSellShareOfCompany(PublicCompany company) {
+    boolean isPrussia = company.getId().equals("PR");
+    boolean hasOperated = company.hasOperated();
+    
+    BooleanState unfloatedState = unfloatedAtStartOfRound.get(company.getId());
+    boolean wasUnfloatedAtStart = (unfloatedState != null && unfloatedState.value());
+    boolean hasFloatedNow = company.hasFloated();
 
-        // 1835 Rule: Cannot sell if not floated (except Prussian) [cite: 468, 470]
-        if (!company.hasFloated()) {
-            return false;
-        }
-        // 1835 Rule: Cannot sell if floated in the CURRENT share round
-        Boolean wasUnfloated = unfloatedAtStartOfRound.get(company.getId());
-        if (wasUnfloated != null && wasUnfloated && company.hasFloated()) {
-            if (!company.getId().equals("PR")) {
-                return false;
-            }
-        }
-
-        // Fallback to standard engine checks for all other conditions
-        return super.mayPlayerSellShareOfCompany(company);
+    if (isPrussia) {
+        return company.hasStarted();
     }
+
+    if (!hasOperated) {
+        return false;
+    }
+
+    if (wasUnfloatedAtStart && hasFloatedNow) {
+        return false;
+    }
+
+    return super.mayPlayerSellShareOfCompany(company);
+}
+    
 
     protected void setGameSpecificActions() {
 
@@ -325,7 +328,6 @@ public class StockRound_1835 extends StockRound {
         Portfolio.moveAll(sellableCertificateCombinations.last(), bankTo);
     }
 
-    // ... (lines of unchanged context code) ...
 
     private boolean isSoldOut(String companyAbbrev) {
         String companyId = resolveId(companyAbbrev);
@@ -338,26 +340,24 @@ public class StockRound_1835 extends StockRound {
         PublicCompany c = companyManager.getPublicCompany(companyId);
         return c != null && !c.isBuyable() && !c.hasStarted();
     }
-    // ... (lines of unchanged context code) ...
 
-    // ... (lines of unchanged context code) ...
     // Cache for resolved IDs to avoid repeated lookups
     private Map<String, String> resolvedIds = new HashMap<>();
+
     // Custom tracker to catch companies that float during this round
-    private final net.sf.rails.game.state.HashMapState<String, Boolean> unfloatedAtStartOfRound = net.sf.rails.game.state.HashMapState
-            .create(this, "unfloatedAtStartOfRound");
+    private final Map<String, BooleanState> unfloatedAtStartOfRound = new HashMap<>();
 
-    @Override
-    public void start() {
-        super.start();
+            
 
-        unfloatedAtStartOfRound.clear();
-        for (PublicCompany c : companyManager.getAllPublicCompanies()) {
-            if (!c.hasFloated()) {
-                unfloatedAtStartOfRound.put(c.getId(), true);
-            }
-        }
+// 2. Update the start method to populate this correctly
+@Override
+public void start() {
+    super.start();
+    unfloatedAtStartOfRound.clear();
+    for (PublicCompany c : companyManager.getAllPublicCompanies()) {
+        unfloatedAtStartOfRound.put(c.getId(), new BooleanState(this, "unfloated_" + c.getId(), !c.hasFloated()));
     }
+}
 
     @Override
     protected void checkForCompanyReleases() {

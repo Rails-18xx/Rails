@@ -1,0 +1,139 @@
+{
+  "game": "1847",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "No."
+    },
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": " No."
+    },
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "Sell then buy."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "After it has operated."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "50% - but bear in mind that the rules indicate this is checked before selling shares, after which you may sell as many shares as you wish in one block. This can result in more than 50% of the shares in the pool."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "| 11 | 9 |  |  |  |  |  |  | Variant 5 (5 companies)"
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "No. All selling precedes all buying."
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "No."
+    },
+    "roundEnd": {
+      "question": "What ends a share dealing round?",
+      "answer": "Each player consecutively not making a purchase. The priority then goes to the player after the one who last made a purchase."
+    },
+    "parPrice": {
+      "question": "How is a share company's initial (par) price determined?",
+      "answer": "Companies have fixed par prices. 1827 Jr, Crisis Unknown."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830; in addition the Saarbr\u00fccker Eisenbahn and Rhein-Nahe-Bahn may only place yellow tiles on light red hexes, while the Pfalzbahn companies may only place yellow tiles on light green hexes (actually blue in my copies)."
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "As for 1835 - presumably restrictive."
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "0, then 100."
+    },
+    "multiStation": {
+      "question": "Can you lay more than one station marker per turn?",
+      "answer": "No."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "The token is placed on the home base at the start of the operating round in which it will first run."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "Yes."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "No."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "As for 1835."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "No."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "Not applicable."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "3",
+          "phase": "Yellow",
+          "effects": "train limit 4, two tile lays, lowest value for off-board areas, 1 OR"
+        },
+        {
+          "train": "3+3",
+          "phase": "-",
+          "effects": "-"
+        },
+        {
+          "train": "4",
+          "phase": "Green",
+          "effects": "Green tiles, train limit 3, trains may be bought from companies, one tile lay per     company, middle value for off-board areas, 2 ORs Expert game : quarries may be bought by companies"
+        },
+        {
+          "train": "4+4",
+          "phase": "-",
+          "effects": "3 trains rust"
+        },
+        {
+          "train": "5",
+          "phase": "-",
+          "effects": "-"
+        },
+        {
+          "train": "5+5",
+          "phase": "-",
+          "effects": "3+3 trains rust"
+        },
+        {
+          "train": "6",
+          "phase": "Brown",
+          "effects": "Brown tiles, train limit 2, highest value for off-board areas, quarries close, 3 ORs Expert game : Rammelsbach quarry is not closed"
+        },
+        {
+          "train": "6+6",
+          "phase": "-",
+          "effects": "4 trains rust"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "In the Expert Game, nationalisation of shares is possible."
+    }
+  }
+}

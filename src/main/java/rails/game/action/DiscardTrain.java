@@ -56,6 +56,7 @@ public class DiscardTrain extends PossibleORAction implements GuiTargetedAction 
         }
     }
 
+    
     @Override
     public Owner getActor() {
         // Return the company associated with this action.
@@ -65,19 +66,7 @@ public class DiscardTrain extends PossibleORAction implements GuiTargetedAction 
     }
 
 
-    @Override
-    public String getButtonLabel() {
-        if (ownedTrains != null && !ownedTrains.isEmpty()) {
-            // Return the name of the first (and usually only) train in this option
-            String name = ownedTrains.first().getName();
 
-            // Strip suffix like "_1" from "4_1" to show just "4"
-            name = name.replaceAll("(.*)_\\d+", "$1");
-
-            return "Discard " + name;
-        }
-        return "Discard ?";
-    }
 
     @Override
     public String toString() {
@@ -91,35 +80,13 @@ public class DiscardTrain extends PossibleORAction implements GuiTargetedAction 
         return "Discard Train (?)";
     }
 
-    // UNIFIED "DISCARD" SIGNATURE (Light Coral / Firebrick)
 
-    @Override
-    public Color getButtonColor() {
-        return new Color(240, 128, 128); // LightCoral
-    }
 
-    @Override
-    public Color getHighlightBackgroundColor() {
-        return new Color(240, 128, 128); // LightCoral
-    }
-
-    @Override
-    public Color getHighlightBorderColor() {
-        return new Color(178, 34, 34); // Firebrick
-    }
 
     public void setLabel(String label) {
         this.label = label;
     }
 
-    @Override
-    public Color getHighlightTextColor() {
-        return Color.BLACK;
-    }
-
-    // ... (Serialization methods omitted) ...
-    // NOTE: Ensure all other methods from the uploaded file are preserved.
-    // I am only showing the overridden visual methods here for clarity.
 
     // --- RESTORING MISSING METHODS TO ENSURE COMPILATION ---
     public void setOwnedTrains(Set<Train> trains) {
@@ -233,14 +200,47 @@ public class DiscardTrain extends PossibleORAction implements GuiTargetedAction 
 
 
 
-@Override
+
+
+
+
+    @Override
     public Object getTarget() {
-        // This method must be INSIDE the class
         if (ownedTrains != null && !ownedTrains.isEmpty()) {
             return ownedTrains.first();
         }
         return getCompany();
     }
 
+    @Override
+    public String getButtonLabel() {
+        if (discardedTrain != null) {
+            return "Discard " + discardedTrain.getName().replaceAll("(.*)_\\d+", "$1");
+        }
+        if (ownedTrains != null && !ownedTrains.isEmpty()) {
+            return "Discard " + ownedTrains.first().getName().replaceAll("(.*)_\\d+", "$1");
+        }
+        return "Discard ?";
+    }
+
+    @Override
+    public Color getButtonColor() {
+        return new Color(240, 128, 128); // LightCoral
+    }
+
+    @Override
+    public Color getHighlightBackgroundColor() {
+        return new Color(240, 128, 128); // LightCoral
+    }
+
+    @Override
+    public Color getHighlightBorderColor() {
+        return new Color(178, 34, 34); // Firebrick
+    }
+
+    @Override
+    public Color getHighlightTextColor() {
+        return Color.BLACK;
+    }
 
 }

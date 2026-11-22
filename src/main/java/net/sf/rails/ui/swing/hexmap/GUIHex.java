@@ -257,7 +257,7 @@ public class GUIHex implements Observer {
     private static final int MARKS_DIRTY_MARGIN = 4;
 
     // positions of offStation Tokens
-private static final int[] offStationTokenX = new int[] { -20, 20 };
+    private static final int[] offStationTokenX = new int[] { -20, 20 };
     private static final int[] offStationTokenY = new int[] { -28, 28 };
 
     // static fields
@@ -614,11 +614,7 @@ private static final int[] offStationTokenX = new int[] { -20, 20 };
                 g.setFont(oldFont);
             }
 
-            if (!isTilePainted())
-                return;
-
-            // Draw preprinted labels only if enabled in UIManager
-            if (hexMap.getOrUIManager() != null && hexMap.getOrUIManager().isShowHexNames()) {
+            if (isTilePainted() && hexMap.getOrUIManager() != null && hexMap.getOrUIManager().isShowHexNames()) {
                 Tile visibleTile = getVisibleTile();
                 if (visibleTile != null && visibleTile.isPrepainted()) {
                     String hexLabel = getHex().getLabel();
@@ -748,9 +744,8 @@ private static final int[] offStationTokenX = new int[] { -20, 20 };
             drawDestinationMilestones(g);
         }
 
-                paintOffboardValues(g);
+        paintOffboardValues(g);
 
-                
         // COMICAL CITY VALUES: Show if toggled ON and routes are actually plotted[cite:
         // 5, 6].
         ORUIManager manager = hexMap.getOrUIManager();
@@ -767,10 +762,12 @@ private static final int[] offStationTokenX = new int[] { -20, 20 };
     }
 
     private void paintOffboardValues(Graphics2D g) {
-        if (hexMap == null || !hexMap.getDisplayOffboardValues()) return;
+        if (hexMap == null || !hexMap.getDisplayOffboardValues())
+            return;
 
         // Ensure this hex actually has phase values
-        if (!getHex().hasValuesPerPhase()) return;
+        if (!getHex().hasValuesPerPhase())
+            return;
         // Query MapManager to see if this specific hex was suppressed via Map.xml
         if (hexMap.getMapManager() != null) {
             if (!hexMap.getMapManager().isOffboardValueAllowed(getHex().getId())) {
@@ -778,7 +775,8 @@ private static final int[] offStationTokenX = new int[] { -20, 20 };
             }
         }
 
-        // Check if this specific hex has disabled offboard value plotting via XML attributes
+        // Check if this specific hex has disabled offboard value plotting via XML
+        // attributes
         boolean showValues = true;
         try {
             // Check if the property exists in a generic attributes/properties map on MapHex
@@ -798,29 +796,86 @@ private static final int[] offStationTokenX = new int[] { -20, 20 };
             }
         }
 
-        if (!showValues) return;
+        if (!showValues)
+            return;
 
         java.util.List<Integer> values = getHex().getValuesPerPhase();
-        if (values == null || values.isEmpty()) return;
+        if (values == null || values.isEmpty())
+            return;
 
         // Constrain to maximum 4 values for a 2x2 grid
         int numVals = Math.min(values.size(), 4);
-        
+
         double zoom = dimensions.zoomFactor;
         int boxSize = (int) Math.round(12.5 * zoom);
 
         double cx = dimensions.center.getX();
         double cy = dimensions.center.getY();
 
-        // 18xx Phase colors: Yellow, Green, Brown, gray
-        java.awt.Color[] bgColors = {
-            new java.awt.Color(255, 255, 102), // Yellow
-            new java.awt.Color(102, 204, 102), // Green
-            new java.awt.Color(153, 102, 51),  // Brown
-            new java.awt.Color(160, 160, 160)  // gray
+      // --- START FIX ---
+        // Dynamically cross-reference Game.xml PhaseManager to map offboard steps to their correct tile colors.
+        java.util.Map<Integer, java.awt.Color> stepBgColors = new java.util.HashMap<>();
+        java.util.Map<Integer, java.awt.Color> stepFgColors = new java.util.HashMap<>();
+        
+        java.awt.Color currentBg = new java.awt.Color(255, 255, 102); // Default Yellow
+        java.awt.Color currentFg = java.awt.Color.BLACK;
+
+        try {
+            if (hexMap != null && hexMap.getMapManager() != null && hexMap.getMapManager().getRoot() != null) {
+                net.sf.rails.game.PhaseManager pm = hexMap.getMapManager().getRoot().getPhaseManager();
+                if (pm != null && pm.getPhases() != null) {
+                    for (Object pObj : pm.getPhases()) {
+                        net.sf.rails.game.Phase p = (net.sf.rails.game.Phase) pObj;
+                        
+                        boolean hasGray = false, hasBrown = false, hasGreen = false;
+                        try {
+                            java.lang.reflect.Method method = p.getClass().getMethod("isTileColourAllowed", String.class);
+                            hasGray = (Boolean) method.invoke(p, "gray") || (Boolean) method.invoke(p, "grey");
+                            hasBrown = (Boolean) method.invoke(p, "brown");
+                            hasGreen = (Boolean) method.invoke(p, "green");
+                        } catch (Exception e) {
+                            try {
+                                java.lang.reflect.Method listMethod = p.getClass().getMethod("getTileColours");
+                                java.util.Collection<?> colors = (java.util.Collection<?>) listMethod.invoke(p);
+                                String colorStr = colors.toString().toLowerCase();
+                                hasGray = colorStr.contains("gray") || colorStr.contains("grey");
+                                hasBrown = colorStr.contains("brown");
+                                hasGreen = colorStr.contains("green");
+                            } catch (Exception ex) {}
+                        }
+                        
+                        if (hasGray) {
+                            currentBg = new java.awt.Color(160, 160, 160);
+                            currentFg = java.awt.Color.WHITE;
+                        } else if (hasBrown) {
+                            currentBg = new java.awt.Color(153, 102, 51);
+                            currentFg = java.awt.Color.WHITE;
+                        } else if (hasGreen) {
+                            currentBg = new java.awt.Color(102, 204, 102);
+                            currentFg = java.awt.Color.BLACK;
+                        }
+                        
+                        int step = p.getOffBoardRevenueStep();
+                        if (!stepBgColors.containsKey(step)) {
+                            stepBgColors.put(step, currentBg);
+                            stepFgColors.put(step, currentFg);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // Ignore reflection errors; fallback logic applies below
+        }
+
+        java.awt.Color[] fallbackBg = {
+                new java.awt.Color(255, 255, 102), // Yellow
+                new java.awt.Color(102, 204, 102), // Green
+                new java.awt.Color(153, 102, 51),  // Brown
+                new java.awt.Color(160, 160, 160)  // Gray
         };
-        // Ensure contrast for the text
-        java.awt.Color[] fgColors = { java.awt.Color.BLACK, java.awt.Color.BLACK, java.awt.Color.WHITE, java.awt.Color.WHITE };
+        java.awt.Color[] fallbackFg = { 
+                java.awt.Color.BLACK, java.awt.Color.BLACK, java.awt.Color.WHITE, java.awt.Color.WHITE 
+        };
 
         java.awt.Font oldFont = g.getFont();
         g.setFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, (int) Math.round(9 * zoom)));
@@ -828,16 +883,19 @@ private static final int[] offStationTokenX = new int[] { -20, 20 };
 
         for (int i = 0; i < numVals; i++) {
             int val = values.get(i);
-            
-            // Calculate 2x2 offsets based on the index
+            int step = i + 1;
+
+            java.awt.Color cellBg = stepBgColors.containsKey(step) ? stepBgColors.get(step) : fallbackBg[Math.min(i, fallbackBg.length - 1)];
+            java.awt.Color cellFg = stepFgColors.containsKey(step) ? stepFgColors.get(step) : fallbackFg[Math.min(i, fallbackFg.length - 1)];
+
             int xOffset = (i % 2 == 0) ? -boxSize : 0;
             int yOffset = (i < 2) ? -boxSize : 0;
-            
+
             int x = (int) Math.round(cx + xOffset);
             int y = (int) Math.round(cy + yOffset);
 
             // Draw Background Box
-            g.setColor(bgColors[i]);
+            g.setColor(cellBg);
             g.fillRect(x, y, boxSize, boxSize);
 
             // Draw Box Border
@@ -846,13 +904,15 @@ private static final int[] offStationTokenX = new int[] { -20, 20 };
             g.drawRect(x, y, boxSize, boxSize);
 
             // Draw Centered Text
-            g.setColor(fgColors[i]);
+            g.setColor(cellFg);
+
+
             String text = String.valueOf(val);
             int tw = fm.stringWidth(text);
-            
+
             int tx = x + (boxSize - tw) / 2;
             int ty = y + ((boxSize - fm.getHeight()) / 2) + fm.getAscent();
-            
+
             g.drawString(text, tx, ty);
         }
         g.setFont(oldFont);
@@ -911,23 +971,46 @@ private static final int[] offStationTokenX = new int[] { -20, 20 };
                         boolean isOwner = tName.startsWith(currentComp.getId() + "_");
                         if (!isOwner) {
                             for (net.sf.rails.game.PrivateCompany priv : currentComp.getPrivates()) {
-                                if ("Gulf".equals(priv.getId()) || (priv.getName() != null && priv.getName().contains("Gulf"))) {
+                                if ("Gulf".equals(priv.getId())
+                                        || (priv.getName() != null && priv.getName().contains("Gulf"))) {
                                     isOwner = true;
                                     break;
                                 }
                             }
                         }
-                        
+
                         int cacheVal = (hexMap == null) ? 0 : hexMap.getDynamicHexBonus(getHex());
-                        
+
                         if (isOwner) {
-                            if (cacheVal < 20) hexValue += 20;
+                            if (cacheVal < 20)
+                                hexValue += 20;
                         } else {
                             if (tName.toLowerCase().contains("open")) {
-                                if (cacheVal < 10) hexValue += 10;
+                                if (cacheVal < 10)
+                                    hexValue += 10;
                             } else if (!tName.toLowerCase().contains("closed") && token.getValue() > 0) {
-                                if (cacheVal < token.getValue()) hexValue += token.getValue();
+                                if (cacheVal < token.getValue())
+                                    hexValue += token.getValue();
                             }
+                        }
+                    } else if (tName.toLowerCase().contains("port") || tName.toLowerCase().contains("glsc")) {
+                        boolean isOwner = false;
+                        for (net.sf.rails.game.PrivateCompany priv : currentComp.getPrivates()) {
+                            if (priv != null && (priv.getId().toLowerCase().contains("glsc")
+                                    || priv.getId().toLowerCase().contains("port"))) {
+                                isOwner = true;
+                                break;
+                            }
+                        }
+                        if (!isOwner) {
+                            isOwner = tName.toLowerCase().startsWith(currentComp.getId().toLowerCase() + "_");
+                        }
+
+                        int cacheVal = (hexMap == null) ? 0 : hexMap.getDynamicHexBonus(getHex());
+
+                        if (isOwner) {
+                            if (cacheVal < 20)
+                                hexValue += 20;
                         }
                     } else if (tName.startsWith(currentComp.getId())) {
                         // Prevent double counting: DestinationModifier mutates the token value and
@@ -936,11 +1019,49 @@ private static final int[] offStationTokenX = new int[] { -20, 20 };
                         if (hexMap == null || hexMap.getDynamicHexBonus(getHex()) == 0) {
                             hexValue += token.getValue();
                         }
-                        
+
                     }
                 }
                 // 1817 Coal Mines are bonus tokens that grant $10 to the route
                 if ("CoalMine".equalsIgnoreCase(token.getName()) || "CoalMine".equalsIgnoreCase(token.getId())) {
+                    hexValue += 10;
+                }
+            }
+        }
+
+        // Add support for 1856 Tunnel and Bridge bonuses in the fancy revenue city value layer
+        if (currentComp != null && getHex() != null && getHex().getId() != null) {
+            String hexId = getHex().getId();
+            boolean hasTunnelRight = false;
+            boolean hasBridgeRight = false;
+
+            // 1. Check active private company cards (Phases 1-3)
+            for (net.sf.rails.game.PrivateCompany priv : currentComp.getPrivates()) {
+                if (priv != null && !priv.isClosed()) {
+                    String id = priv.getId().toLowerCase();
+                    if (id.contains("tunn")) hasTunnelRight = true;
+                    if (id.contains("brid")) hasBridgeRight = true;
+                }
+            }
+
+            // 2. Check permanent purchased bonuses (Phase 5+)
+            for (net.sf.rails.game.Bonus bonus : currentComp.getBonuses()) {
+                if (bonus != null && bonus.getName() != null) {
+                    String name = bonus.getName().toLowerCase();
+                    if (name.contains("tunn")) hasTunnelRight = true;
+                    if (name.contains("brid")) hasBridgeRight = true;
+                }
+            }
+
+            // Apply to Sarnia (B13)
+            if (hasTunnelRight && hexId.equalsIgnoreCase("B13")) {
+                if (hexMap == null || hexMap.getDynamicHexBonus(getHex()) == 0) {
+                    hexValue += 10;
+                }
+            }
+            // Apply to Buffalo (P17 or P19)
+            if (hasBridgeRight && (hexId.equalsIgnoreCase("P17") || hexId.equalsIgnoreCase("P19"))) {
+                if (hexMap == null || hexMap.getDynamicHexBonus(getHex()) == 0) {
                     hexValue += 10;
                 }
             }
@@ -1022,7 +1143,7 @@ private static final int[] offStationTokenX = new int[] { -20, 20 };
         if (getHex().isPreprintedTileCurrent() || !isTilePainted()) {
             Color oldColor = g.getColor();
 
-boolean isOpen = true; 
+            boolean isOpen = true;
             try {
                 // Try to dynamically check the open/closed state from MapHex
                 java.lang.reflect.Method method = getHex().getClass().getMethod("isOpen");
@@ -1043,17 +1164,17 @@ boolean isOpen = true;
             g.setStroke(new BasicStroke(1.0f));
             g.draw(dimensions.hexagon);
 
-         
-
             g.setColor(oldColor);
         }
     }
 
     public void paintPreprintedCityName(Graphics2D g) {
-        if (hexMap == null || hexMap.getMapManager() == null) return;
+        if (hexMap == null || hexMap.getMapManager() == null)
+            return;
 
         String cityName = hexMap.getMapManager().getPreprintedCityName(getHex().getId());
-        if (cityName == null || cityName.isEmpty()) return;
+        if (cityName == null || cityName.isEmpty())
+            return;
 
         // Abbreviate if the name is longer than 12 letters
         if (cityName.length() > 12) {
@@ -1062,7 +1183,7 @@ boolean isOpen = true;
 
         Font oldFont = g.getFont();
         Color oldColor = g.getColor();
-        
+
         // Smaller, plain font size dynamically tracked via zoom factor
         int scaledSize = Math.max(8, (int) Math.round(8.5 * dimensions.zoomFactor));
         g.setFont(new Font("SansSerif", Font.PLAIN, scaledSize));
@@ -1070,8 +1191,9 @@ boolean isOpen = true;
 
         int tw = fm.stringWidth(cityName);
         float tx = (float) (dimensions.center.getX() - tw / 2.0);
-        
-        // Displace slightly upwards from true center to keep clean lines near tile track connections
+
+        // Displace slightly upwards from true center to keep clean lines near tile
+        // track connections
         float ty = (float) (dimensions.center.getY() - (dimensions.tokenDiameter * 0.4));
 
         // High-contrast clean charcoal paint
@@ -1096,7 +1218,7 @@ boolean isOpen = true;
     }
 
     // --- START FIX ---
-public void paintMississippi(Graphics2D g) {
+    public void paintMississippi(Graphics2D g) {
         // Ensure this river logic only executes if the active game is 1870
         if (hexMap == null || hexMap.getMapManager() == null || hexMap.getMapManager().getRoot() == null) {
             return;
@@ -1108,7 +1230,7 @@ public void paintMississippi(Graphics2D g) {
 
         try {
             Class<?> validatorClass = Class.forName("net.sf.rails.game.specific._1870.MississippiRiverValidator");
-            
+
             java.lang.reflect.Field riverHexesField = validatorClass.getDeclaredField("RIVER_HEXES");
             riverHexesField.setAccessible(true);
             @SuppressWarnings("unchecked")
@@ -1308,24 +1430,13 @@ public void paintMississippi(Graphics2D g) {
     }
 
     private void drawHome(Graphics2D g2, PublicCompany co, HexPoint origin, Stop homeCity) {
-        // 1. Branch logic: Check if this is a Major, National, or Coal company
-        boolean isMajor = false;
-        boolean isCoal = false;
-        if (co.getType() != null) {
-            String typeName = co.getType().getId();
-            if (typeName != null) {
-                if (typeName.equals("Major") || typeName.equals("National")) {
-                    isMajor = true;
-                } else if (typeName.equals("Coal")) {
-                    isCoal = true;
-                }
-            }
-        }
+        // 1. Branch logic: Leverage your new permanent base framework capability flag
+        boolean isMajor = co.isMajorCompany();
+        boolean isCoal = co.getType() != null && "Coal".equalsIgnoreCase(co.getType().getId());
 
         // 2. Keep Minors and Coal companies completely intact for their main text
         if (!isMajor) {
             GUIToken.drawTokenText(co.getId(), g2, Color.BLACK, origin, dimensions.tokenDiameter);
-
             return;
         }
 
@@ -1446,10 +1557,8 @@ public void paintMississippi(Graphics2D g) {
         g2.setStroke(oldStroke);
     }
 
-
-
-
-// Cache for loaded SVGs to ensure high rendering performance during map zooming/panning
+    // Cache for loaded SVGs to ensure high rendering performance during map
+    // zooming/panning
     private static final Map<String, org.apache.batik.gvt.GraphicsNode> svgCache = new java.util.concurrent.ConcurrentHashMap<>();
     // Cache for missing SVGs to prevent continuous disk polling
     private static final Set<String> svgNotFoundCache = new java.util.concurrent.ConcurrentSkipListSet<>();
@@ -1462,12 +1571,15 @@ public void paintMississippi(Graphics2D g) {
             tokenName = String.valueOf(bt.getValue());
         } else {
             String lowerName = rawName.toLowerCase();
-            
+
             // Map dynamic or company-specific token names to generic SVG file names
             if (lowerName.contains("gulf")) {
                 tokenName = lowerName.contains("closed") ? "Gulf_Closed" : "Gulf_Open";
             } else if (lowerName.contains("cattle") || lowerName.equals("scc")) {
                 tokenName = "Cattle";
+            } else if (lowerName.contains("port") || lowerName.contains("glsc")) {
+                tokenName = "Port";
+
             }
         }
 
@@ -1475,15 +1587,15 @@ public void paintMississippi(Graphics2D g) {
 
         if (!svgNotFoundCache.contains(tokenName)) {
             org.apache.batik.gvt.GraphicsNode svgIcon = svgCache.get(tokenName);
-            
+
             // 1. Load the SVG if it's not cached yet
             if (svgIcon == null) {
                 try {
-                    
+
                     // Look in the classpath first
                     String resourcePath = "/images/tokens/" + tokenName + ".svg";
                     java.net.URL url = getClass().getResource(resourcePath);
-                    
+
                     // Fallback to a local data folder
                     if (url == null) {
                         java.io.File f = new java.io.File("data/tokens/" + tokenName + ".svg");
@@ -1494,14 +1606,17 @@ public void paintMississippi(Graphics2D g) {
 
                     if (url != null) {
                         String parser = org.apache.batik.util.XMLResourceDescriptor.getXMLParserClassName();
-                        org.apache.batik.anim.dom.SAXSVGDocumentFactory f = new org.apache.batik.anim.dom.SAXSVGDocumentFactory(parser);
+                        org.apache.batik.anim.dom.SAXSVGDocumentFactory f = new org.apache.batik.anim.dom.SAXSVGDocumentFactory(
+                                parser);
                         org.w3c.dom.Document doc = f.createDocument(url.toString());
-                        
+
                         org.apache.batik.bridge.UserAgent userAgent = new org.apache.batik.bridge.UserAgentAdapter();
-                        org.apache.batik.bridge.DocumentLoader loader = new org.apache.batik.bridge.DocumentLoader(userAgent);
-                        org.apache.batik.bridge.BridgeContext ctx = new org.apache.batik.bridge.BridgeContext(userAgent, loader);
+                        org.apache.batik.bridge.DocumentLoader loader = new org.apache.batik.bridge.DocumentLoader(
+                                userAgent);
+                        org.apache.batik.bridge.BridgeContext ctx = new org.apache.batik.bridge.BridgeContext(userAgent,
+                                loader);
                         ctx.setDynamicState(org.apache.batik.bridge.BridgeContext.DYNAMIC);
-                        
+
                         org.apache.batik.bridge.GVTBuilder builder = new org.apache.batik.bridge.GVTBuilder();
                         svgIcon = builder.build(ctx, doc);
                         svgCache.put(tokenName, svgIcon);
@@ -1518,22 +1633,22 @@ public void paintMississippi(Graphics2D g) {
             // 2. Plot the SVG if successfully loaded
             if (svgIcon != null) {
                 java.awt.geom.AffineTransform oldTransform = g2.getTransform();
-                
-                // Scale target size with the map zoom factor 
+
+                // Scale target size with the map zoom factor
                 double targetSize = 16 * dimensions.zoomFactor;
-                
+
                 java.awt.geom.Rectangle2D bounds = svgIcon.getBounds();
                 double scaleX = targetSize / bounds.getWidth();
                 double scaleY = targetSize / bounds.getHeight();
                 double scale = Math.min(scaleX, scaleY);
 
                 // Translate to center the SVG precisely on the hex origin point
-                g2.translate(origin.getX() - (bounds.getWidth() * scale) / 2.0, 
-                             origin.getY() - (bounds.getHeight() * scale) / 2.0);
+                g2.translate(origin.getX() - (bounds.getWidth() * scale) / 2.0,
+                        origin.getY() - (bounds.getHeight() * scale) / 2.0);
                 g2.scale(scale, scale);
-                
+
                 svgIcon.paint(g2);
-                
+
                 g2.setTransform(oldTransform);
                 return; // Exit here so we don't draw the fallback text
             }
@@ -1544,12 +1659,6 @@ public void paintMississippi(Graphics2D g) {
                 origin, 15);
         token.drawToken(g2);
     }
-
-
-
-
-
-    
 
     private HexPoint getTokenCenter(int currentToken, Stop stop) {
         // Find the correct position on the tile
@@ -1989,33 +2098,32 @@ public void paintMississippi(Graphics2D g) {
         g2.setFont(originalFont);
     }
 
-
-
     private void paintEdgeTokens(Graphics2D g2) {
         try {
-            // Access edgeTokens from MapHex via reflection to avoid cross-version compilation errors
+            // Access edgeTokens from MapHex via reflection to avoid cross-version
+            // compilation errors
             java.lang.reflect.Field edgeTokensField = net.sf.rails.game.MapHex.class.getDeclaredField("edgeTokens");
             edgeTokensField.setAccessible(true);
             Object edgeTokensObj = edgeTokensField.get(getHex());
-            
+
             if (edgeTokensObj instanceof Iterable) {
                 int i = 0;
                 for (Object item : (Iterable<?>) edgeTokensObj) {
                     if (item instanceof BaseToken) {
                         BaseToken token = (BaseToken) item;
                         PublicCompany company = token.getParent();
-                        
+
                         // Calculate position: near the edge, slightly inset towards the center
                         HexSide side = HexSide.get(i % 6);
                         HexPoint sidePt = new HexPoint(getSidePoint2D(side));
                         HexPoint centerPt = dimensions.center;
-                        
+
                         double dx = sidePt.getX() - centerPt.getX();
                         double dy = sidePt.getY() - centerPt.getY();
-                        
+
                         // Inset by 20% to keep it inside the hex bounds and avoid track clipping
                         HexPoint origin = new HexPoint(centerPt.getX() + dx * 0.8, centerPt.getY() + dy * 0.8);
-                        
+
                         // Draw slightly smaller than normal tokens to distinguish it as an edge marker
                         drawBaseToken(g2, company, origin, dimensions.tokenDiameter * 0.8);
                         i++;
@@ -2026,8 +2134,5 @@ public void paintMississippi(Graphics2D g) {
             // Field not found or inaccessible; ignore
         }
     }
-
-
-
 
 }

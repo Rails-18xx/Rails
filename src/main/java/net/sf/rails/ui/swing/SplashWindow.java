@@ -319,7 +319,6 @@ public class SplashWindow {
         return myWin;
     }
 
-// ... (lines of unchanged context code) ...
     public void finalizeGameInit() {
         notifyOfStep(STEP_FINALIZE);
 

@@ -535,7 +535,6 @@ if (upperPlayerCaption[j][i] != null) {
         gameUIManager.packAndApplySizing(this);
     }
 
-    // ... (lines of unchanged context code) ...
     private void setupHotkeys() {
         // --- START FIX ---
         // Bind Command/Ctrl + and - to font size adjustment
@@ -633,8 +632,7 @@ if (upperPlayerCaption[j][i] != null) {
                     HexHighlightMouseListener.addMouseListener(card, gameUIManager.getORUIManager(), priv, true);
                 }
             }
-        } else {
-        }
+        } 
     }
 
     protected void clearMapHighlights() {
@@ -931,7 +929,6 @@ if (cardWrappers[i] != null) {
         // --- END FIX ---
     }
 
-// ... (lines of unchanged context code) ...
     @Override
     public void actionPerformed(ActionEvent actor) {
         // --- START FIX ---
