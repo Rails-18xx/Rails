@@ -4032,6 +4032,8 @@ public class OperatingRound extends Round implements Observer {
         // All 'Done' button logic will be evaluated locally per phase pass.
         doneAllowed.set(false);
         boolean phaseAllowsDone = false;
+        // True while the company still has to buy a train and can do so
+        boolean trainPurchaseDue = false;
 
         // Safety Guard: If the operating company was reset (e.g. during reload).
         if (operatingCompany.value() == null) {
@@ -4110,6 +4112,7 @@ public class OperatingRound extends Round implements Observer {
                 if (!mustBuy) {
                     phaseAllowsDone = true;
                 }
+                trainPurchaseDue = mustBuy;
             } else {
                 // Wipe the local done flag if there are zero legitimate buy actions available
                 phaseAllowsDone = false;
@@ -4234,8 +4237,10 @@ public class OperatingRound extends Round implements Observer {
         int actionCountAfterCommon = possibleActions.getList().size();
 
         // If voluntary special actions were appended, we provide a Done button to skip
-        // them.
-        if (actionCountAfterCommon > actionCountBeforeCommon && !forced) {
+        // them. Not where Done would also skip a required step: the revenue
+        // allocation, or a compulsory train purchase.
+        if (actionCountAfterCommon > actionCountBeforeCommon && !forced
+                && step != GameDef.OrStep.CALC_REVENUE && !trainPurchaseDue) {
             phaseAllowsDone = true;
         }
 
