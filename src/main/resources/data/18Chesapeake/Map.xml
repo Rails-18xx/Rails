@@ -35,7 +35,7 @@
 	<Hex name="E11" tile="-1"/>
 	<Hex name="E13" tile="0"/>
 	<Hex name="F2" tile="-10" city="Harrisburg"/>
-	<Hex name="F4" tile="-1" cost="40"  terrain="River"/>
+	<Hex name="F4" tile="0"/>
 	<Hex name="F6" tile="0"/>
 	<Hex name="F8" tile="-10888" city="Washington" label="DC"/>
 	<Hex name="F10" tile="0" cost="40"  terrain="River"/>
@@ -49,9 +49,9 @@
 	<Hex name="G11" tile="0" cost="40"  terrain="River"/>
 	<Hex name="G13" tile="-10" city="Richmond"/>
 	<Hex name="H2" tile="0"/>
-    <Hex name="H4" tile="-10" city="Strasburg"/>
+    <Hex name="H4" tile="-10" cost="40"  terrain="River" city="Strasburg"/>
 
-	<Hex name="H6" tile="-7713" orientation="1" city="Baltimore" label="OO" />
+	<Hex name="H6" tile="-7713" orientation="1" cost="40"  terrain="River" city="Baltimore" label="OO" />
 
 	<Hex name="H8" tile="-4000"/>
     <Hex name="H12" tile="0" cost="40"  terrain="River"/>
