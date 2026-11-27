@@ -6,12 +6,18 @@ import org.gradle.internal.os.OperatingSystem;
 
 plugins {
     id 'java'
-    id 'application'
-    id 'com.gradleup.shadow' version '8.3.0'
-    id 'com.github.ben-manes.versions' version '0.46.0'
-    id 'com.gorylenko.gradle-git-properties' version '2.4.1'
-    id 'org.openjfx.javafxplugin' version '0.0.13'
-    id 'org.sonarqube' version '4.0.0.2929'
+    // https://github.com/GradleUp/shadow
+    id 'com.gradleup.shadow' version '9.4.2'
+    // plugin to check for dependency updates via task dependencyUpdates
+    // https://github.com/ben-manes/gradle-versions-plugin
+    id 'com.github.ben-manes.versions' version '0.54.0'
+    // https://github.com/n0mer/gradle-git-properties
+    id 'com.gorylenko.gradle-git-properties' version '3.0.3'
+    // https://openjfx.io/openjfx-docs/#gradle
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+    // https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-gradle/
+    id 'org.sonarqube' version '7.3.1.8318'
+    // used by SonarQube for code coverage
     id 'jacoco'
 }
 
